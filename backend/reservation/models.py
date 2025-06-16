@@ -3,7 +3,6 @@ from guest.models import Guest
 from room.models import RoomType
 
 # TODO: status enum, no show, cancelled, checked in
-# TODO: add foreign keys of guest and room type
 
 # Create your models here.
 class Reservation(models.Model):
