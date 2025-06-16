@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import Footer from './components/Footer.vue'
-import HeroSlider from './components/HeroSlider.vue'
 import NavBar from './components/NavBar.vue'
 </script>
 
@@ -10,16 +9,15 @@ import NavBar from './components/NavBar.vue'
 
     <!-- Background image layer -->
     <div class="absolute inset-0 z-0">
-      <!-- your background image goes here -->
+      <!-- insert default background image here -->
+      <!-- atm, this is set to a white background -->
     </div>
 
-    <HeroSlider />
-    <!-- Content (with relative context) -->
-    <main class="relative z-10 flex-grow">
-      <router-view />
-    </main>
-
     <NavBar />
+
+      <main class="flex-grow relative z-10">
+        <router-view />
+      </main>
 
     <!-- Footer always at bottom -->
     <Footer />
