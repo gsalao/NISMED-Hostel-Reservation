@@ -1,4 +1,6 @@
 from django.db import models
+from guest.models import Guest
+from room.models import RoomType
 
 # TODO: status enum, no show, cancelled, checked in
 # TODO: add foreign keys of guest and room type
@@ -19,6 +21,8 @@ class Reservation(models.Model):
     end_date: DateTimeField
         The date when the reservation will end 
     """
+    guest_id = models.ForeignKey(Guest, on_delete=models.CASCADE)
+    room_type_id = models.ForeignKey(RoomType, on_delete=models.CASCADE)
     status = models.CharField(max_length=10, default='') 
     reservation_date = models.DateTimeField(auto_now_add=True)
     start_date = models.DateField()
