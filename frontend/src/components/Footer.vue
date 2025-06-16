@@ -1,5 +1,5 @@
 <template>
-  <footer class="bg-[#09240b] text-white pt-12 pb-8">
+  <footer class="bg-[#09240b] text-white pt-8 pb-8 z-10 mt-12">
     <div class="max-w-7xl mx-auto px-4">
       <!-- Grid: 3 equal columns -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 text-center md:text-left">

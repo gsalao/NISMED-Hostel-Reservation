@@ -1,5 +1,5 @@
 <template>
-  <section class="relative h-screen w-full text-white">
+  <section class="relative h-screen w-full text-white z-10">
     <!-- Background Image -->
     <div
       class="absolute inset-0 bg-cover bg-center z-0"
