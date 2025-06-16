@@ -2,6 +2,7 @@
 import Footer from './components/Footer.vue'
 import HeroSlider from './components/HeroSlider.vue'
 import NavBar from './components/NavBar.vue'
+import RoomGallery from './components/RoomGallery.vue'
 </script>
 
 <template>
@@ -18,6 +19,8 @@ import NavBar from './components/NavBar.vue'
     <main class="relative z-10 flex-grow">
       <router-view />
     </main>
+
+    <RoomGallery />
 
     <NavBar />
 

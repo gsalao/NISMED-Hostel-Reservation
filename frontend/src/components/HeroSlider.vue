@@ -15,6 +15,9 @@
       <h1 class="text-5xl md:text-7xl font-bold text-yellow-500 drop-shadow-lg">UP NISMED Hostel</h1>
       <p class="mt-4 text-lg md:text-2xl text-yellow-400 font-sm drop-shadow-lg">
         The Hostel provides a quiet retreat for its guests, a second-home ambience, and a haven for the professional and transients.
+        
+        <!-- TODO: insert more info; uncomment following txt: -->
+        <!-- The hostel has forty-eight (48) rooms and can accommodate a maximum of 120 guests. Each room is equipped with a telephone. Free Wi-Fi is also available. -->
       </p>
     </div>
   </section>
