@@ -4,8 +4,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from .serializers import ReservationSerializer 
-from .utils import valid_reservation
-from room.models import RoomType
+from .utils import find_available_room, is_room_type_available
 
 # Create your views here.
 '''
@@ -38,38 +37,31 @@ def create_new_reservation(request):
     This corresponds to the post response of adding a new reservation
     This assumes that the request was done in format of:
     {
-        guest_id = "...", 
+        guest_id = "...", should be an email address
         room_type_id = "...", 
-        status = "..." (integer),
-        reservation_date = "...", 
         start_date = "...",
         end_date = "...",
     }
     """
+    room_type_id = request.data.get("room_type_id")
+    start_date = request.data.get("start_date")
+    end_date = request.data.get("end_date")
+
+    # Check if there are any available room types at the given dates 
+    if not is_room_type_available(room_type_id, start_date, end_date):
+        return Response({"error": "Room type not available"}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Check if there are any available rooms of that room type (just in case)
+    if not (room := find_available_room(room_type_id, start_date, end_date)):
+        return Response({"error": "No room found"}, status=status.HTTP_400_BAD_REQUEST)
+    
     data = request.data.copy()
-    status_int = data["status"]
-    data["status"] = status_symbols[status_int].value
+    data["room_id"] = room.id
+    print(room.id)
 
     serializer = ReservationSerializer(data=data)
     if not serializer.is_valid():
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    # Check if there are any available room types at the given dates 
-    room_type_id = data.get("room_type_id")
-    start_date = data.get("start_date")
-    end_date = data.get("end_date")
-
-    # Validate dates before serialization
-    if not valid_reservation(room_type_id, start_date, end_date):
-        return Response(
-            {"detail": "No available rooms for the selected type and date range."},
-            status=status.HTTP_400_BAD_REQUEST
-        )
-
-    # Update the corresponding room_type_id's total reserved
-    room_type = RoomType.objects.get(pk=room_type_id)
-    room_type.total_reserved += 1
-    room_type.save()
 
     serializer.save()
     return Response(serializer.data, status=status.HTTP_201_CREATED)

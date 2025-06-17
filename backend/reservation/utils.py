@@ -1,46 +1,40 @@
 from reservation.models import Reservation
-from room.models import RoomType
+from room.models import Room, RoomType
+from reservation.models import StatusEnum
 
 from datetime import date
 
-def valid_reservation(room_type_id, start_date, end_date):
-    """
-    Checks if there is an available room of the given RoomType between start_date and end_date.
-
-    Returns True if there is at least 1 available room; False otherwise.
-    """
-    # Fetch the room type and its total inventory
+def is_room_type_available(room_type_id, start_date, end_date):
     room_type = RoomType.objects.get(pk=room_type_id)
-    total_inventory = room_type.total_inventory
+    total_rooms = room_type.total_inventory
 
-    # CASE 1:
-    # Existing reservation starts before or at requested start,
-    # and ends after the requested start.
-    case_1 = Reservation.objects.filter(
-        room_type_id=room_type_id,
-        start_date__lte=start_date,
-        end_date__gt=start_date
-    ).count()
-
-    # CASE 2:
-    # Existing reservation starts before or at requested end,
-    # and ends after the requested end.
-    case_2 = Reservation.objects.filter(
-        room_type_id=room_type_id,
+    # Count how many reservations overlap
+    overlapping_reservations = Reservation.objects.filter(
+        room_id__room_type_id=room_type_id,
         start_date__lt=end_date,
-        end_date__gte=end_date
+        end_date__gt=start_date,
+        status=StatusEnum.CHECKED_IN.value
     ).count()
 
-    # CASE 3:
-    # Existing reservation starts within the requested period
-    # and ends within the requested period.
-    case_3 = Reservation.objects.filter(
-        room_type_id=room_type_id,
-        start_date__gte=start_date,
-        end_date__lte=end_date
-    ).count()
+    print(Reservation.objects.filter(room_id__room_type_id=room_type_id,start_date__lt=end_date,end_date__gt=start_date,status=StatusEnum.CHECKED_IN.value))
 
-    total_conflicts = case_1 + case_2 + case_3
+    print(overlapping_reservations)
+    print(total_rooms)
 
-    available_rooms = total_inventory - total_conflicts 
-    return available_rooms > 0
+    return overlapping_reservations < total_rooms
+
+def find_available_room(room_type_id, start_date, end_date):
+    rooms = Room.objects.filter(room_type_id=room_type_id)
+
+    for room in rooms:
+        overlap = Reservation.objects.filter(
+            room_id=room,
+            start_date__lt=end_date,
+            end_date__gt=start_date
+        ).exists()
+
+        if not overlap:
+            return room  # First available room
+
+    return None  # No available rooms
+

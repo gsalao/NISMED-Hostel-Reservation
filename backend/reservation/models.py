@@ -1,13 +1,13 @@
 from django.db import models
 from guest.models import Guest
-from room.models import RoomType
+from room.models import Room
 from enum import Enum
 
 class StatusEnum(Enum):
-    NO_SHOW = 'No Show'
-    CANCELLED = 'Cancelled'
-    CHECKED_IN = 'Checked In'
-    DONE = 'Done'
+    NO_SHOW = 'NS'
+    CANCELLED = 'C'
+    CHECKED_IN = 'CI'
+    DONE = 'D'
 
 status_symbols = {
     1: StatusEnum.NO_SHOW,
@@ -40,8 +40,8 @@ class Reservation(models.Model):
         The date when the reservation will end 
     """
     guest_id = models.ForeignKey(Guest, on_delete=models.CASCADE)
-    room_type_id = models.ForeignKey(RoomType, on_delete=models.CASCADE)
-    status = models.CharField(max_length=15, default=StatusEnum.CHECKED_IN)
+    room_id= models.ForeignKey(Room, on_delete=models.CASCADE)
+    status = models.CharField(max_length=1024, default=StatusEnum.CHECKED_IN)
     reservation_date = models.DateTimeField(auto_now_add=True)
     start_date = models.DateField()
     end_date = models.DateField()
