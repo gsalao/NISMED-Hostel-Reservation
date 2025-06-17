@@ -45,10 +45,16 @@ const roomSetC = [
       </div>
 
       <!-- Right Section: Room Gallery -->
-      <div class="flex-1 space-y-12 self-center  ">
-        <RoomGallery :images="roomSetA" />
-        <RoomGallery :images="roomSetB" />
-        <RoomGallery :images="roomSetC" />
+      <div class="flex-1 w-full space-y-12 self-center">
+        <div class="w-full">
+          <RoomGallery :images="roomSetA" />
+        </div>
+        <div class="w-full">
+          <RoomGallery :images="roomSetB" />
+        </div>
+        <div class="w-full">
+          <RoomGallery :images="roomSetC" />
+        </div>
       </div>
     </div>
   </div>
