@@ -22,11 +22,11 @@ def get_all_reservations_status(request):
     Gets all the reservations given a status id.
     This assumes that the format of the request data would be:
     {
-        'status': {integer between 1, ..., 4}
+        "status": {integer between 1, ..., 4}
     }
     """
-    id_of_status_reservations = status_symbols_reverse[request.data["status"]]
-    status_reservations = Reservation.objects.filter(status=status_symbols[id_of_status_reservations].value) 
+    converted_id_of_status_reservations = status_symbols[request.data["status"]]
+    status_reservations = Reservation.objects.filter(status=converted_id_of_status_reservations) 
     serialized_status = ReservationSerializer(status_reservations, many=True)
     return Response(serialized_status.data)
 
@@ -37,10 +37,10 @@ def create_new_reservation(request):
     This corresponds to the post response of adding a new reservation
     This assumes that the request was done in format of:
     {
-        guest_id = "...", should be an email address
-        room_type_id = "...", 
-        start_date = "...",
-        end_date = "...",
+        "guest_id" = "...", should be an email address
+        "room_type_id" = "...", 
+        "start_date" = "...",
+        "end_date" = "...",
     }
     """
     room_type_id = request.data.get("room_type_id")
@@ -57,7 +57,6 @@ def create_new_reservation(request):
     
     data = request.data.copy()
     data["room_id"] = room.id
-    print(room.id)
 
     serializer = ReservationSerializer(data=data)
     if not serializer.is_valid():
@@ -72,8 +71,8 @@ def change_reservation_status(request):
     This corresponds to the post response of changing the reservation status 
     This assumes that the reqeust was done in format of:
     {
-        reservation_id: "...",
-        status = "..." (integer),
+        "reservation_id": "...",
+        "status" = {integer in [1,2,3,4]},
     }
     """
     reservation_id = request.data.get("reservation_id")
