@@ -38,6 +38,10 @@ class Reservation(models.Model):
         The date when the reservation will begin
     end_date: DateTimeField
         The date when the reservation will end 
+    male_count: IntegerField
+        Number of males in reservation
+    female_count: IntegerField
+        Number of females in reservation
     """
     guest_id = models.ForeignKey(Guest, on_delete=models.CASCADE)
     room_id= models.ForeignKey(Room, on_delete=models.CASCADE)
@@ -45,6 +49,8 @@ class Reservation(models.Model):
     reservation_date = models.DateTimeField(auto_now_add=True)
     start_date = models.DateField()
     end_date = models.DateField()
+    male_count = models.IntegerField()
+    female_count = models.IntegerField()
 
     def __str__(self):
         return f"Reservation #{self.id} was reserved on {self.reservation_date} and will start on {self.start_date} and end on {self.end_date}"
