@@ -51,7 +51,8 @@ def create_new_reservation(request):
     if not serializer.is_valid():
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # TODO: possibly add more checks here
+    # <---- TODO ---> Check if there are any available room types at the given dates 
+    # <---- TODO ---> Update the corresponding room_type_id's total reserved
     serializer.save()
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
