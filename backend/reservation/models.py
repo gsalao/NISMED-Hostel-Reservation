@@ -41,7 +41,7 @@ class Reservation(models.Model):
     """
     guest_id = models.ForeignKey(Guest, on_delete=models.CASCADE)
     room_id= models.ForeignKey(Room, on_delete=models.CASCADE)
-    status = models.CharField(max_length=1024, default=StatusEnum.CHECKED_IN)
+    status = models.CharField(max_length=1024, default=StatusEnum.CHECKED_IN.value)
     reservation_date = models.DateTimeField(auto_now_add=True)
     start_date = models.DateField()
     end_date = models.DateField()

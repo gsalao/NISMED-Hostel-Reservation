@@ -30,7 +30,7 @@ def find_available_room(room_type_id, start_date, end_date):
             room_id=room,
             start_date__lt=end_date,
             end_date__gt=start_date,
-            status=StatusEnum.CHECKED_IN
+            status=StatusEnum.CHECKED_IN.value
         ).exists()
 
         if not overlap:

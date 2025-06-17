@@ -16,7 +16,7 @@ possible views for reservation:
 '''
 
 # TODO: add restriction to who can use this request
-@api_view(['GET'])
+@api_view(['POST'])
 def get_all_reservation_status(request):
     """
     Gets all the reservations given a status id.
@@ -78,7 +78,7 @@ def change_reservation_status(request):
     """
     reservation_id = request.data.get("reservation_id")
     status_id = request.data.get("status")
-    new_status = status_symbols[status_id]
+    new_status = status_symbols[status_id].value
 
     try:
         reservation = Reservation.objects.get(id=reservation_id)
