@@ -62,6 +62,7 @@ def create_new_room_type(request):
     serializer.save()
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+# TODO: also add a check for how many has been added!
 @api_view(['POST'])
 def create_new_room(request):
     """
@@ -70,7 +71,6 @@ def create_new_room(request):
     {
         "room_type_id": "...",
         "room_number": "...", -> Add a check of the room number!
-        also add a check for how many has been added!
     }
     """
     serializer = RoomSerializer(data=request.data)

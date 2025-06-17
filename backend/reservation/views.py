@@ -31,6 +31,7 @@ def get_all_reservation_status(request):
     return Response(serialized_status.data)
 
 
+# TODO: add a check where you can't go back to the past!
 @api_view(['POST'])
 def create_new_reservation(request):
     """
@@ -41,7 +42,6 @@ def create_new_reservation(request):
         "room_type_id": "...", 
         "start_date": "...",
         "end_date": "..."
-        add a check where you can't go back to the past!
     }
     """
     room_type_id = request.data.get("room_type_id")
