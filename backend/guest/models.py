@@ -1,6 +1,7 @@
 from django.db import models
 
 # Create your models here.
+# TODO: maybe make the phone number more restrictive and consistent? idk tho
 class Guest(models.Model):
     """
     Represents the guests of a hostel, specifically the one that **reserved** the reservation
