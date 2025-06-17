@@ -15,6 +15,33 @@ possible views for room:
 5. post to renew the room types inventory ✓
 '''
 
+@api_view(['GET'])
+def get_all_rooms(request):
+    """
+    Gets all the rooms.
+    """
+    all_rooms = Room.objects.all() 
+    serialized_rooms = RoomSerializer(all_rooms, many=True)
+    return Response(serialized_rooms.data)
+
+@api_view(['GET'])
+def get_all_room_types(request):
+    """
+    Gets all the room types.
+    """
+    all_room_types = RoomType.objects.all() 
+    serialized_room_types = RoomTypeSerializer(all_room_types, many=True)
+    return Response(serialized_room_types.data)
+
+@api_view(['GET'])
+def get_all_room_rates(request):
+    """
+    Gets all the room rates.
+    """
+    all_room_rates = RoomRate.objects.all() 
+    serialized_room_rates = RoomRateSerializer(all_room_rates, many=True)
+    return Response(serialized_room_rates.data)
+
 # i feel like this could have been encapsulated into the same function, but im too lazy to think of how
 @api_view(['POST'])
 def create_new_room_type(request):
@@ -42,7 +69,8 @@ def create_new_room(request):
     This assumes that the request was done in format of:
     {
         "room_type_id": "...",
-        "room_number": "...",
+        "room_number": "...", -> Add a check of the room number!
+        also add a check for how many has been added!
     }
     """
     serializer = RoomSerializer(data=request.data)
@@ -91,7 +119,7 @@ def change_room_type_inventory(request):
         return Response({"error": "Room Type not found."},
                         status=status.HTTP_404_NOT_FOUND)
 
-    room_type.inventory = new_inventory 
+    room_type.total_inventory = new_inventory 
     room_type.save()
 
     serializer = RoomTypeSerializer(room_type)
@@ -103,17 +131,20 @@ def change_room_rate(request):
     This corresponds to the post response of changing the room rate 
     This assumes that the reqeust was done in format of:
     {
-        "room_rate_id": "...",
+        "room_type_id": "...",
+        "occupancy": "...",
         "new_rate": "..."
+        add the occupancy!
     }
     """
-    room_rate_id = request.data.get("room_rate_id")
+    room_type_id = request.data.get("room_type_id")
     new_rate = request.data.get("new_rate")
+    occupancy = request.data.get("occupancy")
 
     try:
-        room_rate = RoomRate.objects.get(id=room_rate_id)
+        room_rate = RoomRate.objects.get(room_type_id=room_type_id, occupancy=occupancy)
     except RoomRate.DoesNotExist:
-        return Response({"error": "Room Type not found."},
+        return Response({"error": "Room Rate not found."},
                         status=status.HTTP_404_NOT_FOUND)
 
     room_rate.rate = new_rate 
