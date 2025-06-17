@@ -27,9 +27,9 @@ const roomSetB= [
 ];
 
 const roomSetC = [
-  { src: typeA1, label: "Room Type C" },
-  { src: typeA2, label: "Room Type C" },
-  { src: typeA3, label: "Room Type C" },
+  { src: typeC1, label: "Room Type C" },
+  { src: typeC2, label: "Room Type C" },
+  { src: typeC3, label: "Room Type C" },
 ];
 </script>
 
