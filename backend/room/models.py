@@ -16,7 +16,6 @@ class RoomType(models.Model):
     """
     name = models.CharField(max_length=1)
     total_inventory = models.IntegerField()
-    total_reserved = models.IntegerField()
 
     def __str__(self):
         return f"RoomType {self.room-type} (Total Number of Rooms: {self.total_inventory}; Total Number of Reserved Rooms: {self.total_reserved})"

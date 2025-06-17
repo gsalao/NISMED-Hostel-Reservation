@@ -17,7 +17,7 @@ possible views for reservation:
 
 # TODO: add restriction to who can use this request
 @api_view(['GET'])
-def get_all_reservations_status(request):
+def get_all_reservation_status(request):
     """
     Gets all the reservations given a status id.
     This assumes that the format of the request data would be:
@@ -37,10 +37,11 @@ def create_new_reservation(request):
     This corresponds to the post response of adding a new reservation
     This assumes that the request was done in format of:
     {
-        "guest_id" = "...", should be an email address
-        "room_type_id" = "...", 
-        "start_date" = "...",
-        "end_date" = "...",
+        "guest_id": "...", 
+        "room_type_id": "...", 
+        "start_date": "...",
+        "end_date": "..."
+        add a check where you can't go back to the past!
     }
     """
     room_type_id = request.data.get("room_type_id")
@@ -77,7 +78,7 @@ def change_reservation_status(request):
     """
     reservation_id = request.data.get("reservation_id")
     status_id = request.data.get("status")
-    new_status = status_symbols[status_id].value
+    new_status = status_symbols[status_id]
 
     try:
         reservation = Reservation.objects.get(id=reservation_id)

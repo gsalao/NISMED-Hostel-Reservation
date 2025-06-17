@@ -29,7 +29,8 @@ def find_available_room(room_type_id, start_date, end_date):
         overlap = Reservation.objects.filter(
             room_id=room,
             start_date__lt=end_date,
-            end_date__gt=start_date
+            end_date__gt=start_date,
+            status=StatusEnum.CHECKED_IN
         ).exists()
 
         if not overlap:
