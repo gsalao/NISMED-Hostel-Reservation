@@ -1,9 +1,11 @@
 from django.shortcuts import render
-from .models import Reservation, StatusEnum, status_symbols, status_symbols_reverse 
+from .models import Reservation, status_symbols, status_symbols_reverse 
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from .serializers import ReservationSerializer 
+from .utils import valid_reservation
+from room.models import RoomType
 
 # Create your views here.
 '''
@@ -29,6 +31,7 @@ def get_all_reservations_status(request):
     serialized_status = ReservationSerializer(status_reservations, many=True)
     return Response(serialized_status.data)
 
+
 @api_view(['POST'])
 def create_new_reservation(request):
     """
@@ -51,8 +54,23 @@ def create_new_reservation(request):
     if not serializer.is_valid():
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # <---- TODO ---> Check if there are any available room types at the given dates 
-    # <---- TODO ---> Update the corresponding room_type_id's total reserved
+    # Check if there are any available room types at the given dates 
+    room_type_id = data.get("room_type_id")
+    start_date = data.get("start_date")
+    end_date = data.get("end_date")
+
+    # Validate dates before serialization
+    if not valid_reservation(room_type_id, start_date, end_date):
+        return Response(
+            {"detail": "No available rooms for the selected type and date range."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # Update the corresponding room_type_id's total reserved
+    room_type = RoomType.objects.get(pk=room_type_id)
+    room_type.total_reserved += 1
+    room_type.save()
+
     serializer.save()
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
