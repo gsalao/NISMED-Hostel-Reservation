@@ -4,6 +4,8 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from .serializers import ReservationSerializer 
+from django.utils import timezone
+from datetime import datetime
 from .utils import find_available_room, is_room_type_available
 
 # Create your views here.
@@ -31,7 +33,6 @@ def get_all_reservation_status(request):
     return Response(serialized_status.data)
 
 
-# TODO: add a check where you can't go back to the past!
 @api_view(['POST'])
 def create_new_reservation(request):
     """
@@ -49,6 +50,21 @@ def create_new_reservation(request):
     room_type_id = request.data.get("room_type_id")
     start_date = request.data.get("start_date")
     end_date = request.data.get("end_date")
+
+    try:
+        start_date = datetime.strptime(request.data.get("start_date"), "%Y-%m-%d").date()
+        end_date = datetime.strptime(request.data.get("end_date"), "%Y-%m-%d").date()
+    except (TypeError, ValueError):
+        return Response({"error": "Invalid date format. Use YYYY-MM-DD."},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    # Check if the start in the past
+    if start_date < timezone.now().date():
+        return Response({"error": "Start date cannot happen in the past!"}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Check if the end is after the start 
+    if end_date <= start_date:
+        return Response({"error": "End date cannot happen before the start"}, status=status.HTTP_400_BAD_REQUEST)
 
     # Check if there are any available room types at the given dates 
     if not is_room_type_available(room_type_id, start_date, end_date):
