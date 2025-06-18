@@ -30,8 +30,6 @@ def insert_guest(request):
     This assumes that the request was done in format of:
     {
         "email_address": "...",
-        "for_person_name": "...",
-        "by_person_name": "...",
         "phone_number": "...",
         "address": "...",
     }

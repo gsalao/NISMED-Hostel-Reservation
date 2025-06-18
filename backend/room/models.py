@@ -18,7 +18,7 @@ class RoomType(models.Model):
     total_inventory = models.IntegerField()
 
     def __str__(self):
-        return f"RoomType {self.room-type} (Total Number of Rooms: {self.total_inventory}; Total Number of Reserved Rooms: {self.total_reserved})"
+        return f"RoomType {self.name} (Total Number of Rooms: {self.total_inventory})"
 
 class RoomRate(models.Model):
     """
@@ -50,9 +50,12 @@ class Room(models.Model):
         The room type that the rate is associated with
     room_number: IntegerField
         The actual room number of the said room
+    is_available: BooleanField
+        If the room is available to be occupied
     """
     room_type_id = models.ForeignKey(RoomType, on_delete=models.CASCADE, related_name='rooms')
     room_number = models.IntegerField()
+    is_available = models.BooleanField(default=True)
 
     def __str__(self):
         return f"Room #{self.room_number}: ({'Available' if self.is_available else 'Occupied'})"

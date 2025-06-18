@@ -41,7 +41,9 @@ def create_new_reservation(request):
         "guest_id": "...", 
         "room_type_id": "...", 
         "start_date": "...",
-        "end_date": "..."
+        "end_date": "...",
+        "for_person_name": "...",
+        "by_person_name": "...",
     }
     """
     room_type_id = request.data.get("room_type_id")

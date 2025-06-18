@@ -4,10 +4,10 @@ from room.models import Room
 from enum import Enum
 
 class StatusEnum(Enum):
-    NO_SHOW = 'NS'
-    CANCELLED = 'C'
-    CHECKED_IN = 'CI'
-    DONE = 'D'
+    NO_SHOW = 'NO SHOW' 
+    CANCELLED = 'CANCELLED'
+    CHECKED_IN = 'CHECKED IN'
+    DONE = 'DONE'
 
 status_symbols = {
     1: StatusEnum.NO_SHOW,
@@ -38,6 +38,10 @@ class Reservation(models.Model):
         The date when the reservation will begin
     end_date: DateTimeField
         The date when the reservation will end 
+    for_name: CharField
+        The name of the entity the reservation is for
+    by_name: CharField
+        The name of the entity making the reservation
     male_count: IntegerField
         Number of males in reservation
     female_count: IntegerField
@@ -49,6 +53,8 @@ class Reservation(models.Model):
     reservation_date = models.DateTimeField(auto_now_add=True)
     start_date = models.DateField()
     end_date = models.DateField()
+    for_person_name = models.CharField(max_length=1024)
+    by_person_name = models.CharField(max_length=1024)
     male_count = models.IntegerField()
     female_count = models.IntegerField()
 
