@@ -17,11 +17,12 @@
       </p>
 
       <!-- Book Now Button -->
-      <button
-        class="cursor-pointer mt-15 px-8 py-4 bg-yellow-500 text-black font-bold text-2xl rounded-lg shadow-lg hover:bg-yellow-600 transition-all duration-300"
+      <router-link
+        to="/booking-form/"
+        class="cursor-pointer mt-12 px-8 py-4 bg-yellow-500 text-black font-bold text-2xl rounded-lg shadow-lg hover:bg-yellow-600 transition-all duration-300 flex items-center justify-center"
       >
         Book Now
-      </button>
+      </router-link>
     </div>
   </section>
 </template>

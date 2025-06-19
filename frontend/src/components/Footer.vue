@@ -36,7 +36,7 @@
         </div>
 
         <!-- Right: Contact Info -->
-        <div class="flex flex-col items-center md:items-end space-y-3">
+        <div id="contact-section" class="flex flex-col items-center md:items-end space-y-3">
           <ul class="space-y-2 text-sm text-gray-400">
             <h3 class="text-lg text-white font-semibold self-center">Contact Us</h3>
             <li>(632) 89274276 ext. 102</li>
