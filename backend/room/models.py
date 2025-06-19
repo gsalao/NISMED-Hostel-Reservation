@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 class RoomType(models.Model):
@@ -34,6 +35,14 @@ class RoomRate(models.Model):
     room_type_id = models.ForeignKey(RoomType, on_delete=models.CASCADE, related_name='room_rates')
     occupancy = models.IntegerField() 
     rate = models.DecimalField(max_digits = 6, decimal_places = 2)
+
+    def clean(self):
+        super().clean()
+        if RoomRate.objects.filter(
+            room_type_id=self.room_type_id,
+            occupancy=self.occupancy
+        ).exclude(pk=self.pk).exists():
+            raise ValidationError("A rate with this room type and occupancy already exists.")
 
     def __str__(self):
         return f"Rate of a {self.room_type_id} with {self.occupancy} people: {self.rate} Php"
