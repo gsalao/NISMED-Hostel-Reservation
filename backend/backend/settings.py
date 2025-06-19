@@ -144,7 +144,6 @@ JAZZMIN_SETTINGS = {
     "site_icon": "nismed-site-icon.png",
     "welcome_sign": "Welcome to the UP NISMED Hostel Admin",
     "copyright": "UP NISMED",
-    "search_model": ["room.room"],
     "hide_models": ["auth.group"],
     "order_with_respect_to": ["reservation", "guest", "room", "auth"],
     "icons": {
@@ -157,6 +156,12 @@ JAZZMIN_SETTINGS = {
     },
     "show_sidebar": True,
     "site_logo_classes": "img-square",
+    "topmenu_links": [
+        {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"model": "reservation.reservation"},
+        {"model": "guest.guest"},
+        {"app": "room"}
+    ],
     # "show_ui_builder": True,
     # "related_modal_active": True
 }
