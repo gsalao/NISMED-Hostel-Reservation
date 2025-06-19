@@ -158,7 +158,7 @@ JAZZMIN_SETTINGS = {
     "site_logo_classes": "img-square",
     "topmenu_links": [
         {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
-        {"model": "reservation.reservation"},
+        {"app": "reservation"},
         {"model": "guest.guest"},
         {"app": "room"}
     ],

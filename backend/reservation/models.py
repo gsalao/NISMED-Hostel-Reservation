@@ -1,6 +1,6 @@
 from django.db import models
 from guest.models import Guest
-from room.models import Room
+from room.models import Room, RoomRate
 from enum import Enum
 from django.utils import timezone
 from django.core.exceptions import ValidationError
@@ -54,10 +54,11 @@ class Reservation(models.Model):
         Number of females in reservation
     remarks: TextField
         Comments from the admin
+    {occupancy}_{type}_room_count: IntegerField
+        The number of inputted rooms to be reserved
 
     """
     guest_id = models.ForeignKey(Guest, on_delete=models.CASCADE)
-    room_id = models.ForeignKey(Room, on_delete=models.CASCADE)
     status = models.CharField(max_length=1024, choices=StatusEnum.choices(), default=StatusEnum.CHECKED_IN.value)
     reservation_date = models.DateTimeField(auto_now_add=True)
     start_date = models.DateField()
@@ -84,20 +85,29 @@ class Reservation(models.Model):
         if self.end_date <= self.start_date:
             raise ValidationError("End date must be after start date.")
 
-        # Validate the selected room is available
-        overlapping = Reservation.objects.filter(
-            room_id=self.room_id,
-            start_date__lt=self.end_date,
-            end_date__gt=self.start_date,
-            status=StatusEnum.CHECKED_IN.value,
-            room_id__is_active=True
-        ).exclude(pk=self.pk)  # exclude current instance if editing
+        # overlapping = Reservation.objects.filter(
+        #     room_id=self.room_id,
+        #     start_date__lt=self.end_date,
+        #     end_date__gt=self.start_date,
+        #     status=StatusEnum.CHECKED_IN.value,
+        #     room_id__is_active=True
+        # ).exclude(pk=self.pk)  # exclude current instance if editing
 
-        if overlapping.exists():
-            raise ValidationError(f"Room {self.room_id} is not available for the selected dates.")
+        # if overlapping.exists():
+        #     raise ValidationError(f"Room {self.room_id} is not available for the selected dates.")
 
-        if not self.room_id.is_active:
-            raise ValidationError(f"{self.room_id} is currently not available.")
+        # if not self.room_id.is_active:
+        #     raise ValidationError(f"{self.room_id} is currently not available.")
 
     def __str__(self):
         return f"Reservation #{self.id} was reserved on {self.reservation_date.date()} and will start on {self.start_date} and end on {self.end_date}"
+
+# TODO: make the ReservedRoom 
+class ReservedRoom(models.Model):
+    """
+    Represents the reserved room of a user
+    """
+    reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+    room_rate = models.ForeignKey(RoomRate, on_delete=models.CASCADE)
+
