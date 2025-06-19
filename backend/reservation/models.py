@@ -6,27 +6,27 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 
 class StatusEnum(Enum):
+    CHECKED_IN = 'CHECKED IN'
     NO_SHOW = 'NO SHOW' 
     CANCELLED = 'CANCELLED'
-    CHECKED_IN = 'CHECKED IN'
-    DONE = 'DONE'
+    CHECKED_OUT = 'CHECKED OUT' 
 
     @classmethod
     def choices(cls):
         return [(tag.value, tag.value) for tag in cls]
 
 status_symbols = {
-    1: StatusEnum.NO_SHOW,
-    2: StatusEnum.CANCELLED,
-    3: StatusEnum.CHECKED_IN,
-    4: StatusEnum.DONE,
+    1: StatusEnum.CHECKED_IN,
+    2: StatusEnum.NO_SHOW,
+    3: StatusEnum.CANCELLED,
+    4: StatusEnum.CHECKED_OUT,
 }
 
 status_symbols_reverse = {
-    StatusEnum.NO_SHOW: 1,
-    StatusEnum.CANCELLED: 2,
-    StatusEnum.CHECKED_IN: 3,
-    StatusEnum.DONE: 4,
+    StatusEnum.CHECKED_IN: 1,
+    StatusEnum.NO_SHOW: 2,
+    StatusEnum.CANCELLED: 3,
+    StatusEnum.CHECKED_OUT: 4,
 }
 
 # Create your models here.
@@ -63,6 +63,7 @@ class Reservation(models.Model):
     by_person_name = models.CharField(max_length=1024)
     male_count = models.IntegerField()
     female_count = models.IntegerField()
+    remarks = models.TextField()
 
     def clean(self):
         # Validation: Cannot start in the past
@@ -79,13 +80,13 @@ class Reservation(models.Model):
             start_date__lt=self.end_date,
             end_date__gt=self.start_date,
             status=StatusEnum.CHECKED_IN.value,
-            room_id__is_available=True
+            room_id__is_active=True
         ).exclude(pk=self.pk)  # exclude current instance if editing
 
         if overlapping.exists():
             raise ValidationError(f"Room {self.room_id} is not available for the selected dates.")
 
-        if not self.room_id.is_available:
+        if not self.room_id.is_active:
             raise ValidationError(f"{self.room_id} is currently not available.")
 
     def __str__(self):

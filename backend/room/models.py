@@ -50,12 +50,12 @@ class Room(models.Model):
         The room type that the rate is associated with
     room_number: IntegerField
         The actual room number of the said room
-    is_available: BooleanField
+    is_active: BooleanField
         If the room is available to be occupied
     """
     room_type_id = models.ForeignKey(RoomType, on_delete=models.CASCADE, related_name='rooms')
     room_number = models.IntegerField()
-    is_available = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"Room #{self.room_number}: ({'Available' if self.is_available else 'Unavailable'})"
+        return f"Room #{self.room_number}: ({'Available' if self.is_active else 'Unavailable'})"

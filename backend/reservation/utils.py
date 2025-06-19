@@ -15,7 +15,7 @@ def is_room_type_available(room_type_id, start_date, end_date):
         start_date__lt=end_date,
         end_date__gt=start_date,
         status=StatusEnum.CHECKED_IN.value,
-        room_id__is_available=True
+        room_id__is_active=True
     ).count()
 
     return overlapping_reservations < total_rooms
@@ -32,7 +32,7 @@ def find_available_room(room_type_id, start_date, end_date):
             start_date__lt=end_date,
             end_date__gt=start_date,
             status=StatusEnum.CHECKED_IN.value,
-            room_id__is_available=True
+            room_id__is_active=True
         ).exists()
 
         if not overlap:
