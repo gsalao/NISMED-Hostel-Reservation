@@ -5,7 +5,7 @@ import NavBar from './components/NavBar.vue'
 
 <template>
   <!-- Full-page layout -->
-  <div class="relative min-h-screen flex flex-col">
+  <div class="relative min-h-screen flex flex-col scroll-smooth">
 
     <!-- Background image layer -->
     <div class="absolute inset-0 z-0">

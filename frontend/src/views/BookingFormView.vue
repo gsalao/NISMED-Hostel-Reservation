@@ -55,21 +55,21 @@
             <thead class="bg-gray-100">
               <tr>
                 <th class="border px-2 py-1">Room Type</th>
-                <th class="border px-2 py-1">S</th>
-                <th class="border px-2 py-1">D</th>
-                <th class="border px-2 py-1">T</th>
+                <th class="border px-2 py-1">Single<br><span style="font-weight: normal !important;">(1 Pax)</span></th>
+                <th class="border px-2 py-1">Double<br><span style="font-weight: normal !important;">(2 Pax)</span></th>
+                <th class="border px-2 py-1">Triple<br><span style="font-weight: normal !important;">(3 Pax)</span></th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="(room, key) in roomTypes" :key="key">
-                <td class="border px-2 py-1">{{ room.label }}</td>
-                <td class="border px-2 py-1">
+                <td class="border px-2 py-1" v-html="room.label"></td>
+                <td class="border px-2 py-1 text-center">
                   <input type="number" min="0" v-model.number="form.rooms[key].S" class="w-16 border border-gray-300 rounded px-1 py-1 text-center" />
                 </td>
-                <td class="border px-2 py-1">
+                <td class="border px-2 py-1 text-center">
                   <input type="number" min="0" v-model.number="form.rooms[key].D" class="w-16 border border-gray-300 rounded px-1 py-1 text-center" />
                 </td>
-                <td class="border px-2 py-1" v-if="room.allowT">
+                <td class="border px-2 py-1 text-center" v-if="room.allowT">
                   <input type="number" min="0" v-model.number="form.rooms[key].T" class="w-16 border border-gray-300 rounded px-1 py-1 text-center" />
                 </td>
                 <td class="border px-2 py-1" v-else></td>
@@ -83,9 +83,15 @@
       <div>
         <label class="font-semibold block">No. of Guests</label>
         <div class="flex gap-4">
-          <div><label>F: </label><input type="number" v-model.number="form.guests.F" class="w-16 border border-gray-300 rounded px-1 py-1 text-center" /></div>
-          <div><label>M: </label><input type="number" v-model.number="form.guests.M" class="w-16 border border-gray-300 rounded px-1 py-1 text-center" /></div>
-          <div><label>All: </label><input type="number" v-model.number="form.guests.All" class="w-16 border border-gray-300 rounded px-1 py-1 text-center" /></div>
+          <div><label><strong>F</strong>: </label>
+            <input type="number" min="0" v-model.number="form.guests.F" class="w-16 border border-gray-300 rounded px-1 py-1 text-center" />
+          </div>
+          <div><label><strong>M</strong>: </label>
+            <input type="number" min="0" v-model.number="form.guests.M" class="w-16 border border-gray-300 rounded px-1 py-1 text-center" />
+          </div>
+          <div><label><strong>All</strong>: </label>
+            <span class="inline-block px-1 py-1 text-center">{{ totalGuests }}</span>
+          </div>
         </div>
       </div>
 
@@ -112,12 +118,12 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue';
+import { reactive, computed } from 'vue';
 
 const roomTypes = {
-  airconPrivate: { label: "Aircon private toilet & bath", allowT: false },
-  airconShared: { label: "Aircon shared toilet & bath", allowT: false },
-  ceilingFanShared: { label: "Ceiling fan shared toilet & bath", allowT: true },
+  airconPrivate: { label: "<strong>Room A</strong>: Aircon private toilet & bath", allowT: false },
+  airconShared: { label: "<strong>Room B</strong>: Aircon shared toilet & bath", allowT: false },
+  ceilingFanShared: { label: "<strong>Room C</strong>: Ceiling fan shared toilet & bath", allowT: true },
 };
 
 const form = reactive({
@@ -135,8 +141,10 @@ const form = reactive({
     airconShared: { S: 0, D: 0 },
     ceilingFanShared: { S: 0, D: 0, T: 0 },
   },
-  guests: { F: 0, M: 0, All: 0 },
+  guests: { F: 0, M: 0 },
 });
+
+const totalGuests = computed(() => form.guests.F + form.guests.M);
 
 const submitForm = () => {
   console.log("Submitted form:", form);
