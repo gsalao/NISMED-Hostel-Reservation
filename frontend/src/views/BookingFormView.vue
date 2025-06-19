@@ -63,13 +63,13 @@
             <tbody>
               <tr v-for="(room, key) in roomTypes" :key="key">
                 <td class="border px-2 py-1" v-html="room.label"></td>
-                <td class="border px-2 py-1">
+                <td class="border px-2 py-1 text-center">
                   <input type="number" min="0" v-model.number="form.rooms[key].S" class="w-16 border border-gray-300 rounded px-1 py-1 text-center" />
                 </td>
-                <td class="border px-2 py-1">
+                <td class="border px-2 py-1 text-center">
                   <input type="number" min="0" v-model.number="form.rooms[key].D" class="w-16 border border-gray-300 rounded px-1 py-1 text-center" />
                 </td>
-                <td class="border px-2 py-1" v-if="room.allowT">
+                <td class="border px-2 py-1 text-center" v-if="room.allowT">
                   <input type="number" min="0" v-model.number="form.rooms[key].T" class="w-16 border border-gray-300 rounded px-1 py-1 text-center" />
                 </td>
                 <td class="border px-2 py-1" v-else></td>
