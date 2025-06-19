@@ -67,7 +67,7 @@ class Reservation(models.Model):
     by_person_name = models.CharField(max_length=1024)
     male_count = models.IntegerField()
     female_count = models.IntegerField()
-    remarks = models.TextField(null=True)
+    remarks = models.TextField(blank=True, null=True)
     single_a_room_count = models.IntegerField()
     double_a_room_count = models.IntegerField()
     single_b_room_count = models.IntegerField()
