@@ -9,16 +9,14 @@ class RoomType(models.Model):
     ----------
     name: CharField
         The specific name of the room type ('A', 'B', 'C')
-    total_inventory: IntegerField
-        The total number of rooms
-    total_reserved: IntegerField
-        The total number of rooms reserved
+    available_rooms: IntegerField
+        The total number of available rooms
     """
     name = models.CharField(max_length=1)
-    total_inventory = models.IntegerField()
+    available_rooms = models.IntegerField()
 
     def __str__(self):
-        return f"RoomType {self.name} (Total Number of Rooms: {self.total_inventory})"
+        return f"RoomType {self.name} (Available Rooms: {self.available_rooms})"
 
 class RoomRate(models.Model):
     """
