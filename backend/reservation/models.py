@@ -67,7 +67,7 @@ class Reservation(models.Model):
     by_person_name = models.CharField(max_length=1024)
     male_count = models.IntegerField()
     female_count = models.IntegerField()
-    remarks = models.TextField()
+    remarks = models.TextField(null=True)
     single_a_room_count = models.IntegerField()
     double_a_room_count = models.IntegerField()
     single_b_room_count = models.IntegerField()
@@ -84,6 +84,10 @@ class Reservation(models.Model):
         # Validation: End date after start
         if self.end_date <= self.start_date:
             raise ValidationError("End date must be after start date.")
+
+        # Validation: room counts cannot be all zero
+        if self.single_a_room_count == self.single_b_room_count == self.single_c_room_count == self.double_a_room_count == self.double_b_room_count == self.double_c_room_count == self.triple_c_room_count == 0:
+            raise ValidationError("There must be 1 occupant in a room")
 
         # overlapping = Reservation.objects.filter(
         #     room_id=self.room_id,
