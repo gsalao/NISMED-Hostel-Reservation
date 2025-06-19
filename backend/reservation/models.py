@@ -52,6 +52,9 @@ class Reservation(models.Model):
         Number of males in reservation
     female_count: IntegerField
         Number of females in reservation
+    remarks: TextField
+        Comments from the admin
+
     """
     guest_id = models.ForeignKey(Guest, on_delete=models.CASCADE)
     room_id = models.ForeignKey(Room, on_delete=models.CASCADE)
@@ -64,6 +67,13 @@ class Reservation(models.Model):
     male_count = models.IntegerField()
     female_count = models.IntegerField()
     remarks = models.TextField()
+    single_a_room_count = models.IntegerField()
+    double_a_room_count = models.IntegerField()
+    single_b_room_count = models.IntegerField()
+    double_b_room_count = models.IntegerField()
+    single_c_room_count = models.IntegerField()
+    double_c_room_count = models.IntegerField()
+    triple_c_room_count = models.IntegerField()
 
     def clean(self):
         # Validation: Cannot start in the past
