@@ -123,7 +123,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",   
+]
+
+STATIC_ROOT = BASE_DIR / "staticfiles"  
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -133,8 +139,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 JAZZMIN_SETTINGS = {
     "site_title": "UP NISMED Hostel Admin",
     "site_header": "UP NISMED Hostel",
-    "site_brand": "UP NISMED",
-    # "site_logo": "books/img/logo.png",
+    "site_brand": "UP NISMED Hostel",
+    "site_logo": "nismed-site-logo.png",
+    "site_icon": "nismed-site-icon.png",
     "welcome_sign": "Welcome to the UP NISMED Hostel Admin",
     "copyright": "UP NISMED",
     "search_model": ["room.room"],
@@ -149,6 +156,7 @@ JAZZMIN_SETTINGS = {
         "room.roomtype": "fas fa-door-open", 
     },
     "show_sidebar": True,
+    "site_logo_classes": "img-square",
     # "show_ui_builder": True,
     # "related_modal_active": True
 }
@@ -159,8 +167,8 @@ JAZZMIN_UI_TWEAKS = {
     "body_small_text": False,
     "brand_small_text": False,
     "brand_colour": False,
-    "accent": "accent-olive",
-    "navbar": "navbar-dark",
+    "accent": "accent-success",
+    "navbar": "navbar-white navbar-light",
     "no_navbar_border": False,
     "navbar_fixed": False,
     "layout_boxed": False,
@@ -173,15 +181,14 @@ JAZZMIN_UI_TWEAKS = {
     "sidebar_nav_compact_style": False,
     "sidebar_nav_legacy_style": False,
     "sidebar_nav_flat_style": False,
-    "theme": "default",
+    "theme": "cerulean",
     "dark_mode_theme": None,
     "button_classes": {
-        "primary": "btn-primary",
-        "secondary": "btn-secondary",
+        "primary": "btn-outline-primary",
+        "secondary": "btn-outline-secondary",
         "info": "btn-info",
         "warning": "btn-warning",
         "danger": "btn-danger",
         "success": "btn-success"
     }
 }
-
