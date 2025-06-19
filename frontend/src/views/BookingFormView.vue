@@ -55,9 +55,9 @@
             <thead class="bg-gray-100">
               <tr>
                 <th class="border px-2 py-1">Room Type</th>
-                <th class="border px-2 py-1">S</th>
-                <th class="border px-2 py-1">D</th>
-                <th class="border px-2 py-1">T</th>
+                <th class="border px-2 py-1">Single<br><span style="font-weight: normal !important;">(1 Pax)</span></th>
+                <th class="border px-2 py-1">Double<br><span style="font-weight: normal !important;">(2 Pax)</span></th>
+                <th class="border px-2 py-1">Triple<br><span style="font-weight: normal !important;">(3 Pax)</span></th>
               </tr>
             </thead>
             <tbody>
