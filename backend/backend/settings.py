@@ -135,6 +135,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+X_FRAME_OPTIONS = "SAMEORIGIN"
 
 JAZZMIN_SETTINGS = {
     "site_title": "UP NISMED Hostel Admin",
@@ -163,7 +164,7 @@ JAZZMIN_SETTINGS = {
         {"app": "room"}
     ],
     # "show_ui_builder": True,
-    # "related_modal_active": True
+    "related_modal_active": True
 }
 
 JAZZMIN_UI_TWEAKS = {
