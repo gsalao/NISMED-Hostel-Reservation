@@ -68,6 +68,9 @@ class Reservation(models.Model):
     male_count = models.IntegerField()
     female_count = models.IntegerField()
     remarks = models.TextField(blank=True, null=True)
+
+    # this is kinda bad ngl, you might wanna maintain s.t. this is NOT hardcoded (use ReservationRoomCount)
+    # TODO: rewrite this part!
     single_a_room_count = models.IntegerField()
     double_a_room_count = models.IntegerField()
     single_b_room_count = models.IntegerField()
@@ -89,19 +92,17 @@ class Reservation(models.Model):
         if self.single_a_room_count == self.single_b_room_count == self.single_c_room_count == self.double_a_room_count == self.double_b_room_count == self.double_c_room_count == self.triple_c_room_count == 0:
             raise ValidationError("There must be 1 occupant in a room")
 
-        # overlapping = Reservation.objects.filter(
-        #     room_id=self.room_id,
-        #     start_date__lt=self.end_date,
-        #     end_date__gt=self.start_date,
-        #     status=StatusEnum.CHECKED_IN.value,
-        #     room_id__is_active=True
-        # ).exclude(pk=self.pk)  # exclude current instance if editing
+        # TODO: call the are_dates_available function in `utils.py`
 
         # if overlapping.exists():
         #     raise ValidationError(f"Room {self.room_id} is not available for the selected dates.")
 
-        # if not self.room_id.is_active:
-        #     raise ValidationError(f"{self.room_id} is currently not available.")
+    def get_room_counts(self):
+        return {
+            'A': self.single_a_room_count + self.double_a_room_count,
+            'B': self.single_b_room_count + self.double_b_room_count,
+            'C': self.single_c_room_count + self.double_c_room_count + self.triple_c_room_count
+        }
 
     def __str__(self):
         return f"Reservation #{self.id} was reserved on {self.reservation_date.date()} and will start on {self.start_date} and end on {self.end_date}"
@@ -114,4 +115,5 @@ class ReservedRoom(models.Model):
     reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     room_rate = models.ForeignKey(RoomRate, on_delete=models.CASCADE)
+    room_count = models.IntegerField(default=1)
 
