@@ -102,7 +102,7 @@ class Reservation(models.Model):
         }
 
     def __str__(self):
-        return f"Check In: {self.start_date} and Check out: {self.end_date}. {[f"room {letter}: {total_count}" for (letter, total_count) in self.get_room_counts().items() if total_count != 0]}"
+        return f"Check In: {self.start_date} and Check out: {self.end_date}. {[f'room {letter}: {total_count}' for (letter, total_count) in self.get_room_counts().items() if total_count != 0]}"
 
 class ReservedRoom(models.Model):
     """
