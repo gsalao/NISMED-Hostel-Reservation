@@ -63,7 +63,6 @@ class Reservation(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     for_person_name = models.CharField(max_length=1024)
-    by_person_name = models.CharField(max_length=1024)
     male_count = models.IntegerField()
     female_count = models.IntegerField()
     remarks = models.TextField(blank=True, null=True)
