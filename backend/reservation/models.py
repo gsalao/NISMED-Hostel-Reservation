@@ -35,6 +35,8 @@ class Reservation(models.Model):
 
     Attributes
     ----------
+    guest_id: Guest
+        The guest who did the reservation
     status: CharField 
         The status of the reservation 
     reservation_date: DateTimeField
@@ -70,13 +72,13 @@ class Reservation(models.Model):
 
     # this is kinda bad ngl, you might wanna maintain s.t. this is NOT hardcoded (use ReservationRoomCount)
     # TODO: rewrite this part!
-    single_a_room_count = models.IntegerField()
-    double_a_room_count = models.IntegerField()
-    single_b_room_count = models.IntegerField()
-    double_b_room_count = models.IntegerField()
-    single_c_room_count = models.IntegerField()
-    double_c_room_count = models.IntegerField()
-    triple_c_room_count = models.IntegerField()
+    single_a_room_count = models.IntegerField(default=0)
+    double_a_room_count = models.IntegerField(default=0)
+    single_b_room_count = models.IntegerField(default=0)
+    double_b_room_count = models.IntegerField(default=0)
+    single_c_room_count = models.IntegerField(default=0)
+    double_c_room_count = models.IntegerField(default=0)
+    triple_c_room_count = models.IntegerField(default=0)
 
     def clean(self):
         from .utils import are_dates_available
@@ -92,12 +94,8 @@ class Reservation(models.Model):
         if self.single_a_room_count == self.single_b_room_count == self.single_c_room_count == self.double_a_room_count == self.double_b_room_count == self.double_c_room_count == self.triple_c_room_count == 0:
             raise ValidationError("There must be 1 occupant in a room")
 
-        # TODO: call the are_dates_available function in `utils.py`
-        if not are_dates_available(self.start_date, self.end_date):
+        if not are_dates_available(self.start_date, self.end_date, self.get_room_counts(), self):
             raise ValidationError("The reservation cannot be made")
-
-        # if overlapping.exists():
-        #     raise ValidationError(f"Room {self.room_id} is not available for the selected dates.")
 
     def get_room_counts(self):
         return {

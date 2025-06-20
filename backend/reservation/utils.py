@@ -1,9 +1,10 @@
-from .models import Reservation, ReservedRoom
+from .models import Reservation
 from room.models import Room, RoomType
 from reservation.models import StatusEnum
-from django.db.models import Count
+from django.db.models import Sum 
 
-def are_dates_available(start_date, end_date) -> bool:
+def are_dates_available(start_date, end_date, requested_counts, current_reservation=None) -> bool:
+
     # get how many reservations overlap
     overlapping_reservations = Reservation.objects.filter(
         start_date__lt=end_date,
@@ -11,24 +12,34 @@ def are_dates_available(start_date, end_date) -> bool:
         status=StatusEnum.CHECKED_IN.value,
     )
 
-    # get all reserved rooms on those reservations:
-    reserved_rooms = ReservedRoom.objects.filter(reservation__in=overlapping_reservations)
+    # it will count itself, so just remove itself from the overlapping_reservations count
+    if current_reservation and current_reservation.pk:
+        overlapping_reservations = overlapping_reservations.exclude(pk=current_reservation.pk)
 
-    # group the reserved rooms by room type (i.e. grouping by room's room type foreign key) and it will count the number of entries
-    reserved_by_type = (
-        reserved_rooms
-        .values('room__room_type')
-        .annotate(total_reserved=Count('id'))
+    print(overlapping_reservations)
+
+    # Aggregate room counts for each type from all overlapping reservations
+    aggregate = overlapping_reservations.aggregate(
+        total_a=Sum('single_a_room_count') + Sum('double_a_room_count'),
+        total_b=Sum('single_b_room_count') + Sum('double_b_room_count'),
+        total_c=Sum('single_c_room_count') + Sum('double_c_room_count') + Sum('triple_c_room_count'),
     )
 
-    # Convert to a dict: {room_type_id: reserved_count}
-    reserved_count_map = {entry['room__room_type']: entry['total_reserved'] for entry in reserved_by_type}
+    current_counts = {
+        'A': aggregate['total_a'] or 0,
+        'B': aggregate['total_b'] or 0,
+        'C': aggregate['total_c'] or 0,
+    }
 
     # Compare against room type inventory
     for room_type in RoomType.objects.all():
-        reserved = reserved_count_map.get(room_type.id, 0)
-        if reserved >= room_type.total_inventory:
-            return False  # Not enough rooms of this type
+        existing = current_counts.get(room_type.name, 0)
+        requested = requested_counts.get(room_type.name, 0) 
+
+        print(f"{room_type.name}\nExisting: {existing}\nRequested: {requested}")
+
+        if existing + requested > room_type.available_rooms:
+            return False 
 
     return True
 
