@@ -34,7 +34,7 @@ class RoomRate(models.Model):
     """
     room_type_id = models.ForeignKey(RoomType, on_delete=models.CASCADE, related_name='room_rates')
     occupancy = models.IntegerField() 
-    rate = models.DecimalField(max_digits = 6, decimal_places = 2)
+    rate = models.DecimalField(max_digits = 9, decimal_places = 2)
 
     def clean(self):
         super().clean()

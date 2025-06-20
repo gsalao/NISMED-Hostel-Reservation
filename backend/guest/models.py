@@ -20,7 +20,7 @@ class Guest(models.Model):
     email_address = models.CharField(max_length=256, unique=True)
     phone_number = models.CharField(max_length=15)
     address = models.CharField(max_length=1024)
-    name = models.CharField(max_length=2014)
+    name = models.CharField(max_length=1024)
 
     def __str__(self):
         return self.email_address
