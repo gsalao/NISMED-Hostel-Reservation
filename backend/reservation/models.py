@@ -81,8 +81,8 @@ class Reservation(models.Model):
 
     def clean(self):
         # Validation: Cannot start in the past
-        if self.start_date < timezone.now().date():
-            raise ValidationError("Reservation cannot start in the past.")
+        # if self.start_date < timezone.now().date():
+        #     raise ValidationError("Reservation cannot start in the past.")
 
         # Validation: End date after start
         if self.end_date <= self.start_date:
@@ -105,7 +105,7 @@ class Reservation(models.Model):
         }
 
     def __str__(self):
-        return f"Reservation #{self.id} was reserved on {self.reservation_date.date()} and will start on {self.start_date} and end on {self.end_date}"
+        return f"Reservation was reserved on {self.reservation_date.date()} and will start on {self.start_date} and end on {self.end_date}"
 
 # TODO: make the ReservedRoom 
 class ReservedRoom(models.Model):
@@ -115,5 +115,5 @@ class ReservedRoom(models.Model):
     reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     room_rate = models.ForeignKey(RoomRate, on_delete=models.CASCADE)
-    room_count = models.IntegerField(default=1)
+    # room_count = models.IntegerField(default=1)
 
