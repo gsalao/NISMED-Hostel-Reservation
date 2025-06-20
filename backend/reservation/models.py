@@ -47,8 +47,6 @@ class Reservation(models.Model):
         The date when the reservation will end 
     for_name: CharField
         The name of the entity the reservation is for
-    by_name: CharField
-        The name of the entity making the reservation
     male_count: IntegerField
         Number of males in reservation
     female_count: IntegerField

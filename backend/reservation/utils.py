@@ -42,25 +42,3 @@ def are_dates_available(start_date, end_date, requested_counts, current_reservat
             return False 
 
     return True
-
-
-def find_available_room(room_type_id, start_date, end_date):
-    """
-    This function is responsible in determining if there are rooms of a certain room type that are available within a range - it basically assigns the first available room
-    """
-    rooms = Room.objects.filter(room_type_id=room_type_id)
-
-    for room in rooms:
-        overlap = Reservation.objects.filter(
-            room_id=room,
-            start_date__lt=end_date,
-            end_date__gt=start_date,
-            status=StatusEnum.CHECKED_IN.value,
-            room_id__is_active=True
-        ).exists()
-
-        if not overlap:
-            return room  # First available room
-
-    return None  # No available rooms
-
