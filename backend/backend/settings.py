@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'reservation',
     'guest',
-    'room'
+    'room',
+    'django_seed',
 ]
 
 MIDDLEWARE = [
@@ -122,9 +124,79 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",   
+]
+
+STATIC_ROOT = BASE_DIR / "staticfiles"  
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+X_FRAME_OPTIONS = "SAMEORIGIN"
+
+JAZZMIN_SETTINGS = {
+    "site_title": "UP NISMED Hostel Admin",
+    "site_header": "UP NISMED Hostel",
+    "site_brand": "UP NISMED Hostel",
+    "site_logo": "nismed-site-logo.png",
+    "site_icon": "nismed-site-icon.png",
+    "welcome_sign": "Welcome to the UP NISMED Hostel Admin",
+    "copyright": "UP NISMED",
+    "hide_models": ["auth.group"],
+    "order_with_respect_to": ["reservation", "guest", "room", "auth"],
+    "icons": {
+        "auth.user": "fas fa-user",
+        "guest.guest": "fas fa-users",
+        "reservation.reservation": "fas fa-hotel",
+        "reservation.reservedroom": "fas fa-landmark",
+        "room.room": "fas fa-bed",
+        "room.roomrate": "fas fa-dollar-sign",
+        "room.roomtype": "fas fa-door-open", 
+    },
+    "show_sidebar": True,
+    "site_logo_classes": "img-square",
+    "topmenu_links": [
+        {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"app": "reservation"},
+        {"model": "guest.guest"},
+        {"app": "room"}
+    ],
+    # "show_ui_builder": True,
+    "related_modal_active": True
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": False,
+    "accent": "accent-success",
+    "navbar": "navbar-white navbar-light",
+    "no_navbar_border": False,
+    "navbar_fixed": False,
+    "layout_boxed": False,
+    "footer_fixed": False,
+    "sidebar_fixed": True,
+    "sidebar": "sidebar-dark-olive",
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": False,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": False,
+    "theme": "cerulean",
+    "dark_mode_theme": None,
+    "button_classes": {
+        "primary": "btn-outline-primary",
+        "secondary": "btn-outline-secondary",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success"
+    }
+}

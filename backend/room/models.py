@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 class RoomType(models.Model):
@@ -9,17 +10,14 @@ class RoomType(models.Model):
     ----------
     name: CharField
         The specific name of the room type ('A', 'B', 'C')
-    total_inventory: IntegerField
-        The total number of rooms
-    total_reserved: IntegerField
-        The total number of rooms reserved
+    available_rooms: IntegerField
+        The total number of available rooms
     """
     name = models.CharField(max_length=1)
-    total_inventory = models.IntegerField()
-    total_reserved = models.IntegerField()
+    available_rooms = models.IntegerField()
 
     def __str__(self):
-        return f"RoomType {self.room-type} (Total Number of Rooms: {self.total_inventory}; Total Number of Reserved Rooms: {self.total_reserved})"
+        return f"{self.name}" 
 
 class RoomRate(models.Model):
     """
@@ -36,10 +34,18 @@ class RoomRate(models.Model):
     """
     room_type_id = models.ForeignKey(RoomType, on_delete=models.CASCADE, related_name='room_rates')
     occupancy = models.IntegerField() 
-    rate = models.DecimalField(max_digits = 6, decimal_places = 2)
+    rate = models.DecimalField(max_digits = 9, decimal_places = 2)
+
+    def clean(self):
+        super().clean()
+        if RoomRate.objects.filter(
+            room_type_id=self.room_type_id,
+            occupancy=self.occupancy
+        ).exclude(pk=self.pk).exists():
+            raise ValidationError("A rate with this room type and occupancy already exists.")
 
     def __str__(self):
-        return f"Rate of a {self.room_type_id} with {self.occupancy} people: {self.rate} Php"
+        return f"{self.room_type_id} with {self.occupancy} people: {self.rate} Php"
 
 class Room(models.Model):
     """
@@ -51,12 +57,12 @@ class Room(models.Model):
         The room type that the rate is associated with
     room_number: IntegerField
         The actual room number of the said room
-    is_available: BooleanField
-        If the room is available or not
+    is_active: BooleanField
+        If the room is available to be occupied
     """
     room_type_id = models.ForeignKey(RoomType, on_delete=models.CASCADE, related_name='rooms')
     room_number = models.IntegerField()
-    is_available = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"Room #{self.room_number}: ({'Available' if self.is_available else 'Occupied'})"
+        return f"Room #{self.room_number}"

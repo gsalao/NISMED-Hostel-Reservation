@@ -1,8 +1,8 @@
 from django.shortcuts import render
+from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from .serializers import GuestSerializer 
+from .models import Guest 
 
 # Create your views here.
-'''
-possible views for guest:
-1. get all guests
-2. post a new guest if not present
-'''

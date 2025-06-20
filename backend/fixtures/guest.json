@@ -1,0 +1,42 @@
+[
+{
+  "model": "guest.guest",
+  "pk": 1,
+  "fields": {
+    "email_address": "lebronjames@nba.com",
+    "phone_number": "0923 232 2323",
+    "address": "Lebron James St. Metro Manila",
+    "name": "Lebron James"
+  }
+},
+{
+  "model": "guest.guest",
+  "pk": 2,
+  "fields": {
+    "email_address": "joserizal@gmail.com",
+    "phone_number": "0969 143 1234",
+    "address": "Bagumbayan Field, Manila",
+    "name": "Jose Rizal"
+  }
+},
+{
+  "model": "guest.guest",
+  "pk": 3,
+  "fields": {
+    "email_address": "juandelacruz@gmail.com",
+    "phone_number": "0912 345 6789",
+    "address": "Philippines",
+    "name": "Juan Dela Cruz"
+  }
+},
+{
+  "model": "guest.guest",
+  "pk": 4,
+  "fields": {
+    "email_address": "jackson.michael@gmail.com",
+    "phone_number": "0999 123 1234",
+    "address": "4641 Hayvenhurst Avenue",
+    "name": "Michael Jackson"
+  }
+}
+]
