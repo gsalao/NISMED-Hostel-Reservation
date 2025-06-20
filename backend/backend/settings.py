@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'reservation',
     'guest',
-    'room'
+    'room',
+    'django_seed',
 ]
 
 MIDDLEWARE = [
@@ -151,6 +152,7 @@ JAZZMIN_SETTINGS = {
         "auth.user": "fas fa-user",
         "guest.guest": "fas fa-users",
         "reservation.reservation": "fas fa-hotel",
+        "reservation.reservedroom": "fas fa-landmark",
         "room.room": "fas fa-bed",
         "room.roomrate": "fas fa-dollar-sign",
         "room.roomtype": "fas fa-door-open", 
