@@ -12,17 +12,6 @@ possible views for guest:
 2. post a new guest if not present
 '''
 
-# TODO: add restriction to who can use this Get response
-@api_view(['GET'])
-def get_all_guests(request):
-    """
-    This corresponds to the get response for retrieving all guests
-    """
-    all_guests = Guest.objects.all() 
-    serialized_guests = GuestSerializer(all_guests, many=True)
-    return Response(serialized_guests.data)
-
-# TODO: add restriction to who can use this Post response
 @api_view(['POST'])
 def insert_guest(request):
     """
