@@ -17,7 +17,7 @@ class RoomType(models.Model):
     available_rooms = models.IntegerField()
 
     def __str__(self):
-        return f"{self.name} (Available Rooms: {self.available_rooms})"
+        return f"{self.name}" 
 
 class RoomRate(models.Model):
     """
@@ -45,7 +45,7 @@ class RoomRate(models.Model):
             raise ValidationError("A rate with this room type and occupancy already exists.")
 
     def __str__(self):
-        return f"Rate of a {self.room_type_id} with {self.occupancy} people: {self.rate} Php"
+        return f"{self.room_type_id} with {self.occupancy} people: {self.rate} Php"
 
 class Room(models.Model):
     """
@@ -65,4 +65,4 @@ class Room(models.Model):
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"Room #{self.room_number}: ({'Available' if self.is_active else 'Unavailable'})"
+        return f"Room #{self.room_number}"

@@ -3,6 +3,7 @@ from .models import Room, RoomType, RoomRate
 
 class RoomTypeAdmin(admin.ModelAdmin):
     list_display = ('name', 'available_rooms') 
+    list_editable = ('available_rooms',) 
 
 class RoomRateAdmin(admin.ModelAdmin):
     list_display = ('room_type_id', 'occupancy', 'rate') 
@@ -10,6 +11,7 @@ class RoomRateAdmin(admin.ModelAdmin):
 
 class RoomAdmin(admin.ModelAdmin):
     list_display = ('room_number', 'room_type_id', 'is_active')
+    list_editable = ('is_active',)
     list_filter = ('room_type_id',)
 
 # Register your models here.
