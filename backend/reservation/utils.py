@@ -1,6 +1,7 @@
-from reservation.models import Reservation
+from .models import Reservation, ReservedRoom
 from room.models import Room, RoomType
 from reservation.models import StatusEnum
+from django.db.models import Count
 
 def are_dates_available(start_date, end_date) -> bool:
     # get how many reservations overlap
@@ -10,25 +11,27 @@ def are_dates_available(start_date, end_date) -> bool:
         status=StatusEnum.CHECKED_IN.value,
     )
 
-    # TODO: check if this works!
-    type_a_availability = is_room_type_available('A', overlapping_reservations)
-    type_b_availability = is_room_type_available('B', overlapping_reservations)
-    type_c_availability = is_room_type_available('C', overlapping_reservations)
+    # get all reserved rooms on those reservations:
+    reserved_rooms = ReservedRoom.objects.filter(reservation__in=overlapping_reservations)
 
-    return type_a_availability and type_b_availability and type_c_availability
+    # group the reserved rooms by room type (i.e. grouping by room's room type foreign key) and it will count the number of entries
+    reserved_by_type = (
+        reserved_rooms
+        .values('room__room_type')
+        .annotate(total_reserved=Count('id'))
+    )
 
-def is_room_type_available(room_type_id, reservations) -> bool:
-    """
-    This function is responsible in determining if there are room types that are available within a range
-    """
+    # Convert to a dict: {room_type_id: reserved_count}
+    reserved_count_map = {entry['room__room_type']: entry['total_reserved'] for entry in reserved_by_type}
 
-    room_type = RoomType.objects.get(pk=room_type_id)
-    total_rooms = room_type.total_inventory
-    rooms_reserved = 0
-    
-    # TODO: go through all the reservations and get the number of rooms reserved that are of that room type
+    # Compare against room type inventory
+    for room_type in RoomType.objects.all():
+        reserved = reserved_count_map.get(room_type.id, 0)
+        if reserved >= room_type.total_inventory:
+            return False  # Not enough rooms of this type
 
-    return rooms_reserved < total_rooms
+    return True
+
 
 def find_available_room(room_type_id, start_date, end_date):
     """

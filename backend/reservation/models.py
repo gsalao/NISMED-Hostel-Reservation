@@ -2,7 +2,6 @@ from django.db import models
 from guest.models import Guest
 from room.models import Room, RoomRate
 from enum import Enum
-from django.utils import timezone
 from django.core.exceptions import ValidationError
 
 class StatusEnum(Enum):
@@ -80,6 +79,7 @@ class Reservation(models.Model):
     triple_c_room_count = models.IntegerField()
 
     def clean(self):
+        from .utils import are_dates_available
         # Validation: Cannot start in the past
         # if self.start_date < timezone.now().date():
         #     raise ValidationError("Reservation cannot start in the past.")
@@ -93,6 +93,8 @@ class Reservation(models.Model):
             raise ValidationError("There must be 1 occupant in a room")
 
         # TODO: call the are_dates_available function in `utils.py`
+        if not are_dates_available(self.start_date, self.end_date):
+            raise ValidationError("The reservation cannot be made")
 
         # if overlapping.exists():
         #     raise ValidationError(f"Room {self.room_id} is not available for the selected dates.")
@@ -107,7 +109,6 @@ class Reservation(models.Model):
     def __str__(self):
         return f"Reservation was reserved on {self.reservation_date.date()} and will start on {self.start_date} and end on {self.end_date}"
 
-# TODO: make the ReservedRoom 
 class ReservedRoom(models.Model):
     """
     Represents the reserved room of a user
