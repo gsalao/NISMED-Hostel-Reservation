@@ -10,7 +10,7 @@ class RoomRateAdmin(admin.ModelAdmin):
 
 class RoomAdmin(admin.ModelAdmin):
     list_display = ('room_number', 'room_type_id', 'is_active')
-    # list_filter = ('room_type_id')
+    list_filter = ('room_type_id',)
 
 # Register your models here.
 admin.site.register(Room, RoomAdmin)

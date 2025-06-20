@@ -17,7 +17,7 @@ class RoomType(models.Model):
     available_rooms = models.IntegerField()
 
     def __str__(self):
-        return f"RoomType {self.name} (Available Rooms: {self.available_rooms})"
+        return f"{self.name} (Available Rooms: {self.available_rooms})"
 
 class RoomRate(models.Model):
     """
