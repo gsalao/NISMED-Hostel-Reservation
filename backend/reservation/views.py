@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from .serializers import ReservationSerializer 
 from django.utils import timezone
 from datetime import datetime
-from .utils import find_available_room, is_room_type_available
+from .utils import are_dates_available
 
 # Create your views here.
 '''
@@ -32,7 +32,6 @@ def get_all_reservation_status(request):
     serialized_status = ReservationSerializer(status_reservations, many=True)
     return Response(serialized_status.data)
 
-
 @api_view(['POST'])
 def create_new_reservation(request):
     """
@@ -40,44 +39,46 @@ def create_new_reservation(request):
     This assumes that the request was done in format of:
     {
         "guest_id": "...", 
-        "room_type_id": "...", 
         "start_date": "...",
         "end_date": "...",
         "for_person_name": "...",
         "by_person_name": "...",
+        "male_count": "...",
+        "female_count": "...",
+        "single_a_room_count": "...", 
+        "double_a_room_count": "...", 
+        "single_b_room_count": "...", 
+        "double_b_room_count": "...", 
+        "single_c_room_count": "...", 
+        "double_c_room_count": "...", 
+        "triple_c_room_count": "...", 
     }
     """
-    room_type_id = request.data.get("room_type_id")
     start_date = request.data.get("start_date")
     end_date = request.data.get("end_date")
+    single_a_room_count = request.data.get("single_a_room_count") 
+    double_a_room_count = request.data.get("double_a_room_count") 
+    single_b_room_count = request.data.get("single_b_room_count") 
+    double_b_room_count = request.data.get("double_b_room_count") 
+    single_c_room_count = request.data.get("single_c_room_count") 
+    double_c_room_count = request.data.get("double_c_room_count") 
+    triple_c_room_count = request.data.get("triple_c_room_count") 
 
-    try:
-        start_date = datetime.strptime(request.data.get("start_date"), "%Y-%m-%d").date()
-        end_date = datetime.strptime(request.data.get("end_date"), "%Y-%m-%d").date()
-    except (TypeError, ValueError):
-        return Response({"error": "Invalid date format. Use YYYY-MM-DD."},
-                        status=status.HTTP_400_BAD_REQUEST)
-
-    # Check if the start in the past
-    if start_date < timezone.now().date():
-        return Response({"error": "Start date cannot happen in the past!"}, status=status.HTTP_400_BAD_REQUEST)
+    reserved_room_counts = {
+        'A': single_a_room_count + double_a_room_count,
+        'B': single_b_room_count + double_b_room_count,
+        'C': single_c_room_count + double_c_room_count + triple_c_room_count
+    }
 
     # Check if the end is after the start 
     if end_date <= start_date:
         return Response({"error": "End date cannot happen before the start"}, status=status.HTTP_400_BAD_REQUEST)
 
     # Check if there are any available room types at the given dates 
-    if not is_room_type_available(room_type_id, start_date, end_date):
-        return Response({"error": "Room type not available"}, status=status.HTTP_400_BAD_REQUEST)
+    if not are_dates_available(start_date, end_date, reserved_room_counts):
+        return Response({"error": "Dates not available"}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Check if there are any available rooms of that room type (just in case)
-    if not (room := find_available_room(room_type_id, start_date, end_date)):
-        return Response({"error": "No room found"}, status=status.HTTP_400_BAD_REQUEST)
-    
-    data = request.data.copy()
-    data["room_id"] = room.id
-
-    serializer = ReservationSerializer(data=data)
+    serializer = ReservationSerializer(data=request.data)
     if not serializer.is_valid():
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
