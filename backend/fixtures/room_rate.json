@@ -1,0 +1,65 @@
+[
+{
+  "model": "room.roomrate",
+  "pk": 1,
+  "fields": {
+    "room_type_id": 2,
+    "occupancy": 1,
+    "rate": "1145.00"
+  }
+},
+{
+  "model": "room.roomrate",
+  "pk": 2,
+  "fields": {
+    "room_type_id": 3,
+    "occupancy": 2,
+    "rate": "1900.00"
+  }
+},
+{
+  "model": "room.roomrate",
+  "pk": 3,
+  "fields": {
+    "room_type_id": 3,
+    "occupancy": 1,
+    "rate": "1395.00"
+  }
+},
+{
+  "model": "room.roomrate",
+  "pk": 4,
+  "fields": {
+    "room_type_id": 2,
+    "occupancy": 2,
+    "rate": "1785.00"
+  }
+},
+{
+  "model": "room.roomrate",
+  "pk": 5,
+  "fields": {
+    "room_type_id": 1,
+    "occupancy": 1,
+    "rate": "440.00"
+  }
+},
+{
+  "model": "room.roomrate",
+  "pk": 6,
+  "fields": {
+    "room_type_id": 1,
+    "occupancy": 2,
+    "rate": "740.00"
+  }
+},
+{
+  "model": "room.roomrate",
+  "pk": 7,
+  "fields": {
+    "room_type_id": 1,
+    "occupancy": 3,
+    "rate": "925.00"
+  }
+}
+]

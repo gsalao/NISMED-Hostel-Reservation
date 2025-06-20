@@ -1,0 +1,26 @@
+[
+{
+  "model": "room.roomtype",
+  "pk": 1,
+  "fields": {
+    "name": "C",
+    "available_rooms": 18
+  }
+},
+{
+  "model": "room.roomtype",
+  "pk": 2,
+  "fields": {
+    "name": "B",
+    "available_rooms": 15
+  }
+},
+{
+  "model": "room.roomtype",
+  "pk": 3,
+  "fields": {
+    "name": "A",
+    "available_rooms": 3
+  }
+}
+]

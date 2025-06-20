@@ -1,0 +1,398 @@
+[
+{
+  "model": "room.room",
+  "pk": 1,
+  "fields": {
+    "room_type_id": 3,
+    "room_number": 103,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 2,
+  "fields": {
+    "room_type_id": 3,
+    "room_number": 102,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 3,
+  "fields": {
+    "room_type_id": 3,
+    "room_number": 101,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 4,
+  "fields": {
+    "room_type_id": 3,
+    "room_number": 104,
+    "is_active": false
+  }
+},
+{
+  "model": "room.room",
+  "pk": 5,
+  "fields": {
+    "room_type_id": 3,
+    "room_number": 105,
+    "is_active": false
+  }
+},
+{
+  "model": "room.room",
+  "pk": 6,
+  "fields": {
+    "room_type_id": 2,
+    "room_number": 201,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 7,
+  "fields": {
+    "room_type_id": 2,
+    "room_number": 202,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 8,
+  "fields": {
+    "room_type_id": 2,
+    "room_number": 203,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 9,
+  "fields": {
+    "room_type_id": 2,
+    "room_number": 204,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 10,
+  "fields": {
+    "room_type_id": 2,
+    "room_number": 205,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 11,
+  "fields": {
+    "room_type_id": 2,
+    "room_number": 206,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 12,
+  "fields": {
+    "room_type_id": 2,
+    "room_number": 207,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 13,
+  "fields": {
+    "room_type_id": 2,
+    "room_number": 208,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 14,
+  "fields": {
+    "room_type_id": 2,
+    "room_number": 209,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 15,
+  "fields": {
+    "room_type_id": 2,
+    "room_number": 210,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 16,
+  "fields": {
+    "room_type_id": 2,
+    "room_number": 211,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 17,
+  "fields": {
+    "room_type_id": 2,
+    "room_number": 212,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 18,
+  "fields": {
+    "room_type_id": 2,
+    "room_number": 213,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 19,
+  "fields": {
+    "room_type_id": 2,
+    "room_number": 214,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 20,
+  "fields": {
+    "room_type_id": 2,
+    "room_number": 215,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 21,
+  "fields": {
+    "room_type_id": 2,
+    "room_number": 216,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 22,
+  "fields": {
+    "room_type_id": 2,
+    "room_number": 217,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 23,
+  "fields": {
+    "room_type_id": 2,
+    "room_number": 218,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 24,
+  "fields": {
+    "room_type_id": 1,
+    "room_number": 301,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 25,
+  "fields": {
+    "room_type_id": 1,
+    "room_number": 302,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 26,
+  "fields": {
+    "room_type_id": 1,
+    "room_number": 303,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 27,
+  "fields": {
+    "room_type_id": 1,
+    "room_number": 304,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 28,
+  "fields": {
+    "room_type_id": 1,
+    "room_number": 305,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 29,
+  "fields": {
+    "room_type_id": 1,
+    "room_number": 306,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 30,
+  "fields": {
+    "room_type_id": 1,
+    "room_number": 307,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 31,
+  "fields": {
+    "room_type_id": 1,
+    "room_number": 308,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 32,
+  "fields": {
+    "room_type_id": 1,
+    "room_number": 309,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 33,
+  "fields": {
+    "room_type_id": 1,
+    "room_number": 310,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 34,
+  "fields": {
+    "room_type_id": 1,
+    "room_number": 311,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 35,
+  "fields": {
+    "room_type_id": 1,
+    "room_number": 312,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 36,
+  "fields": {
+    "room_type_id": 1,
+    "room_number": 313,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 37,
+  "fields": {
+    "room_type_id": 1,
+    "room_number": 314,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 38,
+  "fields": {
+    "room_type_id": 1,
+    "room_number": 315,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 39,
+  "fields": {
+    "room_type_id": 1,
+    "room_number": 316,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 40,
+  "fields": {
+    "room_type_id": 1,
+    "room_number": 317,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 41,
+  "fields": {
+    "room_type_id": 1,
+    "room_number": 318,
+    "is_active": false
+  }
+},
+{
+  "model": "room.room",
+  "pk": 42,
+  "fields": {
+    "room_type_id": 1,
+    "room_number": 319,
+    "is_active": true
+  }
+},
+{
+  "model": "room.room",
+  "pk": 43,
+  "fields": {
+    "room_type_id": 1,
+    "room_number": 320,
+    "is_active": false
+  }
+},
+{
+  "model": "room.room",
+  "pk": 44,
+  "fields": {
+    "room_type_id": 1,
+    "room_number": 321,
+    "is_active": false
+  }
+}
+]
