@@ -12,7 +12,12 @@ class ReservationAdmin(admin.ModelAdmin):
     inlines = [ReservedRoomInline]
 
 class ReservedRoomAdmin(admin.ModelAdmin):
-    list_display = ('reservation', 'room', 'room_rate',) 
+    list_display = ('reservation', 'room_type', 'room', 'room_rate',) 
+    class Media:
+        js = (
+            'room-dropdown-select.js', # In your static folder and write the logic in this file.
+            'https://code.jquery.com/jquery-3.3.1.min.js' # Jquery CDN
+        )
 
 # Register your models here.
 admin.site.register(Reservation, ReservationAdmin)

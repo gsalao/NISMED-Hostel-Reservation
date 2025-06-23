@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'guest',
     'room',
     'django_seed',
+    'django_filters'
 ]
 
 MIDDLEWARE = [
@@ -131,6 +132,10 @@ STATICFILES_DIRS = [
 ]
 
 STATIC_ROOT = BASE_DIR / "staticfiles"  
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

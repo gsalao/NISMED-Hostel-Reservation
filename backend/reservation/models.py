@@ -109,7 +109,7 @@ class ReservedRoom(models.Model):
     Represents the reserved room of a user
     """
     reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
+    room_type = models.ForeignKey(RoomType , on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     room_rate = models.ForeignKey(RoomRate, on_delete=models.CASCADE)
-    room_type = models.ForeignKey(RoomType , on_delete=models.CASCADE)
 
