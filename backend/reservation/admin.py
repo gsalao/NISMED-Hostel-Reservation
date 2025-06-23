@@ -6,8 +6,8 @@ class ReservedRoomInline(admin.TabularInline):
     extra = 1 
     class Media:
         js = (
-            'inline-room-dropdown-select.js', # In your static folder and write the logic in this file.
-            'https://code.jquery.com/jquery-3.3.1.min.js' # Jquery CDN
+            'inline-room-dropdown-select.js', 
+            'https://code.jquery.com/jquery-3.3.1.min.js' 
         )
 
 class ReservationAdmin(admin.ModelAdmin):
@@ -20,8 +20,8 @@ class ReservedRoomAdmin(admin.ModelAdmin):
     list_display = ('reservation', 'room_type', 'room', 'room_rate',) 
     class Media:
         js = (
-            'room-dropdown-select.js', # In your static folder and write the logic in this file.
-            'https://code.jquery.com/jquery-3.3.1.min.js' # Jquery CDN
+            'room-dropdown-select.js', 
+            'https://code.jquery.com/jquery-3.3.1.min.js' 
         )
 
 # Register your models here.
