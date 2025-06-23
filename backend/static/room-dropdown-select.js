@@ -1,3 +1,4 @@
+
 $(document).ready(function () {
     console.log("Custom admin JS loaded!");
 
@@ -15,6 +16,10 @@ $(document).ready(function () {
         console.log("Room Type changed to:", roomTypeId);
         if (roomTypeId) {
             loadDependentFields(roomTypeId);
+        } else {
+            // Clear room and rate fields if no room type selected
+            $('#id_room').html('<option value="">---------</option>');
+            $('#id_room_rate').html('<option value="">---------</option>');
         }
     });
 
@@ -26,7 +31,7 @@ $(document).ready(function () {
         $.ajax({
             url: `/api/room/rooms/?room_type_id=${roomTypeId}`,
             success: function (data) {
-                let roomOptions = '<option value selected>---------</option>';
+                let roomOptions = '<option value="">---------</option>';
                 let foundMatch = false;
 
                 $.each(data, function (index, room) {
@@ -37,7 +42,6 @@ $(document).ready(function () {
                     }
                 });
 
-                // Keep current room if it’s not in the filtered list
                 if (!foundMatch && currentRoom) {
                     roomOptions += `<option value="${currentRoom}" selected>(Unavailable room)</option>`;
                 }
@@ -50,7 +54,7 @@ $(document).ready(function () {
         $.ajax({
             url: `/api/room/rates/?room_type_id=${roomTypeId}`,
             success: function (data) {
-                let rateOptions = '<option value selected>---------</option>';
+                let rateOptions = '<option value="">---------</option>';
                 let foundRate = false;
 
                 $.each(data, function (index, rate) {

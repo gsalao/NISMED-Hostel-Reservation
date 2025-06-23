@@ -4,6 +4,11 @@ from .models import Reservation, ReservedRoom
 class ReservedRoomInline(admin.TabularInline):
     model = ReservedRoom
     extra = 1 
+    class Media:
+        js = (
+            'inline-room-dropdown-select.js', # In your static folder and write the logic in this file.
+            'https://code.jquery.com/jquery-3.3.1.min.js' # Jquery CDN
+        )
 
 class ReservationAdmin(admin.ModelAdmin):
     list_display = ('guest_id', 'status', 'reservation_date', 'start_date', 'end_date')
