@@ -142,8 +142,18 @@ const form = reactive({
 const totalGuests = computed(() => form.guests.F + form.guests.M);
 
 const submitForm = async () => {
+  const start = new Date(form.checkIn);
+  const end = new Date(form.checkOut);
+  const diffInTime = end - start;
+  const diffInDays = diffInTime / (1000 * 3600 * 24);
+
+  if (diffInDays > 14) {
+    alert("Reservation cannot exceed 14 days. Please shorten the stay.");
+    return;
+  }
+
   const payload = {
-    guest_name: form.by, // or form.guestName if you make it separate
+    guest_name: form.by,
     guest_email: form.email,
     phone_number: form.contact,
     address: form.address,
