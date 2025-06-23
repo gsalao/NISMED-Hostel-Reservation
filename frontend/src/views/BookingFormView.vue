@@ -141,8 +141,49 @@ const form = reactive({
 
 const totalGuests = computed(() => form.guests.F + form.guests.M);
 
-const submitForm = () => {
-  console.log("Submitted form:", form);
-  alert("Reservation submitted!");
+const submitForm = async () => {
+  const payload = {
+    guest_name: form.by, // or form.guestName if you make it separate
+    guest_email: form.email,
+    phone_number: form.contact,
+    address: form.address,
+    start_date: form.checkIn,
+    end_date: form.checkOut,
+    for_person_name: form.for,
+    by_person_name: form.by,
+    male_count: form.guests.M,
+    female_count: form.guests.F,
+    single_a_room_count: form.rooms.airconPrivate.S,
+    double_a_room_count: form.rooms.airconPrivate.D,
+    single_b_room_count: form.rooms.airconShared.S,
+    double_b_room_count: form.rooms.airconShared.D,
+    single_c_room_count: form.rooms.ceilingFanShared.S,
+    double_c_room_count: form.rooms.ceilingFanShared.D,
+    triple_c_room_count: form.rooms.ceilingFanShared.T,
+  };
+
+  try {
+    // api endpoint => {backend/urls.py}+{reservation/urls.py}
+    const res = await fetch("http://127.0.0.1:8000/api/reserve/create_new_reservation/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      alert("Reservation failed: " + JSON.stringify(error));
+      return;
+    }
+
+    const data = await res.json();
+    console.log("Reservation successful", data);
+    alert("Reservation submitted successfully!");
+  } catch (err) {
+    console.error("Error:", err);
+    alert("Network error: could not submit reservation.");
+  }
 };
 </script>
