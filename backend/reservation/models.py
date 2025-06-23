@@ -1,6 +1,6 @@
 from django.db import models
 from guest.models import Guest
-from room.models import Room, RoomRate
+from room.models import Room, RoomRate, RoomType
 from enum import Enum
 from django.core.exceptions import ValidationError
 
@@ -111,5 +111,5 @@ class ReservedRoom(models.Model):
     reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     room_rate = models.ForeignKey(RoomRate, on_delete=models.CASCADE)
-    # room_count = models.IntegerField(default=1)
+    room_type = models.ForeignKey(RoomType , on_delete=models.CASCADE)
 
