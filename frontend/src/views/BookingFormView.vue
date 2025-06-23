@@ -32,11 +32,7 @@
       </div>
 
       <!-- Dates -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label class="font-semibold">Inclusive Dates:</label>
-          <input type="text" v-model="form.inclusiveDates" class="w-full border border-gray-300 rounded px-2 py-1" />
-        </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div>
           <label class="font-semibold">Check-in:</label>
           <input type="date" v-model="form.checkIn" class="w-full border border-gray-300 rounded px-2 py-1" />
@@ -133,7 +129,6 @@ const form = reactive({
   email: '',
   contact: '',
   address: '',
-  inclusiveDates: '',
   checkIn: '',
   checkOut: '',
   rooms: {
