@@ -160,7 +160,6 @@ const submitForm = async () => {
     start_date: form.checkIn,
     end_date: form.checkOut,
     for_person_name: form.for,
-    by_person_name: form.by,
     male_count: form.guests.M,
     female_count: form.guests.F,
     single_a_room_count: form.rooms.airconPrivate.S,
