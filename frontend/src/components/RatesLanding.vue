@@ -55,7 +55,8 @@
 
       data.forEach(rate => {
         const type = rate.room_type_id
-        const typeAlpha = type === 1 ? 'Type A' : type === 2 ? 'Type B' : 'Type C'
+        // Note Room Type C ID = 1, Room Type A ID = 3 (backend-based)
+        const typeAlpha = type === 1 ? 'Type C' : type === 2 ? 'Type B' : 'Type A'
         const occ = rate.occupancy
         const label = occ === 1 ? 'Single' : occ === 2 ? 'Double' : 'Triple'
 
