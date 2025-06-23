@@ -16,7 +16,7 @@ def are_dates_available(start_date, end_date, requested_counts, current_reservat
     if current_reservation and current_reservation.pk:
         overlapping_reservations = overlapping_reservations.exclude(pk=current_reservation.pk)
 
-    print(overlapping_reservations)
+    # print(overlapping_reservations)
 
     # Aggregate room counts for each type from all overlapping reservations
     aggregate = overlapping_reservations.aggregate(
