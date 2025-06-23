@@ -1,9 +1,9 @@
-from typing import ChainMap
 from django.db import models
 from guest.models import Guest
 from room.models import Room, RoomRate, RoomType
 from enum import Enum
 from django.core.exceptions import ValidationError
+from datetime import timedelta
 
 class StatusEnum(Enum):
     CHECKED_IN = 'CHECKED IN'
@@ -85,6 +85,10 @@ class Reservation(models.Model):
         if self.end_date <= self.start_date:
             raise ValidationError("End date must be after start date.")
 
+        # Validation: The end date CANNOT be more than two weeks from the start date
+        if self.end_date > self.start_date + timedelta(weeks=2):
+            raise ValidationError("End date must only be within 2 weeks from the start date")
+
         # Validation: room counts cannot be all zero
         if self.single_a_room_count == self.single_b_room_count == self.single_c_room_count == self.double_a_room_count == self.double_b_room_count == self.double_c_room_count == self.triple_c_room_count == 0:
             raise ValidationError("There must be 1 occupant in a room")
@@ -122,9 +126,9 @@ class ReservedRoom(models.Model):
     def clean(self):
         super().clean()
         if not Reservation.objects.filter(
-            reservation=self.reservation,
+            id=self.reservation.id,
             status=StatusEnum.CHECKED_IN
-        ).exists():
+        ).exclude(pk=self.reservation.id).exists():
             raise ValidationError("You cannot use this reservation")
 
         if ReservedRoom.objects.filter(
