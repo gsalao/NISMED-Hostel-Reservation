@@ -180,8 +180,12 @@
       const data = await res.json()
 
       if (!res.ok) {
-        alert("Reservation failed: " + JSON.stringify(data))
-        return
+        const errorMessages = Object.entries(data)
+          .map(([field, messages]) => `${field.replace('_', ' ')}: ${messages.join(', ')}`)
+          .join('\n');
+
+        alert(`Reservation failed:\n\n${errorMessages}`);
+        return;
       }
 
       // Redirect to /verify?token=...
