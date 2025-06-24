@@ -4,8 +4,6 @@ $(document).ready(function () {
         const $room = $row.find('select[id$="-room"]');
         const $rate = $row.find('select[id$="-room_rate"]');
 
-        if (!$roomType.length || !$room.length || !$rate.length) return;
-
         const fetchAndPopulate = () => {
             const roomTypeId = $roomType.val();
             const currentRoom = $room.val();
@@ -51,18 +49,28 @@ $(document).ready(function () {
         };
 
         // Bind change event
-        $roomType.off('change.inlineBind').on('change.inlineBind', function () {
-            fetchAndPopulate();
-        });
+        $roomType.off('change.inlineBind').on('change.inlineBind', fetchAndPopulate);
 
-        // Initial call on page load
+        // Initial call
         if ($roomType.val()) {
             fetchAndPopulate();
         }
     }
 
-    // Setup all existing inline rows
     $('tr[id^="reservedroom_set-"]').each(function () {
         setupInlineRow($(this));
+    });
+
+    // this "listens" to when the page is loaded and adds an event listener to the add links button
+    window.addEventListener("load", function () {
+        const addLinks = document.getElementsByClassName('addlink');
+
+        for (let i = 0; i < addLinks.length; i++) {
+            addLinks[i].addEventListener("click", function () {
+                const $allRows = $('tr[id^="reservedroom_set-"]').not('[id$="-empty"]');
+                const $newRow = $allRows.last();
+                setupInlineRow($newRow);
+            });
+        }
     });
 });
