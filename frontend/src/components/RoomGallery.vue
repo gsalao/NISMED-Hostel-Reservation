@@ -1,5 +1,5 @@
 <template>
-  <div id="gallery" class="relative w-full min-w-0 mx-auto">
+  <div id="gallery" class="relative w-full min-w-0 mx-auto mt-10">
     <!-- Carousel wrapper -->
     <div class="relative h-48 sm:h-64 md:h-72 lg:h-[28rem] xl:h-[400px] overflow-hidden rounded-lg">
       <div
