@@ -27,7 +27,6 @@ $(document).ready(function () {
         const currentRoom = $('#id_room').val();
         const currentRate = $('#id_room_rate').val();
 
-        // TODO: cache the results somewhere
         // Load filtered Rooms
         $.ajax({
             url: `/api/room/rooms/?room_type_id=${roomTypeId}&reservation=${reservation.val()}`,
