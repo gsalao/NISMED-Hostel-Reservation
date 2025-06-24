@@ -6,10 +6,6 @@
       <!-- Header info -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div>
-          <label class="font-semibold">Date:</label>
-          <input type="date" v-model="form.date" class="w-full border border-gray-300 rounded px-2 py-1" />
-        </div>
-        <div>
           <label class="font-semibold">For (Person/Company/Unit):</label>
           <input type="text" v-model="form.for" class="w-full border border-gray-300 rounded px-2 py-1" />
         </div>
