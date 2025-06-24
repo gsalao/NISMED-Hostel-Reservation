@@ -112,8 +112,10 @@
 <script setup>
   import { reactive, computed } from 'vue'
   import { useRouter } from 'vue-router'
+  import { useToast } from 'vue-toastification'
 
   const router = useRouter()
+  const toast = useToast()
 
   const roomTypes = {
     airconPrivate: { label: "<strong>Room A</strong>: Aircon private toilet & bath", allowT: false },
@@ -146,7 +148,7 @@
     const diffInDays = (end - start) / (1000 * 3600 * 24)
 
     if (diffInDays > 14) {
-      alert("Reservation cannot exceed 14 days. Please shorten the stay.")
+      toast.warning("Reservation cannot exceed 14 days. Please shorten the stay.")
       return
     }
 
@@ -169,32 +171,42 @@
       triple_c_room_count: form.rooms.ceilingFanShared.T,
     }
 
+    const loadingToastId = toast.info("Sending reservation...", { timeout: false })
+
     try {
-      const backendUrl = import.meta.env.VITE_BACKEND_BASE_URL;
+      const backendUrl = import.meta.env.VITE_BACKEND_BASE_URL
       const res = await fetch(`${backendUrl}/reserve/create_new_reservation/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
-      })
+      });
 
-      const data = await res.json()
-
-      if (!res.ok) {
-        const errorMessages = Object.entries(data)
-          .map(([field, messages]) => `${field.replace('_', ' ')}: ${messages.join(', ')}`)
-          .join('\n');
-
-        alert(`Reservation failed:\n\n${errorMessages}`);
+      let data = {};
+      try {
+        data = await res.json();
+      } catch (jsonErr) {
+        toast.dismiss(loadingToastId);
+        toast.error("Invalid response from server.");
         return;
       }
 
-      // Redirect to /verify?token=...
-      const token = data.reservation_token
-      router.push({ name: 'verify', query: { token } })
+      if (!res.ok || !data.reservation_token) {
+        toast.dismiss(loadingToastId);
+        const errorMessages = data?.error || Object.entries(data)
+          .map(([field, messages]) => `${field.replace('_', ' ')}: ${Array.isArray(messages) ? messages.join(', ') : messages}`)
+          .join('\n');
+        toast.error(`Reservation failed:\n\n${errorMessages}`);
+        return;
+      }
+
+      toast.dismiss(loadingToastId);
+      toast.success("Verification email sent! Redirecting to verification page...");
+      router.push({ name: 'verify', query: { token: data.reservation_token } });
 
     } catch (err) {
-      console.error("Error:", err)
-      alert("Network error: could not submit reservation.")
+      toast.dismiss(loadingToastId);
+      console.error("Network error:", err);
+      toast.error("Network error: could not submit reservation.");
     }
   }
 </script>
