@@ -1,11 +1,11 @@
 
 $(document).ready(function () {
-    console.log("Custom admin JS loaded!");
-
     const roomTypeField = $('#id_room_type');
+    const reservation = $('#id_reservation')
 
     // Trigger on startup if already selected
     if (roomTypeField.val()) {
+        console.log(`${reservation.val()}`)
         console.log("Initial Room Type detected:", roomTypeField.val());
         loadDependentFields(roomTypeField.val());
     }
@@ -27,9 +27,10 @@ $(document).ready(function () {
         const currentRoom = $('#id_room').val();
         const currentRate = $('#id_room_rate').val();
 
+        // TODO: cache the results somewhere
         // Load filtered Rooms
         $.ajax({
-            url: `/api/room/rooms/?room_type_id=${roomTypeId}`,
+            url: `/api/room/rooms/?room_type_id=${roomTypeId}&reservation=${reservation.val()}`,
             success: function (data) {
                 let roomOptions = '<option value="">---------</option>';
                 let foundMatch = false;

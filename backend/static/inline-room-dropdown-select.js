@@ -1,6 +1,9 @@
+const pathParts = window.location.pathname.split('/');
+const reservationId = pathParts[pathParts.length - 3];  // "5"
+console.log(`${reservationId}`)
+
 $(document).ready(function () {
     function setupInlineRow($row) {
-        
         // looks for all the table rows
         const $roomType = $row.find('select[id$="-room_type"]');
         const $room = $row.find('select[id$="-room"]');
@@ -13,9 +16,10 @@ $(document).ready(function () {
 
             if (!roomTypeId) return;
 
+            // TODO: cache the results somewhere
             // Fetch Rooms
             $.ajax({
-                url: `/api/room/rooms/?room_type_id=${roomTypeId}`,
+                url: `/api/room/rooms/?room_type_id=${roomTypeId}&reservation=${reservationId}`,
                 success: function (data) {
                     $room.empty().append('<option value="">---------</option>');
                     let matchFound = false;

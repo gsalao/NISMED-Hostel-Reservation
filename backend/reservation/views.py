@@ -9,11 +9,6 @@ from django.core.exceptions import ValidationError
 from datetime import timedelta, datetime
 
 # Create your views here.
-'''
-possible views for reservation:
-2. post a new reservation ✓ 
-'''
-
 def show_unavailable_rooms(total_count):
     final_output = "You added an excess of: "
     for (key,value) in total_count.items():
