@@ -1,5 +1,7 @@
 $(document).ready(function () {
     function setupInlineRow($row) {
+        
+        // looks for all the table rows
         const $roomType = $row.find('select[id$="-room_type"]');
         const $room = $row.find('select[id$="-room"]');
         const $rate = $row.find('select[id$="-room_rate"]');
@@ -57,11 +59,13 @@ $(document).ready(function () {
         }
     }
 
+    // Calls the setupInlineRow function to each of the existing rows
     $('tr[id^="reservedroom_set-"]').each(function () {
         setupInlineRow($(this));
     });
 
-    // this "listens" to when the page is loaded and adds an event listener to the add links button
+    // this "listens" to when the page is loaded and adds an event listener to the add links button and calls the setupInlineRow function when 
+    // a new row is added
     window.addEventListener("load", function () {
         const addLinks = document.getElementsByClassName('addlink');
 

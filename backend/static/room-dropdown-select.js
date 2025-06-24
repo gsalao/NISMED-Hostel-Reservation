@@ -34,7 +34,7 @@ $(document).ready(function () {
                 let roomOptions = '<option value="">---------</option>';
                 let foundMatch = false;
 
-                $.each(data, function (index, room) {
+                $.each(data, function (_, room) {
                     if (room.is_active) {
                         const selected = room.id == currentRoom ? 'selected' : '';
                         if (selected) foundMatch = true;
@@ -57,7 +57,7 @@ $(document).ready(function () {
                 let rateOptions = '<option value="">---------</option>';
                 let foundRate = false;
 
-                $.each(data, function (index, rate) {
+                $.each(data, function (_, rate) {
                     const selected = rate.id == currentRate ? 'selected' : '';
                     if (selected) foundRate = true;
                     rateOptions += `<option value="${rate.id}" ${selected}>${rate.str}</option>`;
