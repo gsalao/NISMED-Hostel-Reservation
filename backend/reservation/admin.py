@@ -17,7 +17,19 @@ class ReservationAdmin(admin.ModelAdmin):
     inlines = [ReservedRoomInline]
 
 class ReservedRoomAdmin(admin.ModelAdmin):
-    list_display = ('reservation', 'room_type', 'room', 'room_rate',) 
+    list_display = ('reservation', 'start_date', 'end_date', 'room_type', 'room', 'room_rate',) 
+    list_filter = ('reservation', 'reservation__start_date', 'reservation__end_date', 'room_type', 'room')
+
+    def start_date(self, obj):
+        return obj.reservation.start_date
+    start_date.admin_order_field = 'reservation__start_date'
+    start_date.short_description = 'Start Date'
+
+    def end_date(self, obj):
+        return obj.reservation.end_date
+    end_date.admin_order_field = 'reservation__end_date'
+    end_date.short_description = 'End Date'
+
     class Media:
         js = (
             'room-dropdown-select.js', 

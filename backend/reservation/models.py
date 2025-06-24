@@ -4,6 +4,7 @@ from room.models import Room, RoomRate, RoomType
 from enum import Enum
 from django.core.exceptions import ValidationError
 from datetime import timedelta
+from django.db.models import Q
 
 class StatusEnum(Enum):
     CHECKED_IN = 'CHECKED IN'
@@ -93,7 +94,7 @@ class Reservation(models.Model):
         if self.single_a_room_count == self.single_b_room_count == self.single_c_room_count == self.double_a_room_count == self.double_b_room_count == self.double_c_room_count == self.triple_c_room_count == 0:
             raise ValidationError("There must be 1 occupant in a room")
 
-        if not are_dates_available(self.start_date, self.end_date, self.get_room_counts(), self):
+        if not are_dates_available(self.start_date, self.end_date, self.get_room_counts(), self) and self.status == StatusEnum.CHECKED_IN.value:
             raise ValidationError("The reservation cannot be made")
 
     def get_room_counts(self):
@@ -125,17 +126,20 @@ class ReservedRoom(models.Model):
 
     def clean(self):
         super().clean()
-        if not Reservation.objects.filter(
-            id=self.reservation.id,
-            status=StatusEnum.CHECKED_IN
-        ).exclude(pk=self.reservation.id).exists():
+
+        # if the reservation is not checked in 
+        if self.reservation.status != StatusEnum.CHECKED_IN.value:
             raise ValidationError("You cannot use this reservation")
 
-        if ReservedRoom.objects.filter(
-            reservation=self.reservation,
+        # if the reserved room has been selected
+        overlapping_reservations = ReservedRoom.objects.filter(
             room=self.room
-        ).exclude(pk=self.pk).exists():
-            raise ValidationError("This room is taken.")
+        ).exclude(pk=self.pk).filter(
+            Q(reservation__start_date__lt=self.reservation.end_date) &
+            Q(reservation__end_date__gt=self.reservation.start_date)
+        )
 
+        if overlapping_reservations.exists():
+            raise ValidationError(f"Room '{self.room}' is already reserved during the selected period.")
     def __str__(self):
         return f"A reserved room for Reservation #{self.reservation.id}"
