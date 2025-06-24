@@ -22,7 +22,7 @@
           <input type="email" v-model="form.email" class="w-full border border-gray-300 rounded px-2 py-1" />
         </div>
         <div>
-          <label class="font-semibold">Contact Info:</label>
+          <label class="font-semibold">Phone Number (09XX XXX XXXX):</label>
           <input type="text" v-model="form.contact" class="w-full border border-gray-300 rounded px-2 py-1" />
         </div>
         <div class="lg:col-span-2">
@@ -32,11 +32,7 @@
       </div>
 
       <!-- Dates -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label class="font-semibold">Inclusive Dates:</label>
-          <input type="text" v-model="form.inclusiveDates" class="w-full border border-gray-300 rounded px-2 py-1" />
-        </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div>
           <label class="font-semibold">Check-in:</label>
           <input type="date" v-model="form.checkIn" class="w-full border border-gray-300 rounded px-2 py-1" />
@@ -133,7 +129,6 @@ const form = reactive({
   email: '',
   contact: '',
   address: '',
-  inclusiveDates: '',
   checkIn: '',
   checkOut: '',
   rooms: {
@@ -146,8 +141,75 @@ const form = reactive({
 
 const totalGuests = computed(() => form.guests.F + form.guests.M);
 
-const submitForm = () => {
-  console.log("Submitted form:", form);
-  alert("Reservation submitted!");
+const submitForm = async () => {
+  const start = new Date(form.checkIn);
+  const end = new Date(form.checkOut);
+  const diffInDays = (end - start) / (1000 * 3600 * 24);
+
+  if (diffInDays > 14) {
+    alert("Reservation cannot exceed 14 days. Please shorten the stay.");
+    return;
+  }
+
+  const payload = {
+    guest_name: form.by,
+    guest_email: form.email,
+    phone_number: form.contact,
+    address: form.address,
+    start_date: form.checkIn,
+    end_date: form.checkOut,
+    for_person_name: form.for,
+    male_count: form.guests.M,
+    female_count: form.guests.F,
+    single_a_room_count: form.rooms.airconPrivate.S,
+    double_a_room_count: form.rooms.airconPrivate.D,
+    single_b_room_count: form.rooms.airconShared.S,
+    double_b_room_count: form.rooms.airconShared.D,
+    single_c_room_count: form.rooms.ceilingFanShared.S,
+    double_c_room_count: form.rooms.ceilingFanShared.D,
+    triple_c_room_count: form.rooms.ceilingFanShared.T,
+  };
+
+  try {
+    const res = await fetch("http://127.0.0.1:8000/api/reserve/create_new_reservation/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      alert("Reservation failed: " + JSON.stringify(error));
+      return;
+    }
+
+    const data = await res.json();
+    const reservationId = data.reservation_id;
+    alert("Reservation created! A verification code has been sent to your email.");
+
+    const code = prompt("Please enter the 6-digit verification code sent to your email:");
+    if (!code) {
+      alert("Verification cancelled.");
+      return;
+    }
+
+    const verifyRes = await fetch("http://127.0.0.1:8000/api/reserve/verify_reservation/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reservation_id: reservationId, code })
+    });
+
+    if (!verifyRes.ok) {
+      const verifyError = await verifyRes.json();
+      alert("Verification failed: " + JSON.stringify(verifyError));
+      return;
+    }
+
+    alert("Reservation verified successfully!");
+
+  } catch (err) {
+    console.error("Error:", err);
+    alert("Network error: could not submit or verify reservation.");
+  }
 };
 </script>
