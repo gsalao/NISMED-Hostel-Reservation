@@ -177,15 +177,15 @@ const submitForm = async () => {
       body: JSON.stringify(payload)
     });
 
+    const data = await res.json();
+
     if (!res.ok) {
-      const error = await res.json();
-      alert("Reservation failed: " + JSON.stringify(error));
+      alert("Reservation failed: " + JSON.stringify(data));
       return;
     }
 
-    const data = await res.json();
-    const reservationId = data.reservation_id;
-    alert("Reservation created! A verification code has been sent to your email.");
+    const token = data.reservation_token;
+    alert(`A verification code has been sent to your email. Your reservation token: ${token}`);
 
     const code = prompt("Please enter the 6-digit verification code sent to your email:");
     if (!code) {
@@ -196,16 +196,17 @@ const submitForm = async () => {
     const verifyRes = await fetch("http://127.0.0.1:8000/api/reserve/verify_reservation/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ reservation_id: reservationId, code })
+      body: JSON.stringify({ reservation_token: token, code })
     });
 
+    const verifyData = await verifyRes.json();
+
     if (!verifyRes.ok) {
-      const verifyError = await verifyRes.json();
-      alert("Verification failed: " + JSON.stringify(verifyError));
+      alert("Verification failed: " + JSON.stringify(verifyData));
       return;
     }
 
-    alert("Reservation verified successfully!");
+    alert("Reservation verified and successfully saved!");
 
   } catch (err) {
     console.error("Error:", err);
