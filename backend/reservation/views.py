@@ -69,7 +69,7 @@ def create_new_reservation(request):
 
     send_mail(
         subject="UP NISMED Hostel - Verification Code",
-        message=f"Thank you for your reservation, {reservation_data["guest"]}.\n\nYour reservation will start on {reservation_data["start_date"]} and end on {reservation_data["end_date"]}.\n\nYour verification code is: {verification_code}",
+        message=f"Thank you for your reservation, {guest_name}.\n\nYour reservation will start on {reservation_data["start_date"]} and end on {reservation_data["end_date"]}.\n\nYour verification code is: {verification_code}",
         from_email="noreply@up.edu.ph", # configured to encoded email
         recipient_list=[guest_email],
         fail_silently=False,
@@ -110,6 +110,19 @@ def verify_reservation(request):
             fail_silently=True,
             html_message=f"""
                 <p><strong>Reservation #{reservation.id}</strong> has been verified.</p>
+                <p><strong>Start Date:</strong> {reservation.start_date}<br>
+                <strong>End Date:</strong> {reservation.end_date}</p>
+            """
+        )
+
+        send_mail(
+            subject=f"UP NISMED Hostel - Successful Reservation",
+            message=f"Reservation #{reservation.id} has been verified.\n\nIt will start on {reservation_data["start_date"]} and end on {reservation_data["end_date"]}",
+            from_email="noreply@up.edu.ph",       # can add specific NISMED Hostel admin email here, doesnt really matter much (?)
+            recipient_list=[reservation_data["guest"]], # can add multiple receipients here
+            fail_silently=True,
+            html_message=f"""
+                <p>Congratulations! Your reservation at UP NISMED Hostel has been verified.</p>
                 <p><strong>Start Date:</strong> {reservation.start_date}<br>
                 <strong>End Date:</strong> {reservation.end_date}</p>
             """
