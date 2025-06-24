@@ -54,7 +54,7 @@
       Verify Reservation
     </button>
 
-    <p v-if="verified" class="mt-4 text-green-600 font-semibold">Reservation successfully verified!</p>
+    <p v-if="verified" class="mt-4 text-center text-green-600 font-semibold">Reservation successfully verified!</p>
     <p v-if="error" class="mt-4 text-red-600">{{ error }}</p>
   </div>
 </template>
