@@ -1,5 +1,5 @@
 <template>
-  <div id="gallery" class="relative w-full min-w-0 mx-auto">
+  <div id="gallery" class="relative w-full min-w-0 mx-auto mt-10">
     <!-- Carousel wrapper -->
     <div class="relative h-48 sm:h-64 md:h-72 lg:h-[28rem] xl:h-[400px] overflow-hidden rounded-lg">
       <div
@@ -10,7 +10,7 @@
       >
         <img :src="image.src" class="w-full h-full object-cover rounded-lg" :alt="image.label">
         <!-- Label Overlay -->
-        <div class="absolute bottom-2 right-2 bg-black bg-opacity-60 text-white text-xs sm:text-sm px-2 py-1 rounded">
+        <div class="absolute bottom-2 right-2 bg-black bg-opacity-60 text-white text-xs sm:text-xl px-2 py-1 rounded">
           {{ image.label }}
         </div>
       </div>
