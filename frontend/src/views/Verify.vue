@@ -16,7 +16,8 @@
     }
 
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/reserve/verify_reservation/', {
+      const backendUrl = import.meta.env.VITE_BACKEND_BASE_URL;
+      const res = await fetch(`${backendUrl}/reserve/verify_reservation/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ reservation_token: token.value, code: code.value })
