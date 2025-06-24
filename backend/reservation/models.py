@@ -94,8 +94,9 @@ class Reservation(models.Model):
         if self.single_a_room_count == self.single_b_room_count == self.single_c_room_count == self.double_a_room_count == self.double_b_room_count == self.double_c_room_count == self.triple_c_room_count == 0:
             raise ValidationError("There must be 1 occupant in a room")
 
-        if not are_dates_available(self.start_date, self.end_date, self.get_room_counts(), self) and self.status == StatusEnum.CHECKED_IN.value:
-            raise ValidationError("The reservation cannot be made")
+        valid_dates, total_counts = are_dates_available(self.start_date, self.end_date, self.get_room_counts(), self) 
+        if not valid_dates and self.status == StatusEnum.CHECKED_IN.value: 
+            raise ValidationError(f"The reservation cannot be made; {self.show_unavailable_rooms(total_counts)}")
 
     def get_room_counts(self):
         return {
@@ -103,6 +104,12 @@ class Reservation(models.Model):
             'B': self.single_b_room_count + self.double_b_room_count,
             'C': self.single_c_room_count + self.double_c_room_count + self.triple_c_room_count
         }
+
+    def show_unavailable_rooms(self, total_count):
+        final_output = "You added an excess of: "
+        for (key,value) in total_count.items():
+            final_output += f"{value} {key} room/s"
+        return final_output 
 
     def show_room_counts(self):
         rooms_counts = self.get_room_counts()

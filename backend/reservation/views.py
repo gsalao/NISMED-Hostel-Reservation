@@ -14,6 +14,12 @@ possible views for reservation:
 2. post a new reservation ✓ 
 '''
 
+def show_unavailable_rooms(total_count):
+    final_output = "You added an excess of: "
+    for (key,value) in total_count.items():
+        final_output += f"{value} {key} room/s"
+    return final_output 
+
 @api_view(['POST'])
 def create_new_reservation(request):
     """
@@ -69,11 +75,12 @@ def create_new_reservation(request):
         return Response({"error": "End date cannot happen before the start"}, status=status.HTTP_400_BAD_REQUEST)
 
     if datetime.strptime(end_date, "%Y-%m-%d").date() > datetime.strptime(start_date, "%Y-%m-%d").date() + timedelta(weeks=2):
-        raise ValidationError("End date cannot be more than two weeks after the start date.")
+        return Response({"error" : "End date cannot be more than two weeks after the start date."}, status=status.HTTP_400_BAD_REQUEST)
 
     # Check if there are any available room types at the given dates 
-    if not are_dates_available(start_date, end_date, reserved_room_counts):
-        return Response({"error": "Dates not available"}, status=status.HTTP_400_BAD_REQUEST)
+    valid_dates, total_counts = are_dates_available(start_date, end_date, reserved_room_counts)
+    if not valid_dates: 
+        return Response({"error": f"Dates not available; {show_unavailable_rooms(total_counts)}"}, status=status.HTTP_400_BAD_REQUEST)
 
     reservation_data = {
         "guest_id": guest.id,
