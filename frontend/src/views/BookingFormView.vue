@@ -104,7 +104,7 @@
 
       <!-- Submit Button -->
       <div class="text-right">
-        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded">
+        <button type="submit" class="cursor-pointer bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded">
           Submit Reservation
         </button>
       </div>
@@ -114,103 +114,86 @@
 </template>
 
 <script setup>
-import { reactive, computed } from 'vue';
+  import { reactive, computed } from 'vue'
+  import { useRouter } from 'vue-router'
 
-const roomTypes = {
-  airconPrivate: { label: "<strong>Room A</strong>: Aircon private toilet & bath", allowT: false },
-  airconShared: { label: "<strong>Room B</strong>: Aircon shared toilet & bath", allowT: false },
-  ceilingFanShared: { label: "<strong>Room C</strong>: Ceiling fan shared toilet & bath", allowT: true },
-};
+  const router = useRouter()
 
-const form = reactive({
-  date: '',
-  for: '',
-  by: '',
-  email: '',
-  contact: '',
-  address: '',
-  checkIn: '',
-  checkOut: '',
-  rooms: {
-    airconPrivate: { S: 0, D: 0 },
-    airconShared: { S: 0, D: 0 },
-    ceilingFanShared: { S: 0, D: 0, T: 0 },
-  },
-  guests: { F: 0, M: 0 },
-});
-
-const totalGuests = computed(() => form.guests.F + form.guests.M);
-
-const submitForm = async () => {
-  const start = new Date(form.checkIn);
-  const end = new Date(form.checkOut);
-  const diffInDays = (end - start) / (1000 * 3600 * 24);
-
-  if (diffInDays > 14) {
-    alert("Reservation cannot exceed 14 days. Please shorten the stay.");
-    return;
+  const roomTypes = {
+    airconPrivate: { label: "<strong>Room A</strong>: Aircon private toilet & bath", allowT: false },
+    airconShared: { label: "<strong>Room B</strong>: Aircon shared toilet & bath", allowT: false },
+    ceilingFanShared: { label: "<strong>Room C</strong>: Ceiling fan shared toilet & bath", allowT: true },
   }
 
-  const payload = {
-    guest_name: form.by,
-    guest_email: form.email,
-    phone_number: form.contact,
-    address: form.address,
-    start_date: form.checkIn,
-    end_date: form.checkOut,
-    for_person_name: form.for,
-    male_count: form.guests.M,
-    female_count: form.guests.F,
-    single_a_room_count: form.rooms.airconPrivate.S,
-    double_a_room_count: form.rooms.airconPrivate.D,
-    single_b_room_count: form.rooms.airconShared.S,
-    double_b_room_count: form.rooms.airconShared.D,
-    single_c_room_count: form.rooms.ceilingFanShared.S,
-    double_c_room_count: form.rooms.ceilingFanShared.D,
-    triple_c_room_count: form.rooms.ceilingFanShared.T,
-  };
+  const form = reactive({
+    date: '',
+    for: '',
+    by: '',
+    email: '',
+    contact: '',
+    address: '',
+    checkIn: '',
+    checkOut: '',
+    rooms: {
+      airconPrivate: { S: 0, D: 0 },
+      airconShared: { S: 0, D: 0 },
+      ceilingFanShared: { S: 0, D: 0, T: 0 },
+    },
+    guests: { F: 0, M: 0 },
+  })
 
-  try {
-    const res = await fetch("http://127.0.0.1:8000/api/reserve/create_new_reservation/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
+  const totalGuests = computed(() => form.guests.F + form.guests.M)
 
-    const data = await res.json();
+  const submitForm = async () => {
+    const start = new Date(form.checkIn)
+    const end = new Date(form.checkOut)
+    const diffInDays = (end - start) / (1000 * 3600 * 24)
 
-    if (!res.ok) {
-      alert("Reservation failed: " + JSON.stringify(data));
-      return;
+    if (diffInDays > 14) {
+      alert("Reservation cannot exceed 14 days. Please shorten the stay.")
+      return
     }
 
-    const token = data.reservation_token;
-    alert(`A verification code has been sent to your email. Your reservation token: ${token}`);
-
-    const code = prompt("Please enter the 6-digit verification code sent to your email:");
-    if (!code) {
-      alert("Verification cancelled.");
-      return;
+    const payload = {
+      guest_name: form.by,
+      guest_email: form.email,
+      phone_number: form.contact,
+      address: form.address,
+      start_date: form.checkIn,
+      end_date: form.checkOut,
+      for_person_name: form.for,
+      male_count: form.guests.M,
+      female_count: form.guests.F,
+      single_a_room_count: form.rooms.airconPrivate.S,
+      double_a_room_count: form.rooms.airconPrivate.D,
+      single_b_room_count: form.rooms.airconShared.S,
+      double_b_room_count: form.rooms.airconShared.D,
+      single_c_room_count: form.rooms.ceilingFanShared.S,
+      double_c_room_count: form.rooms.ceilingFanShared.D,
+      triple_c_room_count: form.rooms.ceilingFanShared.T,
     }
 
-    const verifyRes = await fetch("http://127.0.0.1:8000/api/reserve/verify_reservation/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ reservation_token: token, code })
-    });
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/reserve/create_new_reservation/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
 
-    const verifyData = await verifyRes.json();
+      const data = await res.json()
 
-    if (!verifyRes.ok) {
-      alert("Verification failed: " + JSON.stringify(verifyData));
-      return;
+      if (!res.ok) {
+        alert("Reservation failed: " + JSON.stringify(data))
+        return
+      }
+
+      // Redirect to /verify?token=...
+      const token = data.reservation_token
+      router.push({ name: 'verify', query: { token } })
+
+    } catch (err) {
+      console.error("Error:", err)
+      alert("Network error: could not submit reservation.")
     }
-
-    alert("Reservation verified and successfully saved!");
-
-  } catch (err) {
-    console.error("Error:", err);
-    alert("Network error: could not submit or verify reservation.");
   }
-};
 </script>

@@ -67,9 +67,16 @@ def create_new_reservation(request):
     temp_id = get_random_string(length=12)
     PENDING_VERIFICATIONS[temp_id] = reservation_data
 
+    verification_link = f"http://localhost:5173/verify?token={temp_id}"
+
     send_mail(
         subject="UP NISMED Hostel - Verification Code",
-        message=f"Thank you for your reservation, {guest_name}.\n\nYour reservation will start on {reservation_data["start_date"]} and end on {reservation_data["end_date"]}.\n\nYour verification code is: {verification_code}",
+        message=(
+            f"Thank you for your reservation.\n\n"
+            f"Please verify your reservation by clicking the link below:\n"
+            f"{verification_link}\n\n"
+            f"Or use this verification code: {verification_code}"
+        ),
         from_email="noreply@up.edu.ph", # configured to encoded email
         recipient_list=[guest_email],
         fail_silently=False,
@@ -78,7 +85,8 @@ def create_new_reservation(request):
             <p><strong>Start Date:</strong> {reservation_data["start_date"]}<br>
             <strong>End Date:</strong> {reservation_data["end_date"]}</p>
             <p>
-            <p>Your verification code is <u><strong>{reservation_data["verification_code"]}</strong></u></p>
+            <p>Please verify your reservation by clicking the link below:\n{verification_link}"
+            <p>Your verification code is <u><strong>{verification_code}</strong></u></p>
         """
     )
 
