@@ -11,11 +11,11 @@
         </li>
 
         <li>
-          <button @click="goToBookingForm" class="hover:underline">Book</button>
+          <button @click="goToBookingForm" class="cursor-pointer hover:underline">Book</button>
         </li>
 
         <li>
-          <button @click="scrollToFooter" class="hover:underline">Contact</button>
+          <button @click="scrollToFooter" class="cursor-pointer hover:underline">Contact</button>
         </li>
 
       </ul>
