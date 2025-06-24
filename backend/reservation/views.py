@@ -5,7 +5,8 @@ from .serializers import ReservationSerializer
 from .utils import are_dates_available
 from guest.utils import insert_guest
 from django.core.exceptions import ValidationError
-from django.core.mail import send_mail
+from django.core.mail import send_mail, BadHeaderError
+from smtplib import SMTPException
 from django.utils.crypto import get_random_string
 from .models import Reservation
 
@@ -18,11 +19,6 @@ def create_new_reservation(request):
     guest_name = request.data.get("guest_name")
     phone_number = request.data.get("phone_number")
     address = request.data.get("address")
-
-    try:
-        guest = insert_guest(guest_email, guest_name, phone_number, address)
-    except ValidationError as e:
-        return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
 
     start_date = request.data.get("start_date")
     end_date = request.data.get("end_date")
@@ -42,7 +38,10 @@ def create_new_reservation(request):
     verification_code = get_random_string(length=6, allowed_chars='0123456789')
 
     reservation_data = {
-        "guest": guest,
+        "guest_email": guest_email,
+        "guest_name": guest_name,
+        "phone_number": phone_number,
+        "address": address,
         "start_date": start_date,
         "end_date": end_date,
         "for_person_name": request.data.get("for_person_name"),
@@ -59,38 +58,37 @@ def create_new_reservation(request):
         "is_verified": False,
     }
 
-    serializer = ReservationSerializer(data={**reservation_data, "guest_id": guest.id})
-    if not serializer.is_valid():
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    # Temporarily store reservation data (mock session or caching layer)
     temp_id = get_random_string(length=12)
     PENDING_VERIFICATIONS[temp_id] = reservation_data
 
     verification_link = f"http://localhost:5173/verify?token={temp_id}"
 
-    send_mail(
-        subject="UP NISMED Hostel - Verification Code",
-        message=(
-            f"Thank you for your reservation.\n\n"
-            f"Please verify your reservation by clicking the link below:\n"
-            f"{verification_link}\n\n"
-            f"Or use this verification code: {verification_code}"
-        ),
-        from_email="noreply@up.edu.ph", # configured to encoded email
-        recipient_list=[guest_email],
-        fail_silently=False,
-        html_message=f"""
-            <p>Thank you for your reservation at UP NISMED Hostel, {guest_name}!</p>
-            <p><strong>Start Date:</strong> {reservation_data["start_date"]}<br>
-            <strong>End Date:</strong> {reservation_data["end_date"]}</p>
-            <p>
-            <p>Please verify your reservation by clicking the link below:\n{verification_link}"
-            <p>Your verification code is <u><strong>{verification_code}</strong></u></p>
-        """
-    )
+    try:
+        send_mail(
+            subject="UP NISMED Hostel - Verification Code",
+            message=(
+                f"Thank you for your reservation.\n\n"
+                f"Please verify your reservation by clicking the link below:\n"
+                f"{verification_link}\n\n"
+                f"Or use this verification code: {verification_code}"
+            ),
+            from_email="noreply@up.edu.ph",
+            recipient_list=[guest_email],
+            fail_silently=False,
+            html_message=f"""
+                <p>Thank you for your reservation at UP NISMED Hostel, {guest_name}!</p>
+                <p><strong>Start Date:</strong> {start_date}<br>
+                <strong>End Date:</strong> {end_date}</p>
+                <p>Please verify your reservation by clicking the link below:<br>
+                <a href="{verification_link}">{verification_link}</a></p>
+                <p>Your verification code is <u><strong>{verification_code}</strong></u></p>
+            """
+        )
+        return Response({"reservation_token": temp_id}, status=status.HTTP_202_ACCEPTED)
 
-    return Response({ "reservation_token": temp_id }, status=status.HTTP_202_ACCEPTED)
+    except (BadHeaderError, SMTPException) as e:
+        return Response({"error": f"Failed to send email: {str(e)}"}, status=500)
+    
 
 @api_view(['POST'])
 def verify_reservation(request):
@@ -105,39 +103,53 @@ def verify_reservation(request):
     if reservation_data["verification_code"] != code:
         return Response({"error": "Invalid verification code."}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Save reservation to DB now that it's verified
-    serializer = ReservationSerializer(data={**reservation_data, "guest_id": reservation_data["guest"].id})
+    # Create guest only after successful verification
+    try:
+        guest = insert_guest(
+            reservation_data["guest_email"],
+            reservation_data["guest_name"],
+            reservation_data["phone_number"],
+            reservation_data["address"]
+        )
+    except ValidationError as e:
+        return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
+
+    serializer = ReservationSerializer(data={**reservation_data, "guest_id": guest.id})
     if serializer.is_valid():
         reservation = serializer.save(is_verified=True)
 
-        send_mail(
-            subject=f"NISMED Hostel Reservation - Reservation #{reservation.id}",
-            message=f"Reservation #{reservation.id} has been verified.\n\nIt will start on {reservation_data["start_date"]} and end on {reservation_data["end_date"]}",
-            from_email="noreply@up.edu.ph",       # can add specific NISMED Hostel admin email here, doesnt really matter much (?)
-            recipient_list=["ghsalao@up.edu.ph"], # can add multiple receipients here
-            fail_silently=True,
-            html_message=f"""
-                <p><strong>Reservation #{reservation.id}</strong> has been verified.</p>
-                <p><strong>Start Date:</strong> {reservation.start_date}<br>
-                <strong>End Date:</strong> {reservation.end_date}</p>
-            """
-        )
+        try:
+            send_mail(
+                subject=f"NISMED Hostel Reservation - Reservation #{reservation.id}",
+                message=f"Reservation #{reservation.id} verified.",
+                from_email="noreply@up.edu.ph",
+                recipient_list=["ghsalao@up.edu.ph"],
+                fail_silently=True,
+                html_message=f"""
+                    <p><strong>Reservation #{reservation.id}</strong> has been verified.</p>
+                    <p><strong>Start Date:</strong> {reservation.start_date}<br>
+                    <strong>End Date:</strong> {reservation.end_date}</p>
+                """
+            )
 
-        send_mail(
-            subject=f"UP NISMED Hostel - Successful Reservation",
-            message=f"Reservation #{reservation.id} has been verified.\n\nIt will start on {reservation_data["start_date"]} and end on {reservation_data["end_date"]}",
-            from_email="noreply@up.edu.ph",       # can add specific NISMED Hostel admin email here, doesnt really matter much (?)
-            recipient_list=[reservation_data["guest"]], # can add multiple receipients here
-            fail_silently=True,
-            html_message=f"""
-                <p>Congratulations! Your reservation at UP NISMED Hostel has been verified.</p>
-                <p><strong>Start Date:</strong> {reservation.start_date}<br>
-                <strong>End Date:</strong> {reservation.end_date}</p>
-            """
-        )
+            send_mail(
+                subject=f"UP NISMED Hostel - Successful Reservation",
+                message=f"Reservation #{reservation.id} has been verified.",
+                from_email="noreply@up.edu.ph",
+                recipient_list=[reservation_data["guest_email"]],
+                fail_silently=True,
+                html_message=f"""
+                    <p>Congratulations! Your reservation has been verified.</p>
+                    <p><strong>Start Date:</strong> {reservation.start_date}<br>
+                    <strong>End Date:</strong> {reservation.end_date}</p>
+                """
+            )
 
-        del PENDING_VERIFICATIONS[token]
+            del PENDING_VERIFICATIONS[token]
+            return Response({"success": True})
 
-        return Response({"success": True})
-    else:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except (BadHeaderError, SMTPException) as e:
+            del PENDING_VERIFICATIONS[token]
+            return Response({"error": f"Failed to send confirmation email: {str(e)}"}, status=500)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
