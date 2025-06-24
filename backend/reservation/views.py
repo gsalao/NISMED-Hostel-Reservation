@@ -6,7 +6,7 @@ from .serializers import ReservationSerializer
 from .utils import are_dates_available
 from guest.utils import insert_guest
 from django.core.exceptions import ValidationError
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 # Create your views here.
 '''
@@ -68,7 +68,7 @@ def create_new_reservation(request):
     if end_date <= start_date:
         return Response({"error": "End date cannot happen before the start"}, status=status.HTTP_400_BAD_REQUEST)
 
-    if end_date > start_date + timedelta(weeks=2):
+    if datetime.strptime(end_date, "%Y-%m-%d").date() > datetime.strptime(start_date, "%Y-%m-%d").date() + timedelta(weeks=2):
         raise ValidationError("End date cannot be more than two weeks after the start date.")
 
     # Check if there are any available room types at the given dates 

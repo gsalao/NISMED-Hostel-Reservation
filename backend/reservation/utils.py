@@ -38,7 +38,7 @@ def are_dates_available(start_date, end_date, requested_counts, current_reservat
 
         # print(f"{room_type.name}\nExisting: {existing}\nRequested: {requested}")
 
-        if existing + requested > room_type.available_rooms:
+        if requested != 0 and existing + requested > room_type.available_rooms:
             return False 
 
     return True
