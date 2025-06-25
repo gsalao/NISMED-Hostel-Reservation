@@ -34,7 +34,7 @@ def create_new_reservation(request):
     {
         "guest_name": "...",
         "guest_email": "...",
-        "phone_number": "...",Add commentMore actions
+        "phone_number": "...",
         "address": "...",
         "start_date": "...",
         "end_date": "...",
