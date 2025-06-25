@@ -182,8 +182,6 @@
     return
   }
 
-
-
     // Check date range
     const start = new Date(form.checkIn)
     const end = new Date(form.checkOut)
