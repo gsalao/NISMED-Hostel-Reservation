@@ -9,7 +9,6 @@ from datetime import timedelta, datetime
 from django.core.mail import send_mail, BadHeaderError
 from smtplib import SMTPException
 from django.utils.crypto import get_random_string
-from .models import Reservation
 
 # Temporary store for unverified reservations (use cache/DB/session in production)
 PENDING_VERIFICATIONS = {}
@@ -61,10 +60,18 @@ def create_new_reservation(request):
     start_date = request.data.get("start_date")
     end_date = request.data.get("end_date")
 
+    single_a_room_count = request.data.get("single_a_room_count")
+    double_a_room_count = request.data.get("double_a_room_count") 
+    single_b_room_count = request.data.get("single_b_room_count") 
+    double_b_room_count = request.data.get("double_b_room_count") 
+    single_c_room_count = request.data.get("single_c_room_count") 
+    double_c_room_count = request.data.get("double_c_room_count") 
+    triple_c_room_count = request.data.get("triple_c_room_count") 
+
     reserved_room_counts = {
-        'A': request.data.get("single_a_room_count", 0) + request.data.get("double_a_room_count", 0),
-        'B': request.data.get("single_b_room_count", 0) + request.data.get("double_b_room_count", 0),
-        'C': request.data.get("single_c_room_count", 0) + request.data.get("double_c_room_count", 0) + request.data.get("triple_c_room_count", 0),
+        'A': single_a_room_count + double_a_room_count,
+        'B': single_b_room_count + double_b_room_count,
+        'C': single_c_room_count + double_c_room_count + triple_c_room_count,
     }
 
     # Check if the end is after the start 
@@ -89,15 +96,16 @@ def create_new_reservation(request):
         "start_date": start_date,
         "end_date": end_date,
         "for_person_name": request.data.get("for_person_name"),
+        "by_person_name": request.data.get("by_person_name"),
         "male_count": request.data.get("male_count"),
         "female_count": request.data.get("female_count"),
-        "single_a_room_count": request.data.get("single_a_room_count", 0),
-        "double_a_room_count": request.data.get("double_a_room_count", 0),
-        "single_b_room_count": request.data.get("single_b_room_count", 0),
-        "double_b_room_count": request.data.get("double_b_room_count", 0),
-        "single_c_room_count": request.data.get("single_c_room_count", 0),
-        "double_c_room_count": request.data.get("double_c_room_count", 0),
-        "triple_c_room_count": request.data.get("triple_c_room_count", 0),
+        "single_a_room_count": single_a_room_count,
+        "double_a_room_count": double_a_room_count,
+        "single_b_room_count": single_b_room_count,
+        "double_b_room_count": double_b_room_count,
+        "single_c_room_count": single_c_room_count,
+        "double_c_room_count": double_c_room_count,
+        "triple_c_room_count": triple_c_room_count,
         "verification_code": verification_code,
         "is_verified": False,
     }
