@@ -80,6 +80,10 @@ class Reservation(models.Model):
     double_c_room_count = models.IntegerField(default=0)
     triple_c_room_count = models.IntegerField(default=0)
 
+    # For user email verification
+    verification_code = models.CharField(max_length=6, blank=True, null=True)
+    is_verified = models.BooleanField(default=False)
+
     def clean(self):
         from .utils import are_dates_available
         # Validation: End date after start

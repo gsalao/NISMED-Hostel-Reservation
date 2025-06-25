@@ -6,10 +6,6 @@
       <!-- Header info -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div>
-          <label class="font-semibold">Date:</label>
-          <input type="date" v-model="form.date" class="w-full border border-gray-300 rounded px-2 py-1" />
-        </div>
-        <div>
           <label class="font-semibold">For (Person/Company/Unit):</label>
           <input type="text" v-model="form.for" class="w-full border border-gray-300 rounded px-2 py-1" />
         </div>
@@ -104,7 +100,7 @@
 
       <!-- Submit Button -->
       <div class="text-right">
-        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded">
+        <button type="submit" class="cursor-pointer bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded">
           Submit Reservation
         </button>
       </div>
@@ -114,85 +110,103 @@
 </template>
 
 <script setup>
-import { reactive, computed } from 'vue';
+  import { reactive, computed } from 'vue'
+  import { useRouter } from 'vue-router'
+  import { useToast } from 'vue-toastification'
 
-const roomTypes = {
-  airconPrivate: { label: "<strong>Room A</strong>: Aircon private toilet & bath", allowT: false },
-  airconShared: { label: "<strong>Room B</strong>: Aircon shared toilet & bath", allowT: false },
-  ceilingFanShared: { label: "<strong>Room C</strong>: Ceiling fan shared toilet & bath", allowT: true },
-};
+  const router = useRouter()
+  const toast = useToast()
 
-const form = reactive({
-  date: '',
-  for: '',
-  by: '',
-  email: '',
-  contact: '',
-  address: '',
-  checkIn: '',
-  checkOut: '',
-  rooms: {
-    airconPrivate: { S: 0, D: 0 },
-    airconShared: { S: 0, D: 0 },
-    ceilingFanShared: { S: 0, D: 0, T: 0 },
-  },
-  guests: { F: 0, M: 0 },
-});
-
-const totalGuests = computed(() => form.guests.F + form.guests.M);
-
-const submitForm = async () => {
-  const start = new Date(form.checkIn);
-  const end = new Date(form.checkOut);
-  const diffInTime = end - start;
-  const diffInDays = diffInTime / (1000 * 3600 * 24);
-
-  if (diffInDays > 14) {
-    alert("Reservation cannot exceed 14 days. Please shorten the stay.");
-    return;
+  const roomTypes = {
+    airconPrivate: { label: "<strong>Room A</strong>: Aircon private toilet & bath", allowT: false },
+    airconShared: { label: "<strong>Room B</strong>: Aircon shared toilet & bath", allowT: false },
+    ceilingFanShared: { label: "<strong>Room C</strong>: Ceiling fan shared toilet & bath", allowT: true },
   }
 
-  const payload = {
-    guest_name: form.by,
-    guest_email: form.email,
-    phone_number: form.contact,
-    address: form.address,
-    start_date: form.checkIn,
-    end_date: form.checkOut,
-    for_person_name: form.for,
-    male_count: form.guests.M,
-    female_count: form.guests.F,
-    single_a_room_count: form.rooms.airconPrivate.S,
-    double_a_room_count: form.rooms.airconPrivate.D,
-    single_b_room_count: form.rooms.airconShared.S,
-    double_b_room_count: form.rooms.airconShared.D,
-    single_c_room_count: form.rooms.ceilingFanShared.S,
-    double_c_room_count: form.rooms.ceilingFanShared.D,
-    triple_c_room_count: form.rooms.ceilingFanShared.T,
-  };
+  const form = reactive({
+    date: '',
+    for: '',
+    by: '',
+    email: '',
+    contact: '',
+    address: '',
+    checkIn: '',
+    checkOut: '',
+    rooms: {
+      airconPrivate: { S: 0, D: 0 },
+      airconShared: { S: 0, D: 0 },
+      ceilingFanShared: { S: 0, D: 0, T: 0 },
+    },
+    guests: { F: 0, M: 0 },
+  })
 
-  try {
-    // api endpoint => {backend/urls.py}+{reservation/urls.py}
-    const res = await fetch("http://127.0.0.1:8000/api/reserve/create_new_reservation/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    });
+  const totalGuests = computed(() => form.guests.F + form.guests.M)
 
-    if (!res.ok) {
-      const error = await res.json();
-      alert("Reservation failed: " + JSON.stringify(error));
-      return;
+  const submitForm = async () => {
+    const start = new Date(form.checkIn)
+    const end = new Date(form.checkOut)
+    const diffInDays = (end - start) / (1000 * 3600 * 24)
+
+    if (diffInDays > 14) {
+      toast.warning("Reservation cannot exceed 14 days. Please shorten the stay.")
+      return
     }
 
-    const data = await res.json();
-    console.log("Reservation successful", data);
-    alert("Reservation submitted successfully!");
-  } catch (err) {
-    console.error("Error:", err);
-    alert("Network error: could not submit reservation.");
+    const payload = {
+      guest_name: form.by,
+      guest_email: form.email,
+      phone_number: form.contact,
+      address: form.address,
+      start_date: form.checkIn,
+      end_date: form.checkOut,
+      for_person_name: form.for,
+      male_count: form.guests.M,
+      female_count: form.guests.F,
+      single_a_room_count: form.rooms.airconPrivate.S,
+      double_a_room_count: form.rooms.airconPrivate.D,
+      single_b_room_count: form.rooms.airconShared.S,
+      double_b_room_count: form.rooms.airconShared.D,
+      single_c_room_count: form.rooms.ceilingFanShared.S,
+      double_c_room_count: form.rooms.ceilingFanShared.D,
+      triple_c_room_count: form.rooms.ceilingFanShared.T,
+    }
+
+    const loadingToastId = toast.info("Sending reservation...", { timeout: false })
+
+    try {
+      const backendUrl = import.meta.env.VITE_BACKEND_BASE_URL
+      const res = await fetch(`${backendUrl}/reserve/create_new_reservation/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      let data = {};
+      try {
+        data = await res.json();
+      } catch (jsonErr) {
+        toast.dismiss(loadingToastId);
+        toast.error("Invalid response from server.");
+        return;
+      }
+
+      if (!res.ok || !data.reservation_token) {
+        toast.dismiss(loadingToastId);
+        const errorMessages = data?.error || Object.entries(data)
+          .map(([field, messages]) => `${field.replace('_', ' ')}: ${Array.isArray(messages) ? messages.join(', ') : messages}`)
+          .join('\n');
+        toast.error(`Reservation failed:\n\n${errorMessages}`);
+        return;
+      }
+
+      toast.dismiss(loadingToastId);
+      toast.success("Verification email sent! Redirecting to verification page...");
+      router.push({ name: 'verify', query: { token: data.reservation_token } });
+
+    } catch (err) {
+      toast.dismiss(loadingToastId);
+      console.error("Network error:", err);
+      toast.error("Network error: could not submit reservation.");
+    }
   }
-};
 </script>

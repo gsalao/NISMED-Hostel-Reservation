@@ -6,9 +6,13 @@ import { createPinia } from 'pinia' // not needed since GMail-based authenticati
 import App from './App.vue'
 import router from './router'
 
+import Toast from 'vue-toastification'
+import 'vue-toastification/dist/index.css'
+
 const app = createApp(App)
 
 app.use(createPinia()) // not needed since GMail-based authentication?
 app.use(router)
+app.use(Toast)
 
 app.mount('#app')
