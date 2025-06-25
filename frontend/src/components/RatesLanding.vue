@@ -40,13 +40,46 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+  import { ref, onMounted } from 'vue'
 
-const categories = ref(['Single', 'Double', 'Triple'])
+  const categories = ref(['Single', 'Double', 'Triple'])
+  const rates = ref([])
 
-const rates = ref([
-  { type: 'Type A', prices: { Single: 1395, Double: 1900 } },
-  { type: 'Type B', prices: { Single: 1145, Double: 1785 } },
-  { type: 'Type C', prices: { Single: 440, Double: 740, Triple: 925 } },
-])
+  const fetchRoomRates = async () => {
+    try {
+      const res = await fetch('http://127.0.0.1:8000/api/room/get_all_room_rates/') // adjust URL if different
+
+      const data = await res.json()
+
+      const grouped = {}  // { 'Type A': { Single: 1234, Double: 2345 }, ... }
+
+      data.forEach(rate => {
+        const type = rate.room_type_id
+        // Note Room Type C ID = 1, Room Type A ID = 3 (backend-based)
+        const typeAlpha = type === 1 ? 'Type C' : type === 2 ? 'Type B' : 'Type A'
+        const occ = rate.occupancy
+        const label = occ === 1 ? 'Single' : occ === 2 ? 'Double' : 'Triple'
+
+        if (!grouped[typeAlpha]) grouped[typeAlpha] = {}
+        grouped[typeAlpha][label] = parseFloat(rate.rate)
+      })
+
+      // sort displayed room type alphabetically (i.e. Room Type A -> B -> C in UI)
+      const sortedEntries = Object.entries(grouped).sort((a, b) => {
+        return a[0].localeCompare(b[0])
+      })
+
+      rates.value = sortedEntries.map(([type, prices]) => ({
+        type,
+        prices
+      }))
+
+    } catch (err) {
+      console.error('Failed to fetch room rates:', err)
+    }
+  }
+
+  onMounted(() => {
+    fetchRoomRates()
+  })
 </script>

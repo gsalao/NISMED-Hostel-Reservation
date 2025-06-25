@@ -63,6 +63,13 @@ class Room(models.Model):
     room_type_id = models.ForeignKey(RoomType, on_delete=models.CASCADE, related_name='rooms')
     room_number = models.IntegerField()
     is_active = models.BooleanField(default=True)
+    
+    def clean(self):
+        super().clean()
+        if Room.objects.filter(
+            room_number=self.room_number,
+        ).exclude(pk=self.pk).exists():
+            raise ValidationError("A room with this room number already exists.")
 
     def __str__(self):
         return f"Room #{self.room_number}"
