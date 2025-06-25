@@ -20,6 +20,12 @@ def show_unavailable_rooms(total_count):
         final_output += f"{value} {key} room/s"
     return final_output 
 
+
+'''
+possible views for reservation:
+2. post a new reservation ✓ 
+'''
+
 @api_view(['POST'])
 def create_new_reservation(request):
     """
