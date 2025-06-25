@@ -5,6 +5,7 @@ from .serializers import ReservationSerializer
 from .utils import are_dates_available
 from guest.utils import insert_guest
 from django.core.exceptions import ValidationError
+from datetime import timedelta, datetime
 from django.core.mail import send_mail, BadHeaderError
 from smtplib import SMTPException
 from django.utils.crypto import get_random_string
@@ -12,6 +13,12 @@ from .models import Reservation
 
 # Temporary store for unverified reservations (use cache/DB/session in production)
 PENDING_VERIFICATIONS = {}
+
+def show_unavailable_rooms(total_count):
+    final_output = "You added an excess of: "
+    for (key,value) in total_count.items():
+        final_output += f"{value} {key} room/s"
+    return final_output 
 
 @api_view(['POST'])
 def create_new_reservation(request):
@@ -32,8 +39,17 @@ def create_new_reservation(request):
         'C': request.data.get("single_c_room_count", 0) + request.data.get("double_c_room_count", 0) + request.data.get("triple_c_room_count", 0),
     }
 
-    if not are_dates_available(start_date, end_date, reserved_room_counts):
-        return Response({"error": "Dates not available"}, status=status.HTTP_400_BAD_REQUEST)
+    # Check if the end is after the start 
+    if end_date <= start_date:
+        return Response({"error": "End date cannot happen before the start"}, status=status.HTTP_400_BAD_REQUEST)
+
+    if datetime.strptime(end_date, "%Y-%m-%d").date() > datetime.strptime(start_date, "%Y-%m-%d").date() + timedelta(weeks=2):
+        return Response({"error" : "End date cannot be more than two weeks after the start date."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Check if there are any available room types at the given dates 
+    valid_dates, total_counts = are_dates_available(start_date, end_date, reserved_room_counts)
+    if not valid_dates: 
+        return Response({"error": f"Dates not available; {show_unavailable_rooms(total_counts)}"}, status=status.HTTP_400_BAD_REQUEST)
 
     verification_code = get_random_string(length=6, allowed_chars='0123456789')
 

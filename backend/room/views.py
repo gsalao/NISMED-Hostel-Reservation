@@ -1,19 +1,15 @@
 from django.shortcuts import render
 from .models import Room, RoomType, RoomRate 
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import RoomSerializer, RoomTypeSerializer, RoomRateSerializer 
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import generics
+from reservation.models import Reservation, ReservedRoom
 
 # Create your views here.
-'''
-possible views for room:
-1. post a new room ✓
-2. post a new room type ✓
-3. post a new room rate ✓
-4. post to renew a room rate ✓
-5. post to renew the room types inventory ✓
-'''
 
 @api_view(['GET'])
 def get_all_rooms(request):
@@ -42,3 +38,42 @@ def get_all_room_rates(request):
     serialized_room_rates = RoomRateSerializer(all_room_rates, many=True)
     return Response(serialized_room_rates.data)
 
+class RoomAPIView(generics.ListAPIView):
+    # Filter by Room 
+    # queryset = Room.objects.all()
+    serializer_class = RoomSerializer 
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['room_type_id']
+    permission_classes = [IsAuthenticated]
+    def get_queryset(self):
+        queryset = Room.objects.filter(is_active=True)
+
+        room_type_id = self.request.query_params.get('room_type_id')
+        reservation_id = self.request.query_params.get('reservation')
+
+        if room_type_id:
+            queryset = queryset.filter(room_type_id=room_type_id)
+
+        if reservation_id:
+            reservation = Reservation.objects.get(pk=reservation_id)
+            start_date = reservation.start_date
+            end_date = reservation.end_date
+
+            # Get rooms reserved for overlapping periods
+            overlapping_reserved_rooms = ReservedRoom.objects.filter(
+                reservation__start_date__lt=end_date,
+                reservation__end_date__gt=start_date
+            ).exclude(reservation=reservation).values_list('room_id', flat=True)
+
+            # Exclude these rooms
+            queryset = queryset.exclude(id__in=overlapping_reserved_rooms)
+
+        return queryset
+
+class RoomRateAPIView(generics.ListAPIView):
+    # Filter by Room Rate
+    queryset = RoomRate.objects.all()
+    serializer_class = RoomRateSerializer 
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['room_type_id']
+    permission_classes = [IsAuthenticated]

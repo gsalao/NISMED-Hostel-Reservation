@@ -45,7 +45,7 @@ class RoomRate(models.Model):
             raise ValidationError("A rate with this room type and occupancy already exists.")
 
     def __str__(self):
-        return f"{self.room_type_id} with {self.occupancy} people: {self.rate} Php"
+        return f"{self.room_type_id} room {self.occupancy} pax: ₱{self.rate}"
 
 class Room(models.Model):
     """

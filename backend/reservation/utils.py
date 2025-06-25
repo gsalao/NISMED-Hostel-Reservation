@@ -3,7 +3,7 @@ from room.models import Room, RoomType
 from reservation.models import StatusEnum
 from django.db.models import Sum 
 
-def are_dates_available(start_date, end_date, requested_counts, current_reservation=None) -> bool:
+def are_dates_available(start_date, end_date, requested_counts, current_reservation=None) -> tuple[bool, dict[str, int]]:
 
     # get how many reservations overlap
     overlapping_reservations = Reservation.objects.filter(
@@ -16,7 +16,7 @@ def are_dates_available(start_date, end_date, requested_counts, current_reservat
     if current_reservation and current_reservation.pk:
         overlapping_reservations = overlapping_reservations.exclude(pk=current_reservation.pk)
 
-    print(overlapping_reservations)
+    # print(overlapping_reservations)
 
     # Aggregate room counts for each type from all overlapping reservations
     aggregate = overlapping_reservations.aggregate(
@@ -31,14 +31,20 @@ def are_dates_available(start_date, end_date, requested_counts, current_reservat
         'C': aggregate['total_c'] or 0,
     }
 
+    is_valid = True
+
     # Compare against room type inventory
+    # 'room_type': excess amount of rooms
+    total_counts = {}
+
     for room_type in RoomType.objects.all():
         existing = current_counts.get(room_type.name, 0)
         requested = requested_counts.get(room_type.name, 0) 
 
-        print(f"{room_type.name}\nExisting: {existing}\nRequested: {requested}")
+        # print(f"{room_type.name}\nExisting: {existing}\nRequested: {requested}")
 
-        if existing + requested > room_type.available_rooms:
-            return False 
+        if requested != 0 and existing + requested > room_type.available_rooms:
+            is_valid = False
+            total_counts[room_type.name] = (existing + requested) - room_type.available_rooms 
 
-    return True
+    return (is_valid, total_counts)
