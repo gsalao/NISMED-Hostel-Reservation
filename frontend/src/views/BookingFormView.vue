@@ -143,6 +143,48 @@
   const totalGuests = computed(() => form.guests.F + form.guests.M)
 
   const submitForm = async () => {
+    // Check required top-level fields
+  const requiredFields = {
+    "For (Person/Company/Unit)": form.for,
+    "By (Contact Person/Address)": form.by,
+    "Email": form.email,
+    "Phone Number (09XX XXX XXXX)": form.contact,
+    "Address": form.address,
+    "Check-in": form.checkIn,
+    "Check-out": form.checkOut,
+  }
+
+  const missingFields = Object.entries(requiredFields)
+    .filter(([_, value]) => !value || value.toString().trim() === "")
+    .map(([label]) => label)
+
+  if (missingFields.length > 0) {
+    toast.warning(`Please fill in the following fields:\n\n${missingFields.join('\n')}`)
+    return
+  }
+
+  // Check room count (at least one room of any type must be > 0)
+  const roomCounts = [
+    form.rooms.airconPrivate.S, form.rooms.airconPrivate.D,
+    form.rooms.airconShared.S, form.rooms.airconShared.D,
+    form.rooms.ceilingFanShared.S, form.rooms.ceilingFanShared.D, form.rooms.ceilingFanShared.T
+  ]
+  const hasRoom = roomCounts.some(count => count > 0)
+
+  if (!hasRoom) {
+    toast.warning("Please select at least one room.")
+    return
+  }
+
+  // Check guest count (at least one of M or F > 0)
+  if (form.guests.M <= 0 && form.guests.F <= 0) {
+    toast.warning("Please enter at least one male or female guest.")
+    return
+  }
+
+
+
+    // Check date range
     const start = new Date(form.checkIn)
     const end = new Date(form.checkOut)
     const diffInDays = (end - start) / (1000 * 3600 * 24)
