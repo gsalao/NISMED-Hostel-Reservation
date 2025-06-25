@@ -22,6 +22,31 @@ def show_unavailable_rooms(total_count):
 
 @api_view(['POST'])
 def create_new_reservation(request):
+    """
+    This corresponds to the post response of adding a new reservation
+    This assumes that the request was done in format of:
+    {
+        "guest_name": "...",
+        "guest_email": "...",
+        "phone_number": "...",Add commentMore actions
+        "address": "...",
+        "start_date": "...",
+        "end_date": "...",
+        "for_person_name": "...",
+        "male_count": "...",
+        "female_count": "...",
+        "single_a_room_count": "...", 
+        "double_a_room_count": "...", 
+        "single_b_room_count": "...", 
+        "double_b_room_count": "...", 
+        "single_c_room_count": "...", 
+        "double_c_room_count": "...", 
+        "triple_c_room_count": "...", 
+        "verification_code": "...",
+        "is_verified": "...",
+    }
+    """
+
     guest_email = request.data.get("guest_email")
     guest_name = request.data.get("guest_name")
     phone_number = request.data.get("phone_number")
@@ -29,9 +54,6 @@ def create_new_reservation(request):
 
     start_date = request.data.get("start_date")
     end_date = request.data.get("end_date")
-
-    if end_date <= start_date:
-        return Response({"error": "End date cannot be before the start date"}, status=status.HTTP_400_BAD_REQUEST)
 
     reserved_room_counts = {
         'A': request.data.get("single_a_room_count", 0) + request.data.get("double_a_room_count", 0),
