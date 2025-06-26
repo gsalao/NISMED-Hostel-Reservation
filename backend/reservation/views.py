@@ -10,9 +10,7 @@ from django.core.mail import send_mail, BadHeaderError
 from smtplib import SMTPException
 from django.utils.crypto import get_random_string
 from decouple import config
-
-# Temporary store for unverified reservations (use cache/DB/session in production)
-PENDING_VERIFICATIONS = {}
+from django.core.cache import cache
 
 def show_unavailable_rooms(total_count):
     final_output = "You added an excess of: "
@@ -112,7 +110,9 @@ def create_new_reservation(request):
     }
 
     temp_id = get_random_string(length=12)
-    PENDING_VERIFICATIONS[temp_id] = reservation_data
+
+    # verification_code expiration set to 300 seconds == 5 minutes
+    cache.set(f"reservation:{temp_id}", reservation_data, timeout=10)
 
     verification_link = f"http://localhost:5173/verify?token={temp_id}"
 
@@ -148,10 +148,10 @@ def verify_reservation(request):
     token = request.data.get("reservation_token")
     code = request.data.get("code")
 
-    if token not in PENDING_VERIFICATIONS:
-      return Response({"error": "Invalid or expired reservation token."}, status=status.HTTP_404_NOT_FOUND)
+    reservation_data = cache.get(f"reservation:{token}")
 
-    reservation_data = PENDING_VERIFICATIONS[token]
+    if not reservation_data:
+      return Response({"error": "Invalid or expired reservation token."}, status=status.HTTP_404_NOT_FOUND)
 
     if reservation_data["verification_code"] != code:
       return Response({"error": "Invalid verification code."}, status=status.HTTP_400_BAD_REQUEST)
@@ -198,11 +198,11 @@ def verify_reservation(request):
                 """
             )
 
-            del PENDING_VERIFICATIONS[token]
+            cache.delete(f"reservation:{token}")
             return Response({"success": True})
 
         except (BadHeaderError, SMTPException) as e:
-            del PENDING_VERIFICATIONS[token]
+            cache.delete(f"reservation:{token}")
             return Response({"error": f"Failed to send confirmation email: {str(e)}"}, status=500)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -212,9 +212,9 @@ def verify_reservation(request):
 def get_reservation_email(request):
     token = request.GET.get('token')
 
-    if not token or token not in PENDING_VERIFICATIONS:
+    reservation_data = cache.get(f"reservation:{token}")
+
+    if not reservation_data:
         return Response({"error": "Invalid or expired reservation token."}, status=status.HTTP_404_NOT_FOUND)
-    
-    reservation_data = PENDING_VERIFICATIONS[token]
 
     return Response({ "email" : reservation_data["guest_email"] }, status=status.HTTP_200_OK)
