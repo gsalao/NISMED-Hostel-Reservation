@@ -9,6 +9,7 @@ from datetime import timedelta, datetime
 from django.core.mail import send_mail, BadHeaderError
 from smtplib import SMTPException
 from django.utils.crypto import get_random_string
+from decouple import config
 
 # Temporary store for unverified reservations (use cache/DB/session in production)
 PENDING_VERIFICATIONS = {}
@@ -175,7 +176,7 @@ def verify_reservation(request):
                 subject=f"NISMED Hostel Reservation - Reservation #{reservation.id}",
                 message=f"Reservation #{reservation.id} verified.",
                 from_email="noreply@up.edu.ph",
-                recipient_list=["ghsalao@up.edu.ph"],
+                recipient_list=[config('EMAIL_HOST_USER')],
                 fail_silently=True,
                 html_message=f"""
                     <p><strong>Reservation #{reservation.id}</strong> has been verified.</p>
