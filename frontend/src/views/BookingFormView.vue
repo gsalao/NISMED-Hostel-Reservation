@@ -18,8 +18,8 @@
           <input type="email" v-model="form.email" class="w-full border border-gray-300 rounded px-2 py-1" />
         </div>
         <div>
-          <label class="font-semibold">Phone Number (09XX XXX XXXX):</label>
-          <input type="text" v-model="form.contact" class="w-full border border-gray-300 rounded px-2 py-1" />
+          <label class="font-semibold">Phone Number:</label>
+          <input type="text" v-model="form.contact" placeholder="09XX XXX XXXX" class="w-full border border-gray-300 rounded px-2 py-1" />
         </div>
         <div class="lg:col-span-2">
           <label class="font-semibold">Address:</label>
@@ -181,6 +181,13 @@
     toast.warning("Please enter at least one male or female guest.")
     return
   }
+
+  const phoneRegex = /^09\d{2} \d{3} \d{4}$/;
+  if (!phoneRegex.test(form.contact)) {
+    toast.warning("Please enter a valid phone number in the format:\n09XX XXX XXXX");
+    return;
+  }
+
 
     // Check date range
     const start = new Date(form.checkIn)
