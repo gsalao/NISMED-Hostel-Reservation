@@ -13,11 +13,10 @@ from decouple import config
 from django.core.cache import cache
 
 def show_unavailable_rooms(total_count):
-    final_output = "You added an excess of: "
-    for (key,value) in total_count.items():
-        final_output += f"{value} {key} room/s"
+    final_output = "You cannot reserve your listed amount of: "
+    for (key,_) in total_count.items():
+        final_output += f"{key} room/s"
     return final_output 
-
 
 '''
 possible views for reservation:
