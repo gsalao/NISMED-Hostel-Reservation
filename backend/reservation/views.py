@@ -112,7 +112,7 @@ def create_new_reservation(request):
     temp_id = get_random_string(length=12)
 
     # verification_code expiration set to 300 seconds == 5 minutes
-    cache.set(f"reservation:{temp_id}", reservation_data, timeout=10)
+    cache.set(f"reservation:{temp_id}", reservation_data, timeout=300)
 
     verification_link = f"http://localhost:5173/verify?token={temp_id}"
 
