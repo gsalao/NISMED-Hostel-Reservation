@@ -9,7 +9,6 @@ from datetime import timedelta, datetime
 from django.core.mail import send_mail, BadHeaderError
 from smtplib import SMTPException
 from django.utils.crypto import get_random_string
-from decouple import config
 
 # Temporary store for unverified reservations (use cache/DB/session in production)
 PENDING_VERIFICATIONS = {}
@@ -149,23 +148,23 @@ def verify_reservation(request):
     code = request.data.get("code")
 
     if token not in PENDING_VERIFICATIONS:
-        return Response({"error": "Invalid or expired reservation token."}, status=status.HTTP_404_NOT_FOUND)
+      return Response({"error": "Invalid or expired reservation token."}, status=status.HTTP_404_NOT_FOUND)
 
     reservation_data = PENDING_VERIFICATIONS[token]
 
     if reservation_data["verification_code"] != code:
-        return Response({"error": "Invalid verification code."}, status=status.HTTP_400_BAD_REQUEST)
+      return Response({"error": "Invalid verification code."}, status=status.HTTP_400_BAD_REQUEST)
 
     # Create guest only after successful verification
     try:
-        guest = insert_guest(
-            reservation_data["guest_email"],
-            reservation_data["guest_name"],
-            reservation_data["phone_number"],
-            reservation_data["address"]
+      guest = insert_guest(
+          reservation_data["guest_email"],
+          reservation_data["guest_name"],
+          reservation_data["phone_number"],
+          reservation_data["address"]
         )
     except ValidationError as e:
-        return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
+      return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
 
     serializer = ReservationSerializer(data={**reservation_data, "guest_id": guest.id})
     if serializer.is_valid():
@@ -176,7 +175,7 @@ def verify_reservation(request):
                 subject=f"NISMED Hostel Reservation - Reservation #{reservation.id}",
                 message=f"Reservation #{reservation.id} verified.",
                 from_email="noreply@up.edu.ph",
-                recipient_list=[config('EMAIL_HOST_USER')],
+                recipient_list=["ghsalao@up.edu.ph"],
                 fail_silently=True,
                 html_message=f"""
                     <p><strong>Reservation #{reservation.id}</strong> has been verified.</p>
@@ -206,3 +205,17 @@ def verify_reservation(request):
             return Response({"error": f"Failed to send confirmation email: {str(e)}"}, status=500)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def get_reservation_email(request):
+    token = request.GET.get('token')
+
+    if not token or token not in PENDING_VERIFICATIONS:
+        print("nope, it still doesnt fucking work", token, "pending", PENDING_VERIFICATIONS)
+        return Response({"error": "Invalid or expired reservation token."}, status=status.HTTP_404_NOT_FOUND)
+    
+    reservation_data = PENDING_VERIFICATIONS[token]
+
+    print("nice it fucking works")
+    return Response({ "email" : reservation_data["guest_email"] }, status=status.HTTP_200_OK)

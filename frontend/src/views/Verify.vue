@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-xl mx-auto mt-20 p-6 border rounded shadow bg-white">
     <h2 class="text-2xl font-bold mb-4 text-center">Reservation Verification</h2>
-    <p class="mb-4 text-justify">Please enter the 6-digit code sent to your email to verify your reservation. A <strong>confirmation message</strong> will be sent to the email you registered.</p>
+    <p class="mb-4 text-justify">Please enter the 6-digit code sent to <strong>{{ emailUsed }}</strong> to verify your reservation.</p>
 
     <input
       v-model="code"
@@ -37,12 +37,42 @@
   const error = ref('')
   let loadingId = null
 
-  onMounted(() => {
+  const emailUsed = ref('')
+
+  onMounted(async () => {
     if (!token.value) {
       toast.warning("No reservation token found. Redirecting...")
       setTimeout(() => router.push('/'), 2000)
+      return
+    }
+
+    try {
+      const backendUrl = import.meta.env.VITE_BACKEND_BASE_URL
+      const res = await fetch(`${backendUrl}/reserve/get_reservation_email/?token=${token.value}`)
+
+      if (res.ok) {
+        const data = await res.json()
+        emailUsed.value = data.email
+      } else {
+        let errorText = `Server returned ${res.status}`
+        try {
+          const errJson = await res.json()
+          errorText = errJson?.error || errorText
+        } catch (_) {
+          errorText = "Reservation token expired or invalid."
+        }
+
+        console.warn("Failed to fetch email:", errorText)
+        toast.error(errorText)
+        // setTimeout(() => router.push('/'), 2000)
+      }
+    } catch (err) {
+      console.error("Network error while fetching email:", err)
+      toast.error("Network error while fetching email: " + err.message)
+      setTimeout(() => router.push('/'), 2000)
     }
   })
+
 
   const verify = async () => {
     error.value = ''
@@ -67,7 +97,7 @@
 
       if (res.ok && result.success) {
         verified.value = true
-        toast.success("Reservation verified successfully! Please check your email.")
+        toast.success(`Reservation verified successfully! Please check the email sent to ${emailUsed.value}.`)
         setTimeout(() => router.push('/'), 3000)
       } else {
         error.value = result.error || "Verification failed"
