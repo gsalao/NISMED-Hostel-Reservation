@@ -212,10 +212,8 @@ def get_reservation_email(request):
     token = request.GET.get('token')
 
     if not token or token not in PENDING_VERIFICATIONS:
-        print("nope, it still doesnt fucking work", token, "pending", PENDING_VERIFICATIONS)
         return Response({"error": "Invalid or expired reservation token."}, status=status.HTTP_404_NOT_FOUND)
     
     reservation_data = PENDING_VERIFICATIONS[token]
 
-    print("nice it fucking works")
     return Response({ "email" : reservation_data["guest_email"] }, status=status.HTTP_200_OK)
