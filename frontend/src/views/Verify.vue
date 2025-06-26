@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-xl mx-auto mt-20 p-6 border rounded shadow bg-white">
     <h2 class="text-2xl font-bold mb-4 text-center">Reservation Verification</h2>
-    <p class="mb-4 text-justify">Please enter the 6-digit code sent to <strong>{{ emailUsed }}</strong> to verify your reservation.</p>
+    <p class="mb-4 text-justify">Please enter the 6-digit code sent to <strong>{{ emailUsed }}</strong> to verify your reservation. The code will expire in 5 minutes.</p>
 
     <input
       v-model="code"
