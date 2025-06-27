@@ -11,9 +11,9 @@ class ReservedRoomInline(admin.TabularInline):
         )
 
 class ReservationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'guest_id', 'status', 'reservation_date', 'start_date', 'end_date', 'assigned_a_room')
+    list_display = ('id', 'guest', 'status', 'reservation_date', 'start_date', 'end_date', 'assigned_a_room')
     list_editable = ('status', 'assigned_a_room')
-    list_filter = ('guest_id', 'status', 'reservation_date')
+    list_filter = ('guest', 'status', 'reservation_date')
     list_per_page = 10
     inlines = [ReservedRoomInline]
 
