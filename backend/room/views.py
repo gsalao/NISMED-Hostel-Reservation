@@ -43,12 +43,12 @@ class RoomAPIView(generics.ListAPIView):
     # queryset = Room.objects.all()
     serializer_class = RoomSerializer 
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['room_type']
+    filterset_fields = ['room_type_id']
     permission_classes = [IsAuthenticated]
     def get_queryset(self):
         queryset = Room.objects.filter(is_active=True)
 
-        room_type = self.request.query_params.get('room_type')
+        room_type = self.request.query_params.get('room_type_id')
         reservation = self.request.query_params.get('reservation')
 
         if room_type:
@@ -75,5 +75,5 @@ class RoomRateAPIView(generics.ListAPIView):
     queryset = RoomRate.objects.all()
     serializer_class = RoomRateSerializer 
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['room_type']
+    filterset_fields = ['room_type_id']
     permission_classes = [IsAuthenticated]
