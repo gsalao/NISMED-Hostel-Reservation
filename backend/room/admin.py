@@ -10,7 +10,7 @@ class RoomTypeAdmin(admin.ModelAdmin):
 class RoomRateAdmin(admin.ModelAdmin):
     list_display = ('room_type', 'occupancy', 'rate') 
     list_filter = ('room_type', 'occupancy')
-    ordering = ('-room_type',)
+    ordering = ('-room_type', 'occupancy')
     list_per_page = 10
 
 class RoomAdmin(admin.ModelAdmin):
