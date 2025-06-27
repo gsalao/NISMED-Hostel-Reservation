@@ -166,7 +166,7 @@ def verify_reservation(request):
     except ValidationError as e:
       return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
 
-    serializer = ReservationSerializer(data={**reservation_data, "guest_id": guest.id})
+    serializer = ReservationSerializer(data={**reservation_data, "guest": guest.id})
     if serializer.is_valid():
         reservation = serializer.save(is_verified=True)
 

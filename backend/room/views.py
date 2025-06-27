@@ -48,14 +48,14 @@ class RoomAPIView(generics.ListAPIView):
     def get_queryset(self):
         queryset = Room.objects.filter(is_active=True)
 
-        room_type_id = self.request.query_params.get('room_type_id')
-        reservation_id = self.request.query_params.get('reservation')
+        room_type = self.request.query_params.get('room_type_id')
+        reservation = self.request.query_params.get('reservation')
 
-        if room_type_id:
-            queryset = queryset.filter(room_type_id=room_type_id)
+        if room_type:
+            queryset = queryset.filter(room_type=room_type)
 
-        if reservation_id:
-            reservation = Reservation.objects.get(pk=reservation_id)
+        if reservation:
+            reservation = Reservation.objects.get(pk=reservation)
             start_date = reservation.start_date
             end_date = reservation.end_date
 
@@ -63,7 +63,7 @@ class RoomAPIView(generics.ListAPIView):
             overlapping_reserved_rooms = ReservedRoom.objects.filter(
                 reservation__start_date__lt=end_date,
                 reservation__end_date__gt=start_date
-            ).exclude(reservation=reservation).values_list('room_id', flat=True)
+            ).exclude(reservation=reservation).values_list('room', flat=True)
 
             # Exclude these rooms
             queryset = queryset.exclude(id__in=overlapping_reserved_rooms)

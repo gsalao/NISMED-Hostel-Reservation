@@ -3,8 +3,9 @@
   "model": "reservation.reservedroom",
   "pk": 1,
   "fields": {
-    "reservation": 3,
-    "room": 1,
+    "reservation": 1,
+    "room_type": 3,
+    "room": 3,
     "room_rate": 3
   }
 },
@@ -13,6 +14,7 @@
   "pk": 2,
   "fields": {
     "reservation": 2,
+    "room_type": 3,
     "room": 2,
     "room_rate": 2
   }
@@ -21,18 +23,20 @@
   "model": "reservation.reservedroom",
   "pk": 3,
   "fields": {
-    "reservation": 1,
-    "room": 3,
-    "room_rate": 3
+    "reservation": 3,
+    "room_type": 3,
+    "room": 1,
+    "room_rate": 2
   }
 },
 {
   "model": "reservation.reservedroom",
   "pk": 4,
   "fields": {
-    "reservation": 4,
-    "room": 1,
-    "room_rate": 2
+    "reservation": 5,
+    "room_type": 3,
+    "room": 3,
+    "room_rate": 3
   }
 },
 {
@@ -40,8 +44,9 @@
   "pk": 5,
   "fields": {
     "reservation": 5,
-    "room": 1,
-    "room_rate": 2
+    "room_type": 3,
+    "room": 2,
+    "room_rate": 3
   }
 }
 ]

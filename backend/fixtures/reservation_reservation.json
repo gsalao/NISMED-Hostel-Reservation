@@ -3,7 +3,8 @@
   "model": "reservation.reservation",
   "pk": 1,
   "fields": {
-    "guest_id": 1,
+    "guest": 1,
+    "assigned_a_room": true,
     "status": "CHECKED IN",
     "reservation_date": "2025-06-20T06:43:54.613Z",
     "start_date": "2025-06-20",
@@ -18,14 +19,17 @@
     "double_b_room_count": 0,
     "single_c_room_count": 0,
     "double_c_room_count": 0,
-    "triple_c_room_count": 0
+    "triple_c_room_count": 0,
+    "verification_code": null,
+    "is_verified": false
   }
 },
 {
   "model": "reservation.reservation",
   "pk": 2,
   "fields": {
-    "guest_id": 2,
+    "guest": 2,
+    "assigned_a_room": true,
     "status": "CHECKED IN",
     "reservation_date": "2025-06-20T06:44:32.835Z",
     "start_date": "2025-06-20",
@@ -40,14 +44,17 @@
     "double_b_room_count": 0,
     "single_c_room_count": 0,
     "double_c_room_count": 0,
-    "triple_c_room_count": 0
+    "triple_c_room_count": 0,
+    "verification_code": null,
+    "is_verified": false
   }
 },
 {
   "model": "reservation.reservation",
   "pk": 3,
   "fields": {
-    "guest_id": 3,
+    "guest": 3,
+    "assigned_a_room": true,
     "status": "CHECKED IN",
     "reservation_date": "2025-06-20T06:44:53.165Z",
     "start_date": "2025-06-20",
@@ -62,14 +69,17 @@
     "double_b_room_count": 0,
     "single_c_room_count": 0,
     "double_c_room_count": 0,
-    "triple_c_room_count": 0
+    "triple_c_room_count": 0,
+    "verification_code": null,
+    "is_verified": false
   }
 },
 {
   "model": "reservation.reservation",
   "pk": 4,
   "fields": {
-    "guest_id": 4,
+    "guest": 4,
+    "assigned_a_room": false,
     "status": "CANCELLED",
     "reservation_date": "2025-06-20T06:48:13.477Z",
     "start_date": "2025-06-19",
@@ -84,14 +94,17 @@
     "double_b_room_count": 0,
     "single_c_room_count": 0,
     "double_c_room_count": 0,
-    "triple_c_room_count": 0
+    "triple_c_room_count": 0,
+    "verification_code": null,
+    "is_verified": false
   }
 },
 {
   "model": "reservation.reservation",
   "pk": 5,
   "fields": {
-    "guest_id": 1,
+    "guest": 1,
+    "assigned_a_room": true,
     "status": "CHECKED IN",
     "reservation_date": "2025-06-20T07:07:22.637Z",
     "start_date": "2025-06-19",
@@ -106,7 +119,9 @@
     "double_b_room_count": 0,
     "single_c_room_count": 0,
     "double_c_room_count": 0,
-    "triple_c_room_count": 0
+    "triple_c_room_count": 0,
+    "verification_code": null,
+    "is_verified": false
   }
 }
 ]

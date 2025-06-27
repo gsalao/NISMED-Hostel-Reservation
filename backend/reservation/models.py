@@ -37,7 +37,7 @@ class Reservation(models.Model):
 
     Attributes
     ----------
-    guest_id: Guest
+    guest: Guest
         The guest who did the reservation
     status: CharField 
         The status of the reservation 
@@ -59,7 +59,7 @@ class Reservation(models.Model):
         The number of inputted rooms to be reserved
 
     """
-    guest_id = models.ForeignKey(Guest, on_delete=models.CASCADE)
+    guest = models.ForeignKey(Guest, on_delete=models.CASCADE)
     assigned_a_room = models.BooleanField(default=False)
     status = models.CharField(max_length=1024, choices=StatusEnum.choices(), default=StatusEnum.CHECKED_IN.value)
     reservation_date = models.DateTimeField(auto_now_add=True)

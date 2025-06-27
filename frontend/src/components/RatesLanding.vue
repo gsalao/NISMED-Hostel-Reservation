@@ -54,7 +54,7 @@
       const grouped = {}  // { 'Type A': { Single: 1234, Double: 2345 }, ... }
 
       data.forEach(rate => {
-        const type = rate.room_type_id
+        const type = rate.room_type
         // Note Room Type C ID = 1, Room Type A ID = 3 (backend-based)
         const typeAlpha = type === 1 ? 'Type C' : type === 2 ? 'Type B' : 'Type A'
         const occ = rate.occupancy
