@@ -90,12 +90,28 @@ class ReservationTestCase(TestCase):
         except ValidationError:
             self.fail("Valid reservations should not raise ValidationError")
 
+    def test_valid_reservation_with_one_cancelled(self):
+        reservation_1 = self.create_reservation(status=StatusEnum.CHECKED_OUT.value,)
+        reservation_2 = self.create_reservation()
+        try:
+            reservation_1.full_clean()
+            reservation_2.full_clean()
+        except ValidationError:
+            self.fail("Valid reservations should not raise ValidationError")
+
+    def test_reservation_exactly_two_weeks(self):
+        # Exactly 2 weeks should be allowed
+        reservation = self.create_reservation(end_date=self.today + timedelta(weeks=2))
+        try:
+            reservation.full_clean()
+        except ValidationError:
+            self.fail("Exactly two weeks reservation should be allowed")
+
     def test_invalid_number_of_guests(self):
         reservation= self.create_reservation(male_count=2)
         with self.assertRaises(ValidationError) as ctx:
             reservation.full_clean()
         self.assertIn("The total guest count does not add up", str(ctx.exception))
-
 
     def test_end_date_before_start_date(self):
         reservation = self.create_reservation(end_date=self.today - timedelta(days=1))
@@ -265,3 +281,61 @@ class ReservationTestCase(TestCase):
             reservation_4.full_clean()
         self.assertIn("The reservation cannot be made; You cannot reserve your listed amount of: A room/sB room/sC room/s", str(ctx.exception))
 
+    def test_end_date_edited_with_reservation_made_previously(self):
+        reservation_1 = self.create_reservation()
+        reservation_2 = self.create_reservation(start_date=self.tomorrow, end_date=self.after_tomorrow)
+        reservation_1.save()
+        reservation_2.save()
+        with self.assertRaises(ValidationError) as ctx:
+            reservation_1.end_date = self.after_tomorrow
+            reservation_1.full_clean()
+        self.assertIn("The reservation cannot be made; You cannot reserve your listed amount of: A room/s", str(ctx.exception))
+
+    def test_invalid_gender_distribution(self):
+        # 1 male in a triple room should be invalid
+        reservation = self.create_reservation(
+            single_a_room_count=0,
+            triple_c_room_count=1,
+            male_count=1,
+            female_count=0
+        )
+        with self.assertRaises(ValidationError) as ctx:
+            reservation.full_clean()
+        self.assertIn("The total guest count does not add up", str(ctx.exception))
+
+    def test_room_capacity_exceeded(self):
+        # Trying to put 3 people in a single room
+        reservation = self.create_reservation(
+            single_a_room_count=1,
+            male_count=3,
+            female_count=0
+        )
+        with self.assertRaises(ValidationError) as ctx:
+            reservation.full_clean()
+        self.assertIn("The total guest count does not add up", str(ctx.exception))
+
+    def test_mixed_room_type_reservation(self):
+        # Reserve one A room and one B room
+        reservation = self.create_reservation(
+            single_a_room_count=1,
+            single_b_room_count=1,
+            male_count=2
+        )
+        try:
+            reservation.full_clean()
+        except ValidationError:
+            self.fail("Mixed room type reservation should be allowed")
+
+    def test_room_availability_after_reservation_deletion(self):
+        # Create and delete a reservation, then try to reuse the room
+        res1 = self.create_reservation()
+        res1.save()
+        res1.delete()
+        
+        # Should be able to reuse the room now
+        res2 = self.create_reservation()
+        try:
+            res2.full_clean()
+            res2.save()
+        except ValidationError:
+            self.fail("Should be able to reserve after previous reservation is deleted")
