@@ -47,6 +47,7 @@ def create_new_reservation(request):
         "triple_c_room_count": "...", 
         "verification_code": "...",
         "is_verified": "...",
+        "guest_details": "...",
     }
     """
 
