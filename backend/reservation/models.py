@@ -23,12 +23,15 @@ status_symbols = {
     4: StatusEnum.CHECKED_OUT,
 }
 
-status_symbols_reverse = {
-    StatusEnum.CHECKED_IN: 1,
-    StatusEnum.NO_SHOW: 2,
-    StatusEnum.CANCELLED: 3,
-    StatusEnum.CHECKED_OUT: 4,
-}
+class Capacity(Enum):
+    SINGLE = 'Single'
+    DOUBLE = 'Double'
+    TRIPLE = 'Triple'
+
+    @classmethod
+    def choices(cls):
+        return [(tag.value, tag.value) for tag in cls]
+
 
 # Create your models here.
 class Reservation(models.Model):
@@ -132,6 +135,7 @@ class ReservedRoom(models.Model):
     """
     reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
     room_type = models.ForeignKey(RoomType , on_delete=models.CASCADE)
+    capacity = models.CharField(max_length=1024, choices=Capacity.choices(), blank=True)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     room_rate = models.ForeignKey(RoomRate, on_delete=models.CASCADE)
 

@@ -31,7 +31,7 @@ class ReservedRoomInline(admin.TabularInline):
 class ReservedRoomForm(forms.ModelForm):
     class Meta:
         model = ReservedRoom
-        fields = ['reservation', 'room_type', 'room', 'room_rate']
+        fields = ['reservation', 'room_type',  'room', 'room_rate']
 
     def clean(self):
         cleaned_data = super().clean()
@@ -57,7 +57,7 @@ class ReservationAdmin(admin.ModelAdmin):
     inlines = [ReservedRoomInline]
 
 class ReservedRoomAdmin(admin.ModelAdmin):
-    list_display = ('reservation', 'start_date', 'end_date', 'room_type', 'room', 'room_rate',) 
+    list_display = ('reservation', 'start_date', 'end_date', 'room_type', 'capacity', 'room', 'room_rate',) 
     list_filter = ('reservation', 'reservation__start_date', 'reservation__end_date', 'room_type', 'room')
     list_per_page = 10
     form = ReservedRoomForm
