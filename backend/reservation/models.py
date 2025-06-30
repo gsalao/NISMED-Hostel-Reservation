@@ -23,12 +23,15 @@ status_symbols = {
     4: StatusEnum.CHECKED_OUT,
 }
 
-status_symbols_reverse = {
-    StatusEnum.CHECKED_IN: 1,
-    StatusEnum.NO_SHOW: 2,
-    StatusEnum.CANCELLED: 3,
-    StatusEnum.CHECKED_OUT: 4,
-}
+class Capacity(Enum):
+    SINGLE = 'Single'
+    DOUBLE = 'Double'
+    TRIPLE = 'Triple'
+
+    @classmethod
+    def choices(cls):
+        return [(tag.value, tag.value) for tag in cls]
+
 
 # Create your models here.
 class Reservation(models.Model):
@@ -97,12 +100,21 @@ class Reservation(models.Model):
             raise ValidationError("End date must only be within 2 weeks from the start date")
 
         # Validation: room counts cannot be all zero
-        if self.single_a_room_count == self.single_b_room_count == self.single_c_room_count == self.double_a_room_count == self.double_b_room_count == self.double_c_room_count == self.triple_c_room_count == 0:
+        if self.is_room_count_zero(): 
             raise ValidationError("There must be 1 occupant in a room")
 
         valid_dates, total_counts = are_dates_available(self.start_date, self.end_date, self.get_room_counts(), self) 
         if not valid_dates and self.status == StatusEnum.CHECKED_IN.value: 
             raise ValidationError(f"The reservation cannot be made; {self.show_unavailable_rooms(total_counts)}")
+
+        if self.male_count + self.female_count != self.get_total_guest_count():
+            raise ValidationError(f"The total guest count does not add up")
+
+    def is_room_count_zero(self):
+        return self.single_a_room_count == self.single_b_room_count == self.single_c_room_count == self.double_a_room_count == self.double_b_room_count == self.double_c_room_count == self.triple_c_room_count == 0
+
+    def get_total_guest_count(self):
+        return self.single_a_room_count + self.single_b_room_count + self.single_c_room_count + self.double_a_room_count * 2 + self.double_b_room_count * 2  + self.double_c_room_count * 2 + self.triple_c_room_count * 3
 
     def get_room_counts(self):
         return {
@@ -134,6 +146,7 @@ class ReservedRoom(models.Model):
     """
     reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
     room_type = models.ForeignKey(RoomType , on_delete=models.CASCADE)
+    capacity = models.CharField(max_length=1024, choices=Capacity.choices(), blank=True)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     room_rate = models.ForeignKey(RoomRate, on_delete=models.CASCADE)
 
@@ -154,5 +167,6 @@ class ReservedRoom(models.Model):
 
         if overlapping_reservations.exists():
             raise ValidationError(f"Room '{self.room}' is already reserved during the selected period.")
+
     def __str__(self):
         return f"A reserved room for Reservation #{self.reservation.id}"
