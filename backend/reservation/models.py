@@ -98,7 +98,7 @@ class Reservation(models.Model):
             raise ValidationError("End date must only be within 2 weeks from the start date")
 
         # Validation: room counts cannot be all zero
-        if self.is_room_count_zero: 
+        if self.is_room_count_zero(): 
             raise ValidationError("There must be 1 occupant in a room")
 
         valid_dates, total_counts = are_dates_available(self.start_date, self.end_date, self.get_room_counts(), self) 
