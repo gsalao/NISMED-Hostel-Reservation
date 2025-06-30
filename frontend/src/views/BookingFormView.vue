@@ -235,6 +235,11 @@
       }
     }
 
+    const guestDetailsCSV = form.guestDetails
+      .map(guest => `${guest.name}, ${guest.ageRange}`)
+      .join('\n');
+
+
     const payload = {
       guest_name: form.by,
       guest_email: form.email,
@@ -252,7 +257,7 @@
       single_c_room_count: form.rooms.ceilingFanShared.S,
       double_c_room_count: form.rooms.ceilingFanShared.D,
       triple_c_room_count: form.rooms.ceilingFanShared.T,
-      guest_details: form.guestDetails,
+      guest_details: guestDetailsCSV,
     }
 
     const loadingToastId = toast.info("Sending reservation...", { timeout: false })

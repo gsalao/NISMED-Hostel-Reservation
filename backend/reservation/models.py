@@ -84,6 +84,8 @@ class Reservation(models.Model):
     verification_code = models.CharField(max_length=6, blank=True, null=True)
     is_verified = models.BooleanField(default=False)
 
+    guest_details = models.TextField(blank=True, null=True, help_text="CSV-like guest info: Name, AgeRange")
+
     def clean(self):
         from .utils import are_dates_available
         # Validation: End date after start

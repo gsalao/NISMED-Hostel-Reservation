@@ -66,6 +66,8 @@ def create_new_reservation(request):
     double_c_room_count = request.data.get("double_c_room_count") 
     triple_c_room_count = request.data.get("triple_c_room_count") 
 
+    guest_details = request.data.get("guest_details", "")
+
     reserved_room_counts = {
         'A': single_a_room_count + double_a_room_count,
         'B': single_b_room_count + double_b_room_count,
@@ -106,6 +108,7 @@ def create_new_reservation(request):
         "triple_c_room_count": triple_c_room_count,
         "verification_code": verification_code,
         "is_verified": False,
+        "guest_details": guest_details,
     }
 
     temp_id = get_random_string(length=12)
