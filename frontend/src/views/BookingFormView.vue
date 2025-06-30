@@ -87,6 +87,27 @@
         </div>
       </div>
 
+      <!-- Guest Information -->
+      <div v-if="totalGuests > 0" class="mt-6">
+        <h2 class="font-semibold mb-2">Guest Information ({{ totalGuests }})</h2>
+
+        <!-- Grid of guest cards: 1 column on small screens, 2 columns on md and up -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div v-for="(guest, index) in form.guestDetails" :key="index" class="p-4 border rounded">
+            <label class="block font-semibold mb-1">Guest #{{ index + 1 }} Name</label>
+            <input v-model="guest.name" type="text" class="w-full border border-gray-300 rounded px-2 py-1 mb-2" />
+
+            <label class="block font-semibold mb-1">Age Range</label>
+            <select v-model="guest.ageRange" class="w-full border border-gray-300 rounded px-2 py-1">
+              <option disabled value="">Select age range</option>
+              <option value="13-17">13 to 17</option>
+              <option value="18+">18 years and above</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+
       <!-- Reminders -->
       <div class="mt-6 p-4 border rounded bg-gray-50">
         <h2 class="font-semibold mb-2">Reminders:</h2>
@@ -110,7 +131,7 @@
 </template>
 
 <script setup>
-  import { reactive, computed } from 'vue'
+  import { reactive, computed, watch } from 'vue'
   import { useRouter } from 'vue-router'
   import { useToast } from 'vue-toastification'
 
@@ -138,58 +159,65 @@
       ceilingFanShared: { S: 0, D: 0, T: 0 },
     },
     guests: { F: 0, M: 0 },
+    guestDetails: [],
   })
 
   const totalGuests = computed(() => form.guests.F + form.guests.M)
 
+  watch(totalGuests, (newCount) => {
+    const current = form.guestDetails.length
+    if (newCount > current) {
+      for (let i = current; i < newCount; i++) {
+        form.guestDetails.push({ name: '', ageRange: '' })
+      }
+    } else if (newCount < current) {
+      form.guestDetails.splice(newCount)
+    }
+  })
+
   const submitForm = async () => {
-    // Check required top-level fields
-  const requiredFields = {
-    "For (Person/Company/Unit)": form.for,
-    "By (Contact Person/Address)": form.by,
-    "Email": form.email,
-    "Phone Number (09XX XXX XXXX)": form.contact,
-    "Address": form.address,
-    "Check-in": form.checkIn,
-    "Check-out": form.checkOut,
-  }
+    const requiredFields = {
+      "For (Person/Company/Unit)": form.for,
+      "By (Contact Person/Address)": form.by,
+      "Email": form.email,
+      "Phone Number (09XX XXX XXXX)": form.contact,
+      "Address": form.address,
+      "Check-in": form.checkIn,
+      "Check-out": form.checkOut,
+    }
 
-  const missingFields = Object.entries(requiredFields)
-    .filter(([_, value]) => !value || value.toString().trim() === "")
-    .map(([label]) => label)
+    const missingFields = Object.entries(requiredFields)
+      .filter(([_, value]) => !value || value.toString().trim() === "")
+      .map(([label]) => label)
 
-  if (missingFields.length > 0) {
-    toast.warning(`Please fill in the following fields:\n\n${missingFields.join('\n')}`)
-    return
-  }
+    if (missingFields.length > 0) {
+      toast.warning(`Please fill in the following fields:\n\n${missingFields.join('\n')}`)
+      return
+    }
 
-  // Check room count (at least one room of any type must be > 0)
-  const roomCounts = [
-    form.rooms.airconPrivate.S, form.rooms.airconPrivate.D,
-    form.rooms.airconShared.S, form.rooms.airconShared.D,
-    form.rooms.ceilingFanShared.S, form.rooms.ceilingFanShared.D, form.rooms.ceilingFanShared.T
-  ]
-  const hasRoom = roomCounts.some(count => count > 0)
+    const roomCounts = [
+      form.rooms.airconPrivate.S, form.rooms.airconPrivate.D,
+      form.rooms.airconShared.S, form.rooms.airconShared.D,
+      form.rooms.ceilingFanShared.S, form.rooms.ceilingFanShared.D, form.rooms.ceilingFanShared.T
+    ]
+    const hasRoom = roomCounts.some(count => count > 0)
 
-  if (!hasRoom) {
-    toast.warning("Please select at least one room.")
-    return
-  }
+    if (!hasRoom) {
+      toast.warning("Please select at least one room.")
+      return
+    }
 
-  // Check guest count (at least one of M or F > 0)
-  if (form.guests.M <= 0 && form.guests.F <= 0) {
-    toast.warning("Please enter at least one male or female guest.")
-    return
-  }
+    if (form.guests.M <= 0 && form.guests.F <= 0) {
+      toast.warning("Please enter at least one male or female guest.")
+      return
+    }
 
-  const phoneRegex = /^09\d{2} \d{3} \d{4}$/;
-  if (!phoneRegex.test(form.contact)) {
-    toast.warning("Please enter a valid phone number in the format:\n09XX XXX XXXX");
-    return;
-  }
+    const phoneRegex = /^09\d{2} \d{3} \d{4}$/
+    if (!phoneRegex.test(form.contact)) {
+      toast.warning("Please enter a valid phone number in the format:\n09XX XXX XXXX")
+      return
+    }
 
-
-    // Check date range
     const start = new Date(form.checkIn)
     const end = new Date(form.checkOut)
     const diffInDays = (end - start) / (1000 * 3600 * 24)
@@ -197,6 +225,14 @@
     if (diffInDays > 14) {
       toast.warning("Reservation cannot exceed 14 days. Please shorten the stay.")
       return
+    }
+
+    for (let i = 0; i < totalGuests.value; i++) {
+      const guest = form.guestDetails[i]
+      if (!guest.name || !guest.ageRange) {
+        toast.warning(`Please complete Guest #${i + 1} information.`)
+        return
+      }
     }
 
     const payload = {
@@ -216,6 +252,7 @@
       single_c_room_count: form.rooms.ceilingFanShared.S,
       double_c_room_count: form.rooms.ceilingFanShared.D,
       triple_c_room_count: form.rooms.ceilingFanShared.T,
+      guest_details: form.guestDetails,
     }
 
     const loadingToastId = toast.info("Sending reservation...", { timeout: false })
@@ -226,34 +263,34 @@
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
-      });
+      })
 
-      let data = {};
+      let data = {}
       try {
-        data = await res.json();
-      } catch (jsonErr) {
-        toast.dismiss(loadingToastId);
-        toast.error("Invalid response from server.");
-        return;
+        data = await res.json()
+      } catch {
+        toast.dismiss(loadingToastId)
+        toast.error("Invalid response from server.")
+        return
       }
 
       if (!res.ok || !data.reservation_token) {
-        toast.dismiss(loadingToastId);
+        toast.dismiss(loadingToastId)
         const errorMessages = data?.error || Object.entries(data)
           .map(([field, messages]) => `${field.replace('_', ' ')}: ${Array.isArray(messages) ? messages.join(', ') : messages}`)
-          .join('\n');
-        toast.error(`Reservation failed:\n\n${errorMessages}`);
-        return;
+          .join('\n')
+        toast.error(`Reservation failed:\n\n${errorMessages}`)
+        return
       }
 
-      toast.dismiss(loadingToastId);
-      toast.success("Verification email sent! Redirecting to verification page...");
-      router.push({ name: 'verify', query: { token: data.reservation_token } });
+      toast.dismiss(loadingToastId)
+      toast.success("Verification email sent! Redirecting to verification page...")
+      router.push({ name: 'verify', query: { token: data.reservation_token } })
 
     } catch (err) {
-      toast.dismiss(loadingToastId);
-      console.error("Network error:", err);
-      toast.error("Network error: could not submit reservation.");
+      toast.dismiss(loadingToastId)
+      console.error("Network error:", err)
+      toast.error("Network error: could not submit reservation.")
     }
   }
 </script>
