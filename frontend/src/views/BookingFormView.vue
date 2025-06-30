@@ -235,6 +235,22 @@
       }
     }
 
+    const totalGuestCount = form.rooms.airconPrivate.S        +
+                            form.rooms.airconShared.S         +
+                            form.rooms.ceilingFanShared.S     +
+                            form.rooms.airconPrivate.D    * 2 +
+                            form.rooms.airconShared.D    * 2 +
+                            form.rooms.ceilingFanShared.D * 2 +
+                            form.rooms.ceilingFanShared.T * 3
+
+    console.log(totalGuestCount)
+    console.log(totalGuests.value)
+
+    if (totalGuestCount !== totalGuests.value) {
+      toast.warning("The total guest count does not add up.")
+      return
+    } 
+
     const guestDetailsCSV = form.guestDetails
       .map(guest => `${guest.name}, ${guest.ageRange}`)
       .join('\n');
