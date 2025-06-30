@@ -74,12 +74,28 @@ class ReservationTestCase(TestCase):
 
     def test_multiple_valid_reservation_same_rooms(self):
         reservation_1 = self.create_reservation(single_a_room_count=0, single_c_room_count=2, male_count=2)
-        reservation_2 = self.create_reservation(single_a_room_count=0, single_c_room_count=1, female_count=1)
+        reservation_2 = self.create_reservation(single_a_room_count=0, single_c_room_count=1, male_count=0, female_count=1)
         try:
             reservation_1.full_clean()
             reservation_2.full_clean()
         except ValidationError:
             self.fail("Valid reservations should not raise ValidationError")
+
+    def test_multiple_valid_reservations_diff_dates(self):
+        reservation_1 = self.create_reservation()
+        reservation_2 = self.create_reservation(start_date=self.tomorrow, end_date=self.after_tomorrow)
+        try:
+            reservation_1.full_clean()
+            reservation_2.full_clean()
+        except ValidationError:
+            self.fail("Valid reservations should not raise ValidationError")
+
+    def test_invalid_number_of_guests(self):
+        reservation= self.create_reservation(male_count=2)
+        with self.assertRaises(ValidationError) as ctx:
+            reservation.full_clean()
+        self.assertIn("The total guest count does not add up", str(ctx.exception))
+
 
     def test_end_date_before_start_date(self):
         reservation = self.create_reservation(end_date=self.today - timedelta(days=1))
@@ -182,4 +198,70 @@ class ReservationTestCase(TestCase):
         with self.assertRaises(ValidationError) as ctx:
             res2.full_clean()
         self.assertIn("The reservation cannot be made; You cannot reserve your listed amount of: A room/s", str(ctx.exception))
+
+    def test_multiple_reservation_full_rooms_a(self):
+        reservation_1 = self.create_reservation()
+        reservation_2 = self.create_reservation()
+        reservation_3 = self.create_reservation(single_a_room_count=0, single_b_room_count=1, male_count=1)
+        reservation_1.save()
+        reservation_3.save()
+        with self.assertRaises(ValidationError) as ctx:
+            reservation_2.full_clean()
+        self.assertIn("The reservation cannot be made; You cannot reserve your listed amount of: A room/s", str(ctx.exception))
+
+    def test_multiple_reservation_full_rooms_b(self):
+        reservation_1 = self.create_reservation()
+        reservation_2 = self.create_reservation(single_a_room_count=0, single_b_room_count=2, male_count=2)
+        reservation_3 = self.create_reservation(single_a_room_count=0, single_b_room_count=1, male_count=1)
+        reservation_1.save()
+        reservation_2.save()
+        with self.assertRaises(ValidationError) as ctx:
+            reservation_3.full_clean()
+        self.assertIn("The reservation cannot be made; You cannot reserve your listed amount of: B room/s", str(ctx.exception))
+        
+    def test_multiple_reservation_full_rooms_c(self):
+        reservation_1 = self.create_reservation()
+        reservation_2 = self.create_reservation(single_a_room_count=0, single_c_room_count=2, male_count=2)
+        reservation_3 = self.create_reservation(single_a_room_count=0, single_c_room_count=1, male_count=1)
+        reservation_4 = self.create_reservation(single_a_room_count=0, single_c_room_count=1, male_count=1)
+        reservation_1.save()
+        reservation_2.save()
+        reservation_3.save()
+        with self.assertRaises(ValidationError) as ctx:
+            reservation_4.full_clean()
+        self.assertIn("The reservation cannot be made; You cannot reserve your listed amount of: C room/s", str(ctx.exception))
+
+    def test_multiple_reservation_full_rooms_double_b(self):
+        reservation_1 = self.create_reservation()
+        reservation_2 = self.create_reservation(single_a_room_count=0, double_b_room_count=2, male_count=2)
+        reservation_3 = self.create_reservation(single_a_room_count=0, double_b_room_count=1, male_count=1)
+        reservation_1.save()
+        reservation_2.save()
+        with self.assertRaises(ValidationError) as ctx:
+            reservation_3.full_clean()
+        self.assertIn("The reservation cannot be made; You cannot reserve your listed amount of: B room/s", str(ctx.exception))
+
+    def test_multiple_reservation_full_rooms_double_c(self):
+        reservation_1 = self.create_reservation()
+        reservation_2 = self.create_reservation(single_a_room_count=0, double_c_room_count=2, male_count=2)
+        reservation_3 = self.create_reservation(single_a_room_count=0, double_c_room_count=1, male_count=1)
+        reservation_4 = self.create_reservation(single_a_room_count=0, double_c_room_count=1, male_count=1)
+        reservation_1.save()
+        reservation_2.save()
+        reservation_3.save()
+        with self.assertRaises(ValidationError) as ctx:
+            reservation_4.full_clean()
+        self.assertIn("The reservation cannot be made; You cannot reserve your listed amount of: C room/s", str(ctx.exception))
+
+    def test_multiple_reservation_full_rooms_exceed_everything(self):
+        reservation_1 = self.create_reservation()
+        reservation_2 = self.create_reservation(single_a_room_count=0, double_b_room_count=2, male_count=2)
+        reservation_3 = self.create_reservation(single_a_room_count=0, single_c_room_count=3, male_count=3)
+        reservation_4 = self.create_reservation(double_b_room_count=2, single_c_room_count=1, male_count=6)
+        reservation_1.save()
+        reservation_2.save()
+        reservation_3.save()
+        with self.assertRaises(ValidationError) as ctx:
+            reservation_4.full_clean()
+        self.assertIn("The reservation cannot be made; You cannot reserve your listed amount of: A room/sB room/sC room/s", str(ctx.exception))
 

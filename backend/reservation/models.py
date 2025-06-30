@@ -105,6 +105,12 @@ class Reservation(models.Model):
         if not valid_dates and self.status == StatusEnum.CHECKED_IN.value: 
             raise ValidationError(f"The reservation cannot be made; {self.show_unavailable_rooms(total_counts)}")
 
+        if self.male_count + self.female_count != self.get_total_guest_count():
+            raise ValidationError(f"The total guest count does not add up")
+
+    def get_total_guest_count(self):
+        return self.single_a_room_count + self.single_b_room_count + self.single_c_room_count + self.double_a_room_count * 2 + self.double_b_room_count * 2  + self.double_c_room_count * 2 + self.triple_c_room_count * 3
+
     def get_room_counts(self):
         return {
             'A': self.single_a_room_count + self.double_a_room_count,
@@ -156,5 +162,6 @@ class ReservedRoom(models.Model):
 
         if overlapping_reservations.exists():
             raise ValidationError(f"Room '{self.room}' is already reserved during the selected period.")
+
     def __str__(self):
         return f"A reserved room for Reservation #{self.reservation.id}"
