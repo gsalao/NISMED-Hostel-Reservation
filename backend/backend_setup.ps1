@@ -4,6 +4,7 @@ python manage.py makemigrations
 python manage.py migrate
 python manage.py createsuperuser
 python manage.py loaddata fixtures/guest.json
+python manage.py loaddata fixtures/room_amenitys.json
 python manage.py loaddata fixtures/room_type.json
 python manage.py loaddata fixtures/room_room.json
 python manage.py loaddata fixtures/room_rate.json
