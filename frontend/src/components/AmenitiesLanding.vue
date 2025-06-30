@@ -38,52 +38,30 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
 
-const rooms = ref([
-  {
-    type: 'Type A',
-    amenities: [
-      'Hot & Cold Shower',
-      'Linen',
-      'Towel',
-      'Air-conditioning',
-      'Smart TV',
-      'Mini Refrigerator',
-      'Private Toilet & Bath',
-    ],
-  },
-  {
-    type: 'Type B',
-    amenities: [
-      'Hot & Cold Shower',
-      'Linen',
-      'Towel',
-      'Air-conditioning',
-      'Ceiling Fan',
-      'Shared Toilet & Bath',
-    ],
-  },
-  {
-    type: 'Type C',
-    amenities: [
-      'Hot & Cold Shower',
-      'Linen',
-      'Ceiling Fan',
-      'Shared Toilet & Bath',
-    ],
-  },
-])
+const rooms = ref([])
+const amenities = ref([])
 
-const amenities = ref([
-  'Hot & Cold Shower',
-  'Linen',
-  'Towel',
-  'Air-conditioning',
-  'Smart TV',
-  'Mini Refrigerator',
-  'Private Toilet & Bath',
-  'Ceiling Fan',
-  'Shared Toilet & Bath',
-])
-</script> 
+onMounted(async () => {
+  try {
+    const backendUrl = import.meta.env.VITE_BACKEND_BASE_URL
+    const { data: roomTypes } = await axios.get(`${backendUrl}/room/get_all_room_types/`)
+    
+    rooms.value = roomTypes.map(room => ({
+      type: `Type ${room.name}`,
+      amenities: room.amenities.map(a => a.name)
+    }))
+
+    const allAmenities = new Set()
+    roomTypes.forEach(rt => {
+      rt.amenities.forEach(a => allAmenities.add(a.name))
+    })
+    amenities.value = Array.from(allAmenities)
+
+  } catch (error) {
+    console.error('Failed to load amenities or room types:', error)
+  }
+})
+</script>

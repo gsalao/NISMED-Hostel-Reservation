@@ -15,6 +15,7 @@ class RoomType(models.Model):
     """
     name = models.CharField(max_length=1)
     available_rooms = models.IntegerField()
+    amenities = models.ManyToManyField('Amenity', related_name='room_types', blank=True)
 
     def __str__(self):
         return f"{self.name}" 
@@ -73,3 +74,18 @@ class Room(models.Model):
 
     def __str__(self):
         return f"Room #{self.room_number}"
+    
+
+class Amenity(models.Model):
+    """
+    This represents the amenities present per room in the hostel
+
+    Attributes
+    ----------
+    name: CharField
+        The name of the specific, available amenity
+    """
+    name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+      return f"{self.name}" 
