@@ -1,11 +1,12 @@
 from django.contrib import admin
-from .models import Room, RoomType, RoomRate 
+from .models import Room, RoomType, RoomRate, Amenity
 
 class RoomTypeAdmin(admin.ModelAdmin):
     list_display = ('name', 'available_rooms') 
     ordering = ('name',)
     list_editable = ('available_rooms',) 
     list_per_page = 10
+    filter_horizontal = ('amenities',)
 
 class RoomRateAdmin(admin.ModelAdmin):
     list_display = ('room_type', 'occupancy', 'rate') 
@@ -24,3 +25,4 @@ class RoomAdmin(admin.ModelAdmin):
 admin.site.register(Room, RoomAdmin)
 admin.site.register(RoomType, RoomTypeAdmin)
 admin.site.register(RoomRate, RoomRateAdmin)
+admin.site.register(Amenity)
