@@ -59,11 +59,6 @@ def create_new_reservation(request):
     start_date = request.data.get("start_date")
     end_date = request.data.get("end_date")
 
-    for_person_name = request.data.get("for_person_name"),
-    by_person_name = request.data.get("by_person_name"),
-    male_count = request.data.get("male_count"),
-    female_count = request.data.get("female_count"),
-
     single_a_room_count = request.data.get("single_a_room_count")
     double_a_room_count = request.data.get("double_a_room_count") 
     single_b_room_count = request.data.get("single_b_room_count") 
@@ -101,10 +96,10 @@ def create_new_reservation(request):
         "address": address,
         "start_date": start_date,
         "end_date": end_date,
-        "for_person_name": for_person_name,
-        "by_person_name": by_person_name,
-        "male_count": male_count,
-        "female_count": female_count,
+        "for_person_name": request.data.get("for_person_name"),
+        "by_person_name": request.data.get("by_person_name"),
+        "male_count": request.data.get("male_count"),
+        "female_count": request.data.get("female_count"),
         "single_a_room_count": single_a_room_count,
         "double_a_room_count": double_a_room_count,
         "single_b_room_count": single_b_room_count,
