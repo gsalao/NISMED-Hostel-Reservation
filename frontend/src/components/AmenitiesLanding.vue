@@ -49,6 +49,8 @@ onMounted(async () => {
     const backendUrl = import.meta.env.VITE_BACKEND_BASE_URL
     const { data: roomTypes } = await axios.get(`${backendUrl}/room/get_all_room_types/`)
     
+    roomTypes.sort((a, b) => a.name.localeCompare(b.name))
+
     rooms.value = roomTypes.map(room => ({
       type: `Type ${room.name}`,
       amenities: room.amenities.map(a => a.name)
@@ -58,7 +60,7 @@ onMounted(async () => {
     roomTypes.forEach(rt => {
       rt.amenities.forEach(a => allAmenities.add(a.name))
     })
-    amenities.value = Array.from(allAmenities)
+    amenities.value = Array.from(allAmenities).sort()
 
   } catch (error) {
     console.error('Failed to load amenities or room types:', error)
