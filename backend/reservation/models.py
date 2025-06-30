@@ -98,7 +98,7 @@ class Reservation(models.Model):
             raise ValidationError("End date must only be within 2 weeks from the start date")
 
         # Validation: room counts cannot be all zero
-        if self.single_a_room_count == self.single_b_room_count == self.single_c_room_count == self.double_a_room_count == self.double_b_room_count == self.double_c_room_count == self.triple_c_room_count == 0:
+        if self.is_room_count_zero: 
             raise ValidationError("There must be 1 occupant in a room")
 
         valid_dates, total_counts = are_dates_available(self.start_date, self.end_date, self.get_room_counts(), self) 
@@ -107,6 +107,9 @@ class Reservation(models.Model):
 
         if self.male_count + self.female_count != self.get_total_guest_count():
             raise ValidationError(f"The total guest count does not add up")
+
+    def is_room_count_zero(self):
+        return self.single_a_room_count == self.single_b_room_count == self.single_c_room_count == self.double_a_room_count == self.double_b_room_count == self.double_c_room_count == self.triple_c_room_count == 0
 
     def get_total_guest_count(self):
         return self.single_a_room_count + self.single_b_room_count + self.single_c_room_count + self.double_a_room_count * 2 + self.double_b_room_count * 2  + self.double_c_room_count * 2 + self.triple_c_room_count * 3
