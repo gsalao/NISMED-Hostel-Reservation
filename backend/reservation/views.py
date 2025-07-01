@@ -9,7 +9,7 @@ from datetime import timedelta, datetime
 from django.core.mail import send_mail, BadHeaderError
 from smtplib import SMTPException
 from django.utils.crypto import get_random_string
-from decouple import config
+import decouple
 from django.core.cache import cache
 
 def show_unavailable_rooms(total_count):
@@ -152,51 +152,132 @@ def verify_reservation(request):
     reservation_data = cache.get(f"reservation:{token}")
 
     if not reservation_data:
-      return Response({"error": "Invalid or expired reservation token."}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"error": "Invalid or expired reservation token."}, status=status.HTTP_404_NOT_FOUND)
 
     if reservation_data["verification_code"] != code:
-      return Response({"error": "Invalid verification code."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "Invalid verification code."}, status=status.HTTP_400_BAD_REQUEST)
 
     # Create guest only after successful verification
     try:
-      guest = insert_guest(
-          reservation_data["guest_email"],
-          reservation_data["guest_name"],
-          reservation_data["phone_number"],
-          reservation_data["address"]
+        guest = insert_guest(
+            reservation_data["guest_email"],
+            reservation_data["guest_name"],
+            reservation_data["phone_number"],
+            reservation_data["address"]
         )
     except ValidationError as e:
-      return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
+        return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        start_date = datetime.strptime(reservation_data["start_date"], "%Y-%m-%d")
+        end_date = datetime.strptime(reservation_data["end_date"], "%Y-%m-%d")
+    except (ValueError, TypeError) as e:
+        return Response({"error": f"Invalid date format in reservation data: {str(e)}"}, status=400)
+
 
     serializer = ReservationSerializer(data={**reservation_data, "guest": guest.id})
     if serializer.is_valid():
         reservation = serializer.save(is_verified=True)
 
         try:
+            nights = (end_date - start_date).days
+
+            start_date_str = start_date.strftime("%B %d, %Y")
+            end_date_str = end_date.strftime("%B %d, %Y")
+
+            # Room config with labels and rates
+            room_configs = {
+                "single_a_room_count": {"label": "Type A Single Occupancy (1 pax)", "rate": 1145.00},
+                "double_a_room_count": {"label": "Type A Double Occupancy (2 pax)", "rate": 1600.00},
+                "single_b_room_count": {"label": "Type B Single Occupancy (1 pax)", "rate": 1145.00},
+                "double_b_room_count": {"label": "Type B Double Occupancy (2 pax)", "rate": 1600.00},
+                "single_c_room_count": {"label": "Type C Single Occupancy (1 pax)", "rate": 800.00},
+                "double_c_room_count": {"label": "Type C Double Occupancy (2 pax)", "rate": 1300.00},
+                "triple_c_room_count": {"label": "Type C Triple Occupancy (3 pax)", "rate": 1800.00},
+            }
+
+            room_tables = ""
+            for key, config in room_configs.items():
+                count = getattr(reservation, key)
+                if count > 0:
+                    total = config["rate"] * count * nights
+                    room_tables += f"""
+                        <table style="border-collapse: collapse; width: 100%; font-size: 14px; margin-bottom: 20px;">
+                          <tr>
+                            <th colspan="2" style="border: 1px solid #000; padding: 8px; background-color: #f0f0f0;">
+                              {config["label"]}
+                            </th>
+                          </tr>
+                          <tr>
+                            <td style="border: 1px solid #000; padding: 8px;">Check-in Date (2PM)</td>
+                            <td style="border: 1px solid #000; padding: 8px;">{start_date_str}</td>
+                          </tr>
+                          <tr>
+                            <td style="border: 1px solid #000; padding: 8px;">Check-out Date (12NN)</td>
+                            <td style="border: 1px solid #000; padding: 8px;">{end_date_str}</td>
+                          </tr>
+                          <tr>
+                            <td style="border: 1px solid #000; padding: 8px;">No. of Nights</td>
+                            <td style="border: 1px solid #000; padding: 8px;">{nights}</td>
+                          </tr>
+                          <tr>
+                            <td style="border: 1px solid #000; padding: 8px;">Room Type</td>
+                            <td style="border: 1px solid #000; padding: 8px;">{config["label"]}</td>
+                          </tr>
+                          <tr>
+                            <td style="border: 1px solid #000; padding: 8px;">No. of Rooms</td>
+                            <td style="border: 1px solid #000; padding: 8px;">{count}</td>
+                          </tr>
+                          <tr>
+                            <td style="border: 1px solid #000; padding: 8px;">Rate (per night, Php)</td>
+                            <td style="border: 1px solid #000; padding: 8px;">{config["rate"]:,.2f}</td>
+                          </tr>
+                          <tr>
+                            <td style="border: 1px solid #000; padding: 8px;">Total Amount to be paid (Php)</td>
+                            <td style="border: 1px solid #000; padding: 8px;"><strong>{total:,.2f}</strong></td>
+                          </tr>
+                        </table>
+                    """
+
+            html_client_message = f"""
+                <p>Dear Mx. {reservation_data["guest_name"]},</p>
+                <p>Thank you for choosing UP NISMED Hostel. Please see the details of your reservation below.</p>
+                <br>
+                {room_tables}
+                <p>Also, please see the attached file for our house rules and a few reminders below:</p>
+                <ul>
+                  <li>Check-in time is 2PM, Check-out is 12NN.</li>
+                  <li>Curfew hours: 11PM–5AM</li>
+                  <li><strong>Any changes in reservation should be made 48 hours in advance.</strong></li>
+                  <li>Present your ID card when you check in.</li>
+                  <li>Payment can be made during your stay, and we only accept payment in cash.</li>
+                </ul>
+            """
+
+            html_admin_message = f"""
+              <p><strong>Reservation #{reservation.id}</strong> from {reservation_data["guest_name"]} has been verified.</p>
+              <br>
+              {room_tables}
+            """
+
+            # Send admin confirmation
             send_mail(
                 subject=f"NISMED Hostel Reservation - Reservation #{reservation.id}",
                 message=f"Reservation #{reservation.id} verified.",
                 from_email="noreply@up.edu.ph",
-                recipient_list=[config('EMAIL_HOST_USER')],
+                recipient_list=[decouple.config('EMAIL_HOST_USER')],
                 fail_silently=True,
-                html_message=f"""
-                    <p><strong>Reservation #{reservation.id}</strong> has been verified.</p>
-                    <p><strong>Start Date:</strong> {reservation.start_date}<br>
-                    <strong>End Date:</strong> {reservation.end_date}</p>
-                """
+                html_message=html_admin_message
             )
 
+            # Send guest confirmation
             send_mail(
-                subject=f"UP NISMED Hostel - Successful Reservation",
+                subject="UP NISMED Hostel - Successful Reservation",
                 message=f"Reservation #{reservation.id} has been verified.",
                 from_email="noreply@up.edu.ph",
                 recipient_list=[reservation_data["guest_email"]],
                 fail_silently=True,
-                html_message=f"""
-                    <p>Congratulations! Your reservation has been verified.</p>
-                    <p><strong>Start Date:</strong> {reservation.start_date}<br>
-                    <strong>End Date:</strong> {reservation.end_date}</p>
-                """
+                html_message=html_client_message
             )
 
             cache.delete(f"reservation:{token}")
