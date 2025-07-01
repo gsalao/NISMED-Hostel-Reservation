@@ -168,6 +168,7 @@ JAZZMIN_SETTINGS = {
         "room.room": "fas fa-bed",
         "room.roomrate": "fas fa-dollar-sign",
         "room.roomtype": "fas fa-door-open", 
+        "room.amenity": "fas fa-hand-holding-heart", 
     },
     "show_sidebar": True,
     "site_logo_classes": "img-square",
