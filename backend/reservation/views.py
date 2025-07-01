@@ -133,8 +133,6 @@ def create_new_reservation(request):
             fail_silently=False,
             html_message=f"""
                 <p>Thank you for your reservation at UP NISMED Hostel, {guest_name}!</p>
-                <p><strong>Start Date:</strong> {start_date}<br>
-                <strong>End Date:</strong> {end_date}</p>
                 <p>Please verify your reservation by clicking the link below:<br>
                 <a href="{verification_link}">{verification_link}</a></p>
                 <p>Your verification code is <u><strong>{verification_code}</strong></u></p>
