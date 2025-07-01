@@ -11,6 +11,7 @@ from smtplib import SMTPException
 from django.utils.crypto import get_random_string
 import decouple
 from django.core.cache import cache
+from room.models import RoomRate
 
 def show_unavailable_rooms(total_count):
     final_output = "You cannot reserve your listed amount of: "
@@ -185,15 +186,21 @@ def verify_reservation(request):
             start_date_str = start_date.strftime("%B %d, %Y")
             end_date_str = end_date.strftime("%B %d, %Y")
 
+            # Preload all room rates into a dictionary to avoid multiple DB hits
+            rate_lookup = {
+                (rate.room_type.id, rate.occupancy): rate.rate
+                for rate in RoomRate.objects.select_related('room_type')
+            }
+
             # Room config with labels and rates
             room_configs = {
-                "single_a_room_count": {"label": "Type A Single Occupancy (1 pax)", "rate": 1145.00},
-                "double_a_room_count": {"label": "Type A Double Occupancy (2 pax)", "rate": 1600.00},
-                "single_b_room_count": {"label": "Type B Single Occupancy (1 pax)", "rate": 1145.00},
-                "double_b_room_count": {"label": "Type B Double Occupancy (2 pax)", "rate": 1600.00},
-                "single_c_room_count": {"label": "Type C Single Occupancy (1 pax)", "rate": 800.00},
-                "double_c_room_count": {"label": "Type C Double Occupancy (2 pax)", "rate": 1300.00},
-                "triple_c_room_count": {"label": "Type C Triple Occupancy (3 pax)", "rate": 1800.00},
+                "single_a_room_count": {"label": "Type A Single Occupancy (1 pax)", "rate": rate_lookup.get((3, 1), 0)},
+                "double_a_room_count": {"label": "Type A Double Occupancy (2 pax)", "rate": rate_lookup.get((3, 2), 0)},
+                "single_b_room_count": {"label": "Type B Single Occupancy (1 pax)", "rate": rate_lookup.get((2, 1), 0)},
+                "double_b_room_count": {"label": "Type B Double Occupancy (2 pax)", "rate": rate_lookup.get((2, 2), 0)},
+                "single_c_room_count": {"label": "Type C Single Occupancy (1 pax)", "rate": rate_lookup.get((1, 1), 0)},
+                "double_c_room_count": {"label": "Type C Double Occupancy (2 pax)", "rate": rate_lookup.get((1, 2), 0)},
+                "triple_c_room_count": {"label": "Type C Triple Occupancy (3 pax)", "rate": rate_lookup.get((1, 3), 0)},
             }
 
             room_tables = ""
