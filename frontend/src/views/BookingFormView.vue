@@ -122,7 +122,11 @@
 
       <!-- Submit Button -->
       <div class="text-right">
-        <button type="submit" class="cursor-pointer bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded">
+        <button
+          type="submit"
+          :disabled="isSubmitting"
+          class="cursor-pointer bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+        >
           Submit Reservation
         </button>
       </div>
@@ -132,12 +136,14 @@
 </template>
 
 <script setup>
-  import { reactive, computed, watch } from 'vue'
+  import { reactive, computed, watch, ref } from 'vue'
   import { useRouter } from 'vue-router'
   import { useToast } from 'vue-toastification'
 
   const router = useRouter()
   const toast = useToast()
+
+  const isSubmitting = ref(false)
 
   const roomTypes = {
     airconPrivate: { label: "<strong>Room A</strong>: Aircon private toilet & bath", allowT: false },
@@ -277,6 +283,10 @@
       guest_details: guestDetailsCSV,
     }
 
+    if (isSubmitting.value) return
+
+    isSubmitting.value = true
+
     const loadingToastId = toast.info("Sending reservation...", { timeout: false })
 
     try {
@@ -313,6 +323,9 @@
       toast.dismiss(loadingToastId)
       console.error("Network error:", err)
       toast.error("Network error: could not submit reservation.")
+    } finally {
+      isSubmitting.value = false
+      toast.dismiss(loadingToastId)
     }
   }
 </script>
