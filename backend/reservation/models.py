@@ -62,30 +62,30 @@ class Reservation(models.Model):
         The number of inputted rooms to be reserved
 
     """
-    guest = models.ForeignKey(Guest, on_delete=models.CASCADE)
-    assigned_a_room = models.BooleanField(default=False)
-    status = models.CharField(max_length=1024, choices=StatusEnum.choices(), default=StatusEnum.CHECKED_IN.value)
-    reservation_date = models.DateTimeField(auto_now_add=True)
-    start_date = models.DateField()
-    end_date = models.DateField()
-    for_person_name = models.CharField(max_length=1024)
-    male_count = models.IntegerField()
-    female_count = models.IntegerField()
-    remarks = models.TextField(blank=True, null=True)
+    guest = models.ForeignKey(Guest, on_delete=models.CASCADE, help_text="Email of the guest who registered the reservation")
+    assigned_a_room = models.BooleanField(default=False, help_text="Check this if the reservation has already been assigned room/s")
+    status = models.CharField(max_length=1024, choices=StatusEnum.choices(), default=StatusEnum.CHECKED_IN.value, help_text="The current status of the resevation")
+    reservation_date = models.DateTimeField(auto_now_add=True, help_text="The date when the reservation was reserved")
+    start_date = models.DateField(help_text="The check-in date of the reservation")
+    end_date = models.DateField(help_text="The check-out date of the reservation")
+    for_person_name = models.CharField(max_length=1024, help_text="To whom the reservation is for")
+    male_count = models.IntegerField(help_text="Number of male guests")
+    female_count = models.IntegerField(help_text="Number of female guests")
+    remarks = models.TextField(blank=True, null=True, help_text="Remarks regarding the reservation")
 
     # this is kinda bad ngl, you might wanna maintain s.t. this is NOT hardcoded (use ReservationRoomCount)
     # TODO: rewrite this part!
-    single_a_room_count = models.IntegerField(default=0)
-    double_a_room_count = models.IntegerField(default=0)
-    single_b_room_count = models.IntegerField(default=0)
-    double_b_room_count = models.IntegerField(default=0)
-    single_c_room_count = models.IntegerField(default=0)
-    double_c_room_count = models.IntegerField(default=0)
-    triple_c_room_count = models.IntegerField(default=0)
+    single_a_room_count = models.IntegerField(default=0, help_text="Number of A single rooms reserved")
+    double_a_room_count = models.IntegerField(default=0, help_text="Number of A double rooms reserved")
+    single_b_room_count = models.IntegerField(default=0, help_text="Number of B single rooms reserved")
+    double_b_room_count = models.IntegerField(default=0, help_text="Number of B double rooms reserved")
+    single_c_room_count = models.IntegerField(default=0, help_text="Number of C single rooms reserved")
+    double_c_room_count = models.IntegerField(default=0, help_text="Number of C double rooms reserved")
+    triple_c_room_count = models.IntegerField(default=0, help_text="Number of C triple rooms reserved")
 
     # For user email verification
-    verification_code = models.CharField(max_length=6, blank=True, null=True)
-    is_verified = models.BooleanField(default=False)
+    verification_code = models.CharField(max_length=6, blank=True, null=True, help_text="The given code during reservation")
+    is_verified = models.BooleanField(default=False, help_text="Check this if the user has verified their reservation")
 
     guest_details = models.TextField(blank=True, null=True, help_text="CSV-like guest info: Name, AgeRange")
 
@@ -144,11 +144,11 @@ class ReservedRoom(models.Model):
     """
     Represents the reserved room of a user
     """
-    reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE)
-    room_type = models.ForeignKey(RoomType , on_delete=models.CASCADE)
-    capacity = models.CharField(max_length=1024, choices=Capacity.choices(), blank=True)
-    room = models.ForeignKey(Room, on_delete=models.CASCADE)
-    room_rate = models.ForeignKey(RoomRate, on_delete=models.CASCADE)
+    reservation = models.ForeignKey(Reservation, on_delete=models.CASCADE, help_text="The reservation associated with this reserved room")
+    room_type = models.ForeignKey(RoomType , on_delete=models.CASCADE, help_text="The room type of this reserved room")
+    capacity = models.CharField(max_length=1024, choices=Capacity.choices(), blank=True, help_text="The amount of occupants in the room")
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, help_text="The associated room")
+    room_rate = models.ForeignKey(RoomRate, on_delete=models.CASCADE, help_text="The cost of the room at a daily rate")
 
     def clean(self):
         super().clean()

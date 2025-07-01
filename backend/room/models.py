@@ -13,9 +13,9 @@ class RoomType(models.Model):
     available_rooms: IntegerField
         The total number of available rooms
     """
-    name = models.CharField(max_length=1)
-    available_rooms = models.IntegerField()
-    amenities = models.ManyToManyField('Amenity', related_name='room_types', blank=True)
+    name = models.CharField(max_length=1, help_text="Name of the room type")
+    available_rooms = models.IntegerField(help_text="The number of available rooms of that room type (Any changes in the number of rooms must be changed here)")
+    amenities = models.ManyToManyField('Amenity', related_name='room_types', blank=True, help_text="The amenities of the room type")
 
     def __str__(self):
         return f"{self.name}" 
@@ -33,9 +33,9 @@ class RoomRate(models.Model):
     rate: DecimalField 
         The rate of the room type given the occupancy per day
     """
-    room_type = models.ForeignKey(RoomType, on_delete=models.CASCADE, related_name='room_rates')
-    occupancy = models.IntegerField() 
-    rate = models.DecimalField(max_digits = 9, decimal_places = 2)
+    room_type = models.ForeignKey(RoomType, on_delete=models.CASCADE, related_name='room_rates', help_text="The room type of this room rate")
+    occupancy = models.IntegerField(help_text="The amount of guests who occupy the room in accordance to the rate") 
+    rate = models.DecimalField(max_digits = 9, decimal_places = 2, help_text="The rate according to the room type and the occupancy")
 
     def clean(self):
         super().clean()
@@ -61,9 +61,9 @@ class Room(models.Model):
     is_active: BooleanField
         If the room is available to be occupied
     """
-    room_type = models.ForeignKey(RoomType, on_delete=models.CASCADE, related_name='rooms')
-    room_number = models.IntegerField()
-    is_active = models.BooleanField(default=True)
+    room_type = models.ForeignKey(RoomType, on_delete=models.CASCADE, related_name='rooms', help_text="The type of room")
+    room_number = models.IntegerField(help_text="The room number of the room")
+    is_active = models.BooleanField(default=True, help_text="Check this if the room is available (i.e. uncheck this if the room is unavailable due to repairs and other concerns)")
     
     def clean(self):
         super().clean()

@@ -17,10 +17,10 @@ class Guest(models.Model):
     name: CharField
         The name of the entity making the reservation
     """
-    email_address = models.CharField(max_length=256, unique=True)
-    phone_number = models.CharField(max_length=15)
-    address = models.CharField(max_length=1024)
-    name = models.CharField(max_length=1024)
+    name = models.CharField(max_length=1024, help_text="The name of the guest")
+    email_address = models.CharField(max_length=256, unique=True, help_text="The email address of the guest")
+    phone_number = models.CharField(max_length=15, help_text="The phone number of the guest")
+    address = models.CharField(max_length=1024, help_text="The address of the guest")
 
     def __str__(self):
         return self.email_address
