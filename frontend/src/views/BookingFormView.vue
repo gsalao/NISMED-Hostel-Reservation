@@ -250,9 +250,6 @@
                             form.rooms.ceilingFanShared.D * 2 +
                             form.rooms.ceilingFanShared.T * 3
 
-    console.log(totalGuestCount)
-    console.log(totalGuests.value)
-
     if (totalGuestCount !== totalGuests.value) {
       toast.warning("The total guest count does not add up.")
       return
