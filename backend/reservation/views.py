@@ -254,12 +254,12 @@ def verify_reservation(request):
             total_balance_html = f"""
               <table style="border-collapse: collapse; width: 100%; font-size: 14px; margin-bottom: 20px;">
                 <tr>
-                  <td style="border: 1px solid #000; padding: 8px; background-color: #f0f0f0;">
+                  <td style="width: 50%; border: 1px solid #000; padding: 8px; background-color: #f0f0f0;">
                     <strong>
                       Total Outstanding Balance
                     </strong>
                   </td>
-                  <td style="border: 1px solid #000; padding: 8px;">
+                  <td style="width: 50%; border: 1px solid #000; padding: 8px;">
                     <strong>
                       {total_balance:,.2f}
                     </strong>
