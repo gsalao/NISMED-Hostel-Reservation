@@ -203,11 +203,16 @@ def verify_reservation(request):
                 "triple_c_room_count": {"label": "Type C Triple Occupancy (3 pax)", "rate": rate_lookup.get((1, 3), 0)},
             }
 
+            # Calculate the total standing balance and initialize HTML Table Row container
+            total_balance: int = 0
+            total_balance_html: str = ""
+
             room_tables = ""
             for key, config in room_configs.items():
                 count = getattr(reservation, key)
                 if count > 0:
                     total = config["rate"] * count * nights
+                    total_balance += total
                     room_tables += f"""
                         <table style="border-collapse: collapse; width: 100%; font-size: 14px; margin-bottom: 20px;">
                           <tr>
@@ -246,11 +251,29 @@ def verify_reservation(request):
                         </table>
                     """
 
+            total_balance_html = f"""
+              <table style="border-collapse: collapse; width: 100%; font-size: 14px; margin-bottom: 20px;">
+                <tr>
+                  <td style="border: 1px solid #000; padding: 8px; background-color: #f0f0f0;">
+                    <strong>
+                      Total Outstanding Balance
+                    </strong>
+                  </td>
+                  <td style="border: 1px solid #000; padding: 8px;">
+                    <strong>
+                      {total_balance:,.2f}
+                    </strong>
+                  </td>
+                </tr>
+              </table>
+            """
+
             html_client_message = f"""
                 <p>Dear Mx. {reservation_data["guest_name"]},</p>
                 <p>Thank you for choosing UP NISMED Hostel. Please see the details of your reservation below.</p>
                 <br>
                 {room_tables}
+                {total_balance_html}
                 <p>Also, please see the attached file for our house rules and a few reminders below:</p>
                 <ul>
                   <li>Check-in time is 2PM, Check-out is 12NN.</li>
@@ -265,6 +288,7 @@ def verify_reservation(request):
               <p><strong>Reservation #{reservation.id}</strong> from {reservation_data["guest_name"]} has been verified.</p>
               <br>
               {room_tables}
+              {total_balance_html}
             """
 
             # Send admin confirmation
