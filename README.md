@@ -36,7 +36,7 @@ This part of the README.md assumes a local setup.
 1. Create a PostgeSQL database local in your machine
 2. Ensure that you are in the `backend` folder
 3. Create `.env` file and fill up with necessary details (see above for details)
-4. `python3 -m venv env` in order to create the virtual environment for Django
+4. `python3 -m venv env` or `python -m venv env` in order to create the virtual environment for Django
 5. Run the `backend_setup.ps1` file to prepare the backend
 6. `docker run -d -p <port>:<port> redis`
 
@@ -45,7 +45,7 @@ This part of the README.md assumes a local setup.
 2. Create `.env` folder and fill up with necessary details (see above for details)
 3. `npm install` to install dependecies
 4. `npm run dev` to run server
-5. `npm run build` to type-check, compile, and minify for production\
+5. `npm run build` to type-check, compile, and minify for production
 
 # Team
 The following are the developers of the project:
