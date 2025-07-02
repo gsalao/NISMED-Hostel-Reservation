@@ -242,11 +242,11 @@ def verify_reservation(request):
                           </tr>
                           <tr>
                             <td style="border: 1px solid #000; padding: 8px;">Rate (per night, Php)</td>
-                            <td style="border: 1px solid #000; padding: 8px;">{config["rate"]:,.2f}</td>
+                            <td style="border: 1px solid #000; padding: 8px;">₱{config["rate"]:,.2f}</td>
                           </tr>
                           <tr>
                             <td style="border: 1px solid #000; padding: 8px;">Total Amount to be paid (Php)</td>
-                            <td style="border: 1px solid #000; padding: 8px;"><strong>{total:,.2f}</strong></td>
+                            <td style="border: 1px solid #000; padding: 8px;"><strong>₱{total:,.2f}</strong></td>
                           </tr>
                         </table>
                     """
@@ -261,7 +261,7 @@ def verify_reservation(request):
                   </td>
                   <td style="width: 50%; border: 1px solid #000; padding: 8px;">
                     <strong>
-                      {total_balance:,.2f}
+                      ₱{total_balance:,.2f}
                     </strong>
                   </td>
                 </tr>
