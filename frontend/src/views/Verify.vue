@@ -1,27 +1,5 @@
-<template>
-  <div class="max-w-xl mx-auto mt-20 p-6 border rounded shadow bg-white">
-    <h2 class="text-2xl font-bold mb-4 text-center">Reservation Verification</h2>
-    <p class="mb-4 text-justify">Please enter the 6-digit code sent to <strong>{{ emailUsed }}</strong> to verify your reservation. The code will expire in 5 minutes.</p>
-
-    <input
-      v-model="code"
-      maxlength="6"
-      class="w-full p-2 border mb-4"
-      placeholder="Enter verification code"
-    />
-
-    <button
-      @click="verify"
-      class="cursor-pointer w-full bg-green-800 text-white py-2 rounded hover:bg-green-700"
-    >
-      Verify Reservation
-    </button>
-
-    <p v-if="verified" class="mt-4 text-center text-green-600 font-semibold">Reservation verified successfully! Please check your email.</p>
-    <p v-if="error" class="mt-4 text-red-600">{{ error }}</p>
-  </div>
-</template>
-
+<!-- Verification route view -->
+ 
 <script setup>
   import { ref, onMounted } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
@@ -110,3 +88,27 @@
     }
   }
 </script>
+
+<template>
+  <div class="max-w-xl mx-auto mt-20 p-6 border rounded shadow bg-white">
+    <h2 class="text-2xl font-bold mb-4 text-center">Reservation Verification</h2>
+    <p class="mb-4 text-justify">Please enter the 6-digit code sent to <strong>{{ emailUsed }}</strong> to verify your reservation. The code will expire in 5 minutes.</p>
+
+    <input
+      v-model="code"
+      maxlength="6"
+      class="w-full p-2 border mb-4"
+      placeholder="Enter verification code"
+    />
+
+    <button
+      @click="verify"
+      class="cursor-pointer w-full bg-green-800 text-white py-2 rounded hover:bg-green-700"
+    >
+      Verify Reservation
+    </button>
+
+    <p v-if="verified" class="mt-4 text-center text-green-600 font-semibold">Reservation verified successfully! Please check your email.</p>
+    <p v-if="error" class="mt-4 text-red-600">{{ error }}</p>
+  </div>
+</template>
