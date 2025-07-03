@@ -1,3 +1,36 @@
+<!-- Amenities Grid View -->
+
+<script setup>
+  import { ref, onMounted } from 'vue'
+  import axios from 'axios'
+
+  const rooms = ref([])
+  const amenities = ref([])
+
+  onMounted(async () => {
+    try {
+      const backendUrl = import.meta.env.VITE_BACKEND_BASE_URL
+      const { data: roomTypes } = await axios.get(`${backendUrl}/room/get_all_room_types/`)
+      
+      roomTypes.sort((a, b) => a.name.localeCompare(b.name))
+
+      rooms.value = roomTypes.map(room => ({
+        type: `Type ${room.name}`,
+        amenities: room.amenities.map(a => a.name)
+      }))
+
+      const allAmenities = new Set()
+      roomTypes.forEach(rt => {
+        rt.amenities.forEach(a => allAmenities.add(a.name))
+      })
+      amenities.value = Array.from(allAmenities).sort()
+
+    } catch (error) {
+      console.error('Failed to load amenities or room types:', error)
+    }
+  })
+</script>
+
 <template>
   <div class="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg z-10">
     <h2 class="text-2xl font-bold text-center mb-6">Room Type Amenities</h2>
@@ -36,34 +69,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import { ref, onMounted } from 'vue'
-import axios from 'axios'
-
-const rooms = ref([])
-const amenities = ref([])
-
-onMounted(async () => {
-  try {
-    const backendUrl = import.meta.env.VITE_BACKEND_BASE_URL
-    const { data: roomTypes } = await axios.get(`${backendUrl}/room/get_all_room_types/`)
-    
-    roomTypes.sort((a, b) => a.name.localeCompare(b.name))
-
-    rooms.value = roomTypes.map(room => ({
-      type: `Type ${room.name}`,
-      amenities: room.amenities.map(a => a.name)
-    }))
-
-    const allAmenities = new Set()
-    roomTypes.forEach(rt => {
-      rt.amenities.forEach(a => allAmenities.add(a.name))
-    })
-    amenities.value = Array.from(allAmenities).sort()
-
-  } catch (error) {
-    console.error('Failed to load amenities or room types:', error)
-  }
-})
-</script>

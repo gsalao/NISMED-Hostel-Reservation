@@ -1,3 +1,9 @@
+<!-- Hero Slider (includes Landing Page) View -->
+
+<script setup>
+  import nismedHero from '@/assets/images/nismed-hostel-landing.jpg'
+</script>
+
 <template>
   <section class="relative h-[60vh] w-full text-white z-10 flex items-center justify-center">
     <!-- Background Image -->
@@ -26,7 +32,3 @@
     </div>
   </section>
 </template>
-
-<script setup>
-  import nismedHero from '@/assets/images/nismed-hostel-landing.jpg'
-</script>

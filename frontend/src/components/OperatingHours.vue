@@ -1,3 +1,5 @@
+<!-- Operating Hours Grid View -->
+
 <template>
   <div class="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg z-10">
     <h2 class="text-2xl font-bold text-center mb-6">Operating Hours</h2>
@@ -31,7 +33,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-// no script needed unless you're fetching data
-</script>

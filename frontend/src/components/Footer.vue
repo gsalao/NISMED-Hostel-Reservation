@@ -1,3 +1,5 @@
+<!-- General Page Footer View -->
+
 <template>
   <footer class="bg-[#09240b] text-white pt-8 pb-8 z-10 mt-12">
     <div class="max-w-7xl mx-auto px-4">
@@ -56,12 +58,3 @@
     </div>
   </footer>
 </template>
-
-
-<script setup>
-// Static footer
-</script>
-
-<style scoped>
-/* Add icon spacing/custom styles here if needed */
-</style>

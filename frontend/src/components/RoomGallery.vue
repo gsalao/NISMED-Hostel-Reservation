@@ -1,3 +1,26 @@
+<!-- Room Gallery 1-Grid View -->
+
+<script setup>
+  import { ref } from 'vue';
+
+  const props = defineProps({
+    images: {
+      type: Array,
+      required: true
+    }
+  });
+
+  const activeIndex = ref(0);
+
+  const nextSlide = () => {
+    activeIndex.value = (activeIndex.value + 1) % props.images.length;
+  };
+
+  const prevSlide = () => {
+    activeIndex.value = (activeIndex.value - 1 + props.images.length) % props.images.length;
+  };
+</script>
+
 <template>
   <div id="gallery" class="relative w-full min-w-0 mx-auto mt-10">
     <!-- Carousel wrapper -->
@@ -36,24 +59,3 @@
     </button>
   </div>
 </template>
-
-<script setup>
-import { ref } from 'vue';
-
-const props = defineProps({
-  images: {
-    type: Array,
-    required: true
-  }
-});
-
-const activeIndex = ref(0);
-
-const nextSlide = () => {
-  activeIndex.value = (activeIndex.value + 1) % props.images.length;
-};
-
-const prevSlide = () => {
-  activeIndex.value = (activeIndex.value - 1 + props.images.length) % props.images.length;
-};
-</script>
