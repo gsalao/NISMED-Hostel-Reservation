@@ -3,7 +3,7 @@
 <template>
   <div>
     <HeroSlider />
-    <div class="flex flex-col md:flex-row gap-6 px-4 md:px-10">
+    <div id="landing-page-bulk"class="flex flex-col md:flex-row gap-6 px-4 md:px-10">
       <!-- Left Section: Amenities, Rates, Hours -->
       <div class="flex-1 space-y-6">
         <AmenitiesLanding />
