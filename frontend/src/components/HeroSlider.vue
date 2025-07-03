@@ -5,7 +5,7 @@
 </script>
 
 <template>
-  <section class="relative h-[60vh] w-full text-white z-10 flex items-center justify-center">
+  <section class="relative h-screen w-full text-white z-10 flex items-center justify-center">
     <!-- Background Image -->
     <div
       class="absolute inset-0 bg-cover bg-center z-0"
