@@ -40,7 +40,7 @@
 <template>
   <nav class="fixed top-0 w-full z-30 bg-[#09240B]">
     <div class="max-w-screen-xl mx-auto px-4 py-3 flex justify-between items-center text-white">
-      <button @click="goToHome" class="font-bold text-xl md:text-2xl flex items-center space-x-2">
+      <button @click="goToHome" class="cursor-pointer font-bold text-xl md:text-2xl flex items-center space-x-2">
         <img :src="nismedLogo" alt="UP NISMED Logo" class="h-10 w-auto">
         <span>UP NISMED Hostel</span>
       </button>
