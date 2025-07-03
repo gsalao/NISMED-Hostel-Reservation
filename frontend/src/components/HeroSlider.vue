@@ -17,7 +17,7 @@
 
     <!-- Hero Content -->
     <div class="relative z-20 flex flex-col items-center justify-center text-center px-4">
-      <h1 class="text-5xl md:text-7xl font-bold text-yellow-500 drop-shadow-lg">UP NISMED Hostel</h1>
+      <h1 class="text-5xl md:text-7xl text-yellow-500 drop-shadow-lg">UP NISMED Hostel</h1>
       <p class="mt-4 text-lg md:text-2xl text-yellow-400 font-sm drop-shadow-lg">
         The Hostel provides a quiet retreat for its guests, a second-home ambience, and a haven for the professional and transients.
       </p>
