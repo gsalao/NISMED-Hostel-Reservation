@@ -13,16 +13,14 @@ import decouple
 from django.core.cache import cache
 from room.models import RoomRate
 
-def show_unavailable_rooms(total_count):
+def show_unavailable_rooms(total_count: dict[str, int]) -> str:
+    """
+    This method is for showing which rooms are unavailable to be used (this is mainly for sending the error message)
+    """
     final_output = "You cannot reserve your listed amount of: "
     for (key,_) in total_count.items():
         final_output += f"{key} room/s"
     return final_output 
-
-'''
-possible views for reservation:
-2. post a new reservation ✓ 
-'''
 
 @api_view(['POST'])
 def create_new_reservation(request):
@@ -147,6 +145,9 @@ def create_new_reservation(request):
 
 @api_view(['POST'])
 def verify_reservation(request):
+    """
+    This function is for determining if the given reservation token is the one sent from the email
+    """
     token = request.data.get("reservation_token")
     code = request.data.get("code")
 
@@ -323,6 +324,9 @@ def verify_reservation(request):
 
 @api_view(['GET'])
 def get_reservation_email(request):
+    """
+    This function is for getting the associated token for the reservation
+    """
     token = request.GET.get('token')
 
     reservation_data = cache.get(f"reservation:{token}")

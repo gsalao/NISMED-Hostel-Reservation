@@ -39,13 +39,18 @@ def get_all_room_rates(request):
     return Response(serialized_room_rates.data)
 
 class RoomAPIView(generics.ListAPIView):
-    # Filter by Room 
-    # queryset = Room.objects.all()
+    """
+    this class is primarily for filtering the dropdown menu for the admin panel; It filters the room based on the room type
+    """
     serializer_class = RoomSerializer 
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['room_type_id']
     permission_classes = [IsAuthenticated]
+
     def get_queryset(self):
+        """
+        This method is primarily for showing the possible room that you can select that will be shown in the dropdown menu given the inputted room type
+        """
         queryset = Room.objects.filter(is_active=True)
 
         room_type = self.request.query_params.get('room_type_id')

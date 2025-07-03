@@ -38,6 +38,9 @@ class RoomRate(models.Model):
     rate = models.DecimalField(max_digits = 9, decimal_places = 2, help_text="The rate according to the room type and the occupancy")
 
     def clean(self):
+        """
+        This method is mainly for validating that the inputted entries for the model is correct
+        """
         super().clean()
         if RoomRate.objects.filter(
             room_type=self.room_type,
@@ -66,6 +69,9 @@ class Room(models.Model):
     is_active = models.BooleanField(default=True, help_text="Check this if the room is available (i.e. uncheck this if the room is unavailable due to repairs and other concerns)")
     
     def clean(self):
+        """
+        This method is mainly for validating that the inputted entries for the model is correct
+        """
         super().clean()
         if Room.objects.filter(
             room_number=self.room_number,

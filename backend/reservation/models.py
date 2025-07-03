@@ -7,6 +7,9 @@ from datetime import timedelta
 from django.db.models import Q
 
 class StatusEnum(Enum):
+    """
+    This enum is for showing the 'states' that a reservation can take
+    """
     CHECKED_IN = 'CHECKED IN'
     NO_SHOW = 'NO SHOW' 
     CANCELLED = 'CANCELLED'
@@ -24,6 +27,9 @@ status_symbols = {
 }
 
 class Capacity(Enum):
+    """
+    This enum is for representing the 'occupancy' associated with a reserved room
+    """
     SINGLE = 'Single'
     DOUBLE = 'Double'
     TRIPLE = 'Triple'
@@ -90,6 +96,9 @@ class Reservation(models.Model):
     guest_details = models.TextField(blank=True, null=True, help_text="CSV-like guest info: Name, AgeRange")
 
     def clean(self):
+        """
+        This method is mainly for validating that the inputted entries for the model is correct
+        """
         from .utils import are_dates_available
         # Validation: End date after start
         if self.end_date <= self.start_date:
@@ -102,34 +111,50 @@ class Reservation(models.Model):
         # Validation: room counts cannot be all zero
         if self.is_room_count_zero(): 
             raise ValidationError("There must be 1 occupant in a room")
-
+        # Validation: the dates inputted by the guest can be occupied
         valid_dates, total_counts = are_dates_available(self.start_date, self.end_date, self.get_room_counts(), self) 
         if not valid_dates and self.status == StatusEnum.CHECKED_IN.value: 
             raise ValidationError(f"The reservation cannot be made; {self.show_unavailable_rooms(total_counts)}")
 
+        # Validation: the inputted guest count matches the inputted number of rooms
         if self.male_count + self.female_count != self.get_total_guest_count():
             raise ValidationError(f"The total guest count does not add up")
 
-    def is_room_count_zero(self):
+    def is_room_count_zero(self) -> bool:
+        """
+        This method is for determining if all the room counts are zero
+        """
         return self.single_a_room_count == self.single_b_room_count == self.single_c_room_count == self.double_a_room_count == self.double_b_room_count == self.double_c_room_count == self.triple_c_room_count == 0
 
-    def get_total_guest_count(self):
+    def get_total_guest_count(self) -> int:
+        """
+        This method is primarily for getting the total guest count by getting the corresponding guest counts from the inputted room types
+        """
         return self.single_a_room_count + self.single_b_room_count + self.single_c_room_count + self.double_a_room_count * 2 + self.double_b_room_count * 2  + self.double_c_room_count * 2 + self.triple_c_room_count * 3
 
-    def get_room_counts(self):
+    def get_room_counts(self) -> dict[str, int]:
+        """
+        This method is for getting how many rooms of each type is needed
+        """
         return {
             'A': self.single_a_room_count + self.double_a_room_count,
             'B': self.single_b_room_count + self.double_b_room_count,
             'C': self.single_c_room_count + self.double_c_room_count + self.triple_c_room_count
         }
 
-    def show_unavailable_rooms(self, total_count):
+    def show_unavailable_rooms(self, total_count) -> str:
+        """
+        This method is for showing which rooms are unavailable to be used (this is mainly for sending the error message)
+        """
         final_output = "You cannot reserve your listed amount of: "
         for (key,_) in total_count.items():
             final_output += f"{key} room/s"
         return final_output 
 
     def show_room_counts(self):
+        """
+        This method is for showing how many rooms of each type has been reserved
+        """
         rooms_counts = self.get_room_counts()
         final_output = ""
         if rooms_counts['A'] != 0: final_output += f"{rooms_counts['A']} A {'rooms' if rooms_counts['A'] > 1 else 'room'}"
@@ -151,6 +176,9 @@ class ReservedRoom(models.Model):
     room_rate = models.ForeignKey(RoomRate, on_delete=models.CASCADE, help_text="The cost of the room at a daily rate")
 
     def clean(self):
+        """
+        This method is mainly for validating that the inputted entries for the model is correct
+        """
         super().clean()
 
         # if the reservation is not checked in 

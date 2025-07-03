@@ -4,6 +4,20 @@ from reservation.models import StatusEnum
 from django.db.models import Sum 
 
 def are_dates_available(start_date, end_date, requested_counts, current_reservation=None) -> tuple[bool, dict[str, int]]:
+    """
+    This function is for determining whether the given check in and check out dates && the requested counts of rooms can be allocated
+
+    Attributes
+    ----------
+    start_date: DateField
+        The check in date of the reservation
+    end_date: DateField
+        The check out date of the reservation
+    requested_counts: dict[str, int]
+        A dictionary whose keys are the names of the room types and the values are the counts of each room type
+    current_reservation: Reservation | None
+        This attribute is None if it is a new reservation and it is an actual Reservation if it is being edited (this is to ensure that it does excludes itself from the reservations)
+    """
 
     # get how many reservations overlap
     overlapping_reservations = Reservation.objects.filter(
