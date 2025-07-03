@@ -52,7 +52,7 @@
       "For (Person/Company/Unit)": form.for,
       "By (Contact Person/Address)": form.by,
       "Email": form.email,
-      "Phone Number (09XX XXX XXXX)": form.contact,
+      "Phone Number (09XXXXXXXXX)": form.contact,
       "Address": form.address,
       "Check-in": form.checkIn,
       "Check-out": form.checkOut,
@@ -84,9 +84,9 @@
       return
     }
 
-    const phoneRegex = /^09\d{2} \d{3} \d{4}$/
+    const phoneRegex = /^09\d{2}\d{3}\d{4}$/
     if (!phoneRegex.test(form.contact)) {
-      toast.warning("Please enter a valid phone number in the format:\n09XX XXX XXXX")
+      toast.warning("Please enter a valid phone number in the format:\n09XXXXXXXXX")
       return
     }
 
@@ -213,7 +213,7 @@
         </div>
         <div>
           <label class="font-semibold">Phone Number:</label>
-          <input type="text" v-model="form.contact" placeholder="09XX XXX XXXX" class="w-full border border-gray-300 rounded px-2 py-1" />
+          <input type="text" v-model="form.contact" placeholder="09XXXXXXXXX" class="w-full border border-gray-300 rounded px-2 py-1" />
         </div>
         <div class="lg:col-span-2">
           <label class="font-semibold">Address:</label>
