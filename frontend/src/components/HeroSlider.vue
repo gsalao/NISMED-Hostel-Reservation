@@ -42,7 +42,7 @@
       <!-- Pulsating Arrow Button -->
       <button
         @click="scrollToLandingBulk"
-        class="mt-8 animate-bounce focus:outline-none"
+        class="cursor-pointer mt-8 animate-bounce focus:outline-none"
         aria-label="Scroll down"
       >
         <svg
