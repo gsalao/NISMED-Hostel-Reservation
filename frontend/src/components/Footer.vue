@@ -21,12 +21,17 @@
             </li>
             <li>
               <a href="https://nismed.upd.edu.ph/" target="_blank" rel="noopener" class="text-gray-400 hover:text-white transition">
-                Home Site
+                UP NISMED Official Site
               </a>
             </li>
             <li>
               <a href="https://www.facebook.com/nismed1964/" target="_blank" rel="noopener" class="text-gray-400 hover:text-white transition">
-                Facebook
+                Facebook - UP NISMED Official
+              </a>
+            </li>
+            <li>
+              <a href="https://www.facebook.com/nismedhostelupd/" target="_blank" rel="noopener" class="text-gray-400 hover:text-white transition">
+                Facebook - UP NISMED Hostel
               </a>
             </li>
             <li>
