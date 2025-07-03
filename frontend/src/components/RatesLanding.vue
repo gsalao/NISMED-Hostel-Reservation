@@ -47,7 +47,7 @@
 
 <template>
   <div class="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg z-10">
-    <h2 class="text-2xl font-bold text-center mb-6">Room Rates Per Day</h2>
+    <h2 class="text-2xl font-bold text-center mb-6">Room Rates Per Night</h2>
     <div class="overflow-x-auto">
       <table class="w-full border-collapse border border-gray-300">
         <thead>
