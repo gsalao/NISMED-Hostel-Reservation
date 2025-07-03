@@ -307,6 +307,8 @@
         <h2 class="font-semibold mb-2">Reminders:</h2>
         <ul class="list-disc pl-5 space-y-1">
           <li><strong>Only guests of the same gender are allowed to occupy adjacent rooms with shared toilet and bath.</strong></li>
+          <li>Minor guests should be accompanied by an adult, be it a parent or guardian.</li>
+          <li>Please note that we don’t allow guests below 13 years old.</li>
           <li>Please confirm your registration at least one week before check-in date.</li>
           <li>Any changes in reservation should be made 48 hours in advance.</li>
           <li>The hostel closes at 11 PM and opens at 5 AM. Check-in is 2 PM, check-out is 12 noon.</li>
