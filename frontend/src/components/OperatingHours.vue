@@ -13,11 +13,11 @@
         </thead>
         <tbody>
           <tr class="border border-gray-300">
-            <td class="p-3 font-medium text-gray-800">Hours</td>
+            <td class="p-3 font-medium text-gray-800">Operating Hours</td>
             <td class="p-3 text-gray-700">5:00 a.m. – 11:00 p.m.</td>
           </tr>
           <tr class="border border-gray-300">
-            <td class="p-3 font-medium text-gray-800">Curfew</td>
+            <td class="p-3 font-medium text-gray-800">Curfew Hours</td>
             <td class="p-3 text-gray-700">11:00 p.m. – 5:00 a.m.</td>
           </tr>
           <tr class="border border-gray-300">
