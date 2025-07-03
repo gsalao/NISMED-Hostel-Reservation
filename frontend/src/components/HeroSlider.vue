@@ -14,7 +14,7 @@
 </script>
 
 <template>
-  <section class="relative h-screen w-full text-white z-10 flex items-center justify-center">
+  <section class="relative h-screen w-full text-white z-10">
     <!-- Background Image -->
     <div
       class="absolute inset-0 bg-cover bg-center z-0"
@@ -24,9 +24,13 @@
     <!-- Overlay -->
     <div class="absolute inset-0 bg-black opacity-80 z-10"></div>
 
-    <!-- Hero Content -->
-    <div class="relative z-20 flex flex-col items-center justify-center text-center px-4">
-      <h1 class="text-5xl md:text-7xl text-yellow-500 drop-shadow-lg">UP NISMED Hostel</h1>
+    <!-- Hero Content (centered) -->
+    <div
+      class="relative z-20 flex flex-col items-center justify-center text-center px-4 h-full"
+    >
+      <h1 class="text-5xl md:text-7xl text-yellow-500 drop-shadow-lg">
+        UP NISMED Hostel
+      </h1>
       <p class="mt-4 text-lg md:text-2xl text-yellow-400 font-sm drop-shadow-lg">
         The Hostel provides a quiet retreat for its guests, a second-home ambience, and a haven for the professional and transients.
       </p>
@@ -38,23 +42,23 @@
       >
         Book Now
       </router-link>
-
-      <!-- Pulsating Arrow Button -->
-      <button
-        @click="scrollToLandingBulk"
-        class="cursor-pointer mt-8 animate-bounce focus:outline-none"
-        aria-label="Scroll down"
-      >
-        <svg
-          class="w-12 h-12 text-yellow-400"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
     </div>
+
+    <!-- Pulsating Arrow Button at bottom -->
+    <button
+      @click="scrollToLandingBulk"
+      class="cursor-pointer absolute bottom-4 left-1/2 transform -translate-x-1/2 animate-bounce z-30 focus:outline-none"
+      aria-label="Scroll down"
+    >
+      <svg
+        class="w-12 h-12 text-yellow-400"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+      </svg>
+    </button>
   </section>
 </template>
