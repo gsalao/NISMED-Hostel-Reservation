@@ -8,7 +8,8 @@
 
   const fetchRoomRates = async () => {
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/room/get_all_room_rates/') // adjust URL if different
+      const backendUrl = import.meta.env.VITE_BACKEND_BASE_URL
+      const res = await fetch(`${backendUrl}/room/get_all_room_rates/`)
 
       const data = await res.json()
 
