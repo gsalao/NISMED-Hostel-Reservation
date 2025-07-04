@@ -17,6 +17,7 @@ The backend and frontend have `.env.example` files to ensure that secret variabl
 | `EMAIL_HOST_USER`       | The email address of the account sending the verification codes |
 | `EMAIL_HOST_PASSWORD`   | The generated app password for the email |
 | `REDIS_URL`             | The URL for redis |
+| `FRONTEND_URL`          | The URL for the frontend |
 
 ### Frontend `.env` configuration
 | **Name**                | **Description**                                                    |
