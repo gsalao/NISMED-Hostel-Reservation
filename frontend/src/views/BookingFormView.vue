@@ -1,7 +1,7 @@
 <!-- Booking Form View -->
 
 <script setup>
-  import { reactive, computed, watch, ref } from 'vue'
+  import { reactive, computed, watch, ref, onMounted } from 'vue'
   import { useRouter } from 'vue-router'
   import { useToast } from 'vue-toastification'
 
@@ -34,6 +34,28 @@
     guestDetails: [],
   })
 
+  // Tracker to hold max limits of room inputs from the backend
+  const roomLimits = reactive({ A: 0, B: 0, C: 0 })
+
+  onMounted(async () => {
+    const backendUrl = import.meta.env.VITE_BACKEND_BASE_URL
+    const res = await fetch(`${backendUrl}/room/get_all_room_types/`)
+    const data = await res.json()
+    data.forEach(rt => {
+      if (rt.name === 'A') roomLimits.A = rt.available_rooms
+      if (rt.name === 'B') roomLimits.B = rt.available_rooms
+      if (rt.name === 'C') roomLimits.C = rt.available_rooms
+    })
+  })
+
+  const totalRoomsA = computed(() => form.rooms.airconPrivate.S + form.rooms.airconPrivate.D)
+  const totalRoomsB = computed(() => form.rooms.airconShared.S + form.rooms.airconShared.D)
+  const totalRoomsC = computed(() => form.rooms.ceilingFanShared.S + form.rooms.ceilingFanShared.D + form.rooms.ceilingFanShared.T)
+
+  const disableA = computed(() => totalRoomsA.value >= roomLimits.A)
+  const disableB = computed(() => totalRoomsB.value >= roomLimits.B)
+  const disableC = computed(() => totalRoomsC.value >= roomLimits.C)
+
   const totalGuests = computed(() => form.guests.F + form.guests.M)
 
   watch(totalGuests, (newCount) => {
@@ -46,6 +68,37 @@
       form.guestDetails.splice(newCount)
     }
   })
+
+  function checkLimit(key, type) {
+    const total = (k) => {
+      if (k === 'airconPrivate')
+        return form.rooms.airconPrivate.S + form.rooms.airconPrivate.D
+      if (k === 'airconShared')
+        return form.rooms.airconShared.S + form.rooms.airconShared.D
+      if (k === 'ceilingFanShared')
+        return (
+          form.rooms.ceilingFanShared.S +
+          form.rooms.ceilingFanShared.D +
+          form.rooms.ceilingFanShared.T
+        )
+      return 0
+    }
+
+    const limit = {
+      airconPrivate: roomLimits.A,
+      airconShared: roomLimits.B,
+      ceilingFanShared: roomLimits.C,
+    }[key]
+
+    const currentTotal = total(key)
+
+    if (currentTotal > limit) {
+      const excess = currentTotal - limit
+      form.rooms[key][type] = Math.max(0, form.rooms[key][type] - excess)
+
+      toast.warning(`Cannot exceed maximum of ${limit} rooms for this type.`)
+    }
+  }
 
   const submitForm = async () => {
     const requiredFields = {
@@ -255,15 +308,31 @@
             <tbody>
               <tr v-for="(room, key) in roomTypes" :key="key">
                 <td class="border px-2 py-1" v-html="room.label"></td>
+
                 <td class="border px-2 py-1 text-center">
-                  <input type="number" min="0" v-model.number="form.rooms[key].S" class="w-16 border border-gray-300 rounded px-1 py-1 text-center" />
+                  <input
+                    type="number" min="0" v-model.number="form.rooms[key].S"
+                    @input="checkLimit(key, 'S')"
+                    class="w-16 border border-gray-300 rounded px-1 py-1 text-center"
+                  />
                 </td>
+
                 <td class="border px-2 py-1 text-center">
-                  <input type="number" min="0" v-model.number="form.rooms[key].D" class="w-16 border border-gray-300 rounded px-1 py-1 text-center" />
+                  <input
+                    type="number" min="0" v-model.number="form.rooms[key].D"
+                    @input="checkLimit(key, 'D')"
+                    class="w-16 border border-gray-300 rounded px-1 py-1 text-center"
+                  />
                 </td>
+
                 <td class="border px-2 py-1 text-center" v-if="room.allowT">
-                  <input type="number" min="0" v-model.number="form.rooms[key].T" class="w-16 border border-gray-300 rounded px-1 py-1 text-center" />
+                  <input
+                    type="number" min="0" v-model.number="form.rooms[key].T"
+                    @input="checkLimit(key, 'T')"
+                    class="w-16 border border-gray-300 rounded px-1 py-1 text-center"
+                  />
                 </td>
+
                 <td class="border px-2 py-1" v-else></td>
               </tr>
             </tbody>
