@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Room, RoomType, RoomRate, Amenity
+from .models import Room, RoomType, RoomRate, Amenity, RoomTypeImage
 
 class AmenitySerializer(serializers.ModelSerializer):
     class Meta:
@@ -29,3 +29,8 @@ class RoomRateSerializer(serializers.ModelSerializer):
         fields = '__all__' 
     def get_str(self, obj):
         return str(obj)
+
+class RoomTypeImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RoomTypeImage
+        fields = ['id', 'name', 'image', 'room_type']
