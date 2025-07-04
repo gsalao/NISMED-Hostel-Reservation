@@ -7,10 +7,9 @@ from .serializers import RoomSerializer, RoomTypeSerializer, RoomRateSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
-from reservation.models import Reservation, ReservedRoom
+from reservation.models import Reservation, ReservedRoom, StatusEnum
 
 # Create your views here.
-
 @api_view(['GET'])
 def get_all_rooms(request):
     """
@@ -57,19 +56,26 @@ class RoomAPIView(generics.ListAPIView):
         reservation = self.request.query_params.get('reservation')
 
         if room_type:
+            # filters out the rooms that are not of that room type
             queryset = queryset.filter(room_type=room_type)
 
         if reservation:
+            # filters out the rooms that cannot be used during those dates
             reservation = Reservation.objects.get(pk=reservation)
             start_date = reservation.start_date
             end_date = reservation.end_date
 
-            # Get rooms reserved for overlapping periods
+            # Get rooms reserved for overlapping periods that are NOT reserved and checked in 
+            # hence we are filtering OUT those whose periods are greater than the end date and the less than the start date 
+            # but we are also filtering out the reserved rooms that are associated with reservations that have been reserved / checked in 
             overlapping_reserved_rooms = ReservedRoom.objects.filter(
                 reservation__start_date__lt=end_date,
-                reservation__end_date__gt=start_date
-            ).exclude(reservation=reservation).values_list('room', flat=True)
-
+                reservation__end_date__gt=start_date,
+                reservation__status__in=[StatusEnum.RESERVED.value, StatusEnum.CHECKED_IN.value],
+            ).exclude(
+                reservation=reservation
+            ).values_list('room', flat=True)
+            
             # Exclude these rooms
             queryset = queryset.exclude(id__in=overlapping_reserved_rooms)
 

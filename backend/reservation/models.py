@@ -10,6 +10,7 @@ class StatusEnum(Enum):
     """
     This enum is for showing the 'states' that a reservation can take
     """
+    RESERVED = 'RESERVED'
     CHECKED_IN = 'CHECKED IN'
     NO_SHOW = 'NO SHOW' 
     CANCELLED = 'CANCELLED'
@@ -20,6 +21,7 @@ class StatusEnum(Enum):
         return [(tag.value, tag.value) for tag in cls]
 
 status_symbols = {
+    0: StatusEnum.RESERVED,
     1: StatusEnum.CHECKED_IN,
     2: StatusEnum.NO_SHOW,
     3: StatusEnum.CANCELLED,
@@ -182,8 +184,8 @@ class ReservedRoom(models.Model):
         super().clean()
 
         # if the reservation is not checked in 
-        if self.reservation.status != StatusEnum.CHECKED_IN.value:
-            raise ValidationError("You cannot use this reservation")
+        # if self.reservation.status != StatusEnum.CHECKED_IN.value:
+        #     raise ValidationError("You cannot use this reservation")
 
         # if the reserved room has been selected
         overlapping_reservations = ReservedRoom.objects.filter(
