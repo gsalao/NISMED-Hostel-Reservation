@@ -235,7 +235,13 @@
 
       <!-- Rooms Table -->
       <div>
-        <label class="block font-semibold mb-2">No. of Rooms</label>
+        <label class="block font-semibold">
+          No. of Rooms
+        </label>
+        <p class="text-gray-500 text-sm mb-2">
+          Maximum of 10 rooms only. If more than 10 rooms, kindly email us at <strong>nismedhostel.upd@up.edu.ph</strong> to check availability.
+        </p>
+
         <div class="overflow-x-auto">
           <table class="w-full table-auto border border-gray-300">
             <thead class="bg-gray-100">
