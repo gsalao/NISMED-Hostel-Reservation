@@ -1,0 +1,83 @@
+[
+{
+  "model": "room.roomtypeimage",
+  "pk": 1,
+  "fields": {
+    "name": "Type A1",
+    "image": "room_type_images/Type-A-1.avif",
+    "room_type": 3
+  }
+},
+{
+  "model": "room.roomtypeimage",
+  "pk": 2,
+  "fields": {
+    "name": "Type A2",
+    "image": "room_type_images/Type-A-2.avif",
+    "room_type": 3
+  }
+},
+{
+  "model": "room.roomtypeimage",
+  "pk": 3,
+  "fields": {
+    "name": "Type A3",
+    "image": "room_type_images/Type-A-3.avif",
+    "room_type": 3
+  }
+},
+{
+  "model": "room.roomtypeimage",
+  "pk": 4,
+  "fields": {
+    "name": "Type B1",
+    "image": "room_type_images/Type-B-1.avif",
+    "room_type": 2
+  }
+},
+{
+  "model": "room.roomtypeimage",
+  "pk": 5,
+  "fields": {
+    "name": "Type B2",
+    "image": "room_type_images/Type-B-2.avif",
+    "room_type": 2
+  }
+},
+{
+  "model": "room.roomtypeimage",
+  "pk": 6,
+  "fields": {
+    "name": "Type B3",
+    "image": "room_type_images/Type-B-3.avif",
+    "room_type": 2
+  }
+},
+{
+  "model": "room.roomtypeimage",
+  "pk": 7,
+  "fields": {
+    "name": "Type C1",
+    "image": "room_type_images/Type-C-1.avif",
+    "room_type": 1
+  }
+},
+{
+  "model": "room.roomtypeimage",
+  "pk": 8,
+  "fields": {
+    "name": "Type C2",
+    "image": "room_type_images/Type-C-2.avif",
+    "room_type": 1
+  }
+},
+{
+  "model": "room.roomtypeimage",
+  "pk": 9,
+  "fields": {
+    "name": "Type C3",
+    "image": "room_type_images/Type-C-3.avif",
+    "room_type": 1
+  }
+}
+]
