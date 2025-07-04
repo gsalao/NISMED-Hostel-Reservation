@@ -98,3 +98,14 @@ class Amenity(models.Model):
 
     class Meta:
         verbose_name_plural = 'Amenities'
+
+class RoomTypeImage(models.Model):
+    """
+    This is the images of a room type
+    """
+    name = models.CharField(max_length=255, help_text="The name of the image")
+    image = models.ImageField(upload_to='room_type_images/', help_text="The image of the room type")
+    room_type = models.ForeignKey(RoomType, on_delete=models.CASCADE, help_text="The room type of this image")
+
+    def __str__(self):
+      return f"{self.name}" 
