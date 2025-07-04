@@ -33,31 +33,56 @@
   import RatesLanding from '../components/RatesLanding.vue'
   import AmenitiesLanding from '../components/AmenitiesLanding.vue'
   import OperatingHours from '../components/OperatingHours.vue'
-  import typeA1 from '@/assets/images/Type-A-1.jpg'
-  import typeA2 from '@/assets/images/Type-A-2.jpg'
-  import typeA3 from '@/assets/images/Type-A-3.jpg'
-  import typeB1 from '@/assets/images/Type-B-1.jpg'
-  import typeB2 from '@/assets/images/Type-B-2.jpg'
-  import typeB3 from '@/assets/images/Type-B-3.jpg'
-  import typeC1 from '@/assets/images/Type-C-1.jpg'
-  import typeC2 from '@/assets/images/Type-C-2.jpg'
-  import typeC3 from '@/assets/images/Type-C-3.jpg'
+  import { ref, onMounted } from 'vue'
 
-  const roomSetA = [
-    { src: typeA1, label: "Room Type A" },
-    { src: typeA2, label: "Room Type A" },
-    { src: typeA3, label: "Room Type A" },
-  ];
+  interface RoomImage {
+    id: number
+    name: string
+    image: string
+    room_type: number
+    label?: string
+    src?: string
+  }
 
-  const roomSetB= [
-    { src: typeB1, label: "Room Type B" },
-    { src: typeB2, label: "Room Type B" },
-    { src: typeB3, label: "Room Type B" },
-  ];
+  const roomSetA = ref<{ src: string; label: string }[]>([])
+  const roomSetB = ref<{ src: string; label: string }[]>([])
+  const roomSetC = ref<{ src: string; label: string }[]>([])
 
-  const roomSetC = [
-    { src: typeC1, label: "Room Type C" },
-    { src: typeC2, label: "Room Type C" },
-    { src: typeC3, label: "Room Type C" },
-  ];
+  const allImages = ref<RoomImage[]>([])
+
+  onMounted(async () => {
+    try {
+      const backendUrl = import.meta.env.VITE_BACKEND_BASE_URL
+      const mediaUrl = import.meta.env.VITE_BACKEND_URL
+      const res = await fetch(`${backendUrl}/room/get_all_room_type_images/`)
+
+      const data: RoomImage[] = await res.json()
+
+      allImages.value = data
+
+      // If your RoomType IDs are: A=1, B=2, C=3 (adjust if needed)
+      roomSetA.value = data
+        .filter(img => img.room_type === 3)
+        .map(img => ({
+          src: `${mediaUrl}${img.image}`,
+          label: 'Room Type A'
+        }))
+
+      roomSetB.value = data
+        .filter(img => img.room_type === 2)
+        .map(img => ({
+          src: `${mediaUrl}${img.image}`,
+          label: 'Room Type B'
+        }))
+
+      roomSetC.value = data
+        .filter(img => img.room_type === 1)
+        .map(img => ({
+          src: `${mediaUrl}${img.image}`,
+          label: 'Room Type C'
+        }))
+    } catch (err) {
+      console.error('Failed to fetch room images:', err)
+    }
+  })
 </script>
