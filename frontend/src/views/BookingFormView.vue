@@ -95,8 +95,6 @@
     if (currentTotal > limit) {
       const excess = currentTotal - limit
       form.rooms[key][type] = Math.max(0, form.rooms[key][type] - excess)
-
-      toast.warning(`Cannot exceed maximum of ${limit} rooms for this type.`)
     }
   }
 
