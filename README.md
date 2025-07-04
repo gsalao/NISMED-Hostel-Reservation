@@ -22,6 +22,7 @@ The backend and frontend have `.env.example` files to ensure that secret variabl
 | **Name**                | **Description**                                                    |
 | ----------------------- | ------------------------------------------------------------------ |
 | `VITE_BACKEND_BASE_URL` | The URL of the Django app (in this case, the `/api` suffix **MUST** be included or it will not work) |
+| `VITE_BACKEND_URL` | The URL of the Django app **without** `/api` |
 
 # Project Setup
 This part of the README.md assumes a local setup.
