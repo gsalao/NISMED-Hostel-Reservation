@@ -1,9 +1,9 @@
 from django.shortcuts import render
-from .models import Room, RoomType, RoomRate 
+from .models import Room, RoomType, RoomRate, RoomTypeImage
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import RoomSerializer, RoomTypeSerializer, RoomRateSerializer 
+from .serializers import RoomSerializer, RoomTypeSerializer, RoomRateSerializer, RoomTypeImageSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
@@ -36,6 +36,18 @@ def get_all_room_rates(request):
     all_room_rates = RoomRate.objects.all() 
     serialized_room_rates = RoomRateSerializer(all_room_rates, many=True)
     return Response(serialized_room_rates.data)
+
+@api_view(['GET'])
+def get_room_type_images(request):
+    """
+    Get all the room type images
+    """
+    try:
+        images = RoomTypeImage.objects.all()
+        serializer = RoomTypeImageSerializer(images, many=True)
+    except:
+        return Response({'error': 'error in accessing images'}, status=status.HTTP_400_BAD_REQUEST)
+    return Response(serializer.data, status=status.HTTP_200_OK) 
 
 class RoomAPIView(generics.ListAPIView):
     """

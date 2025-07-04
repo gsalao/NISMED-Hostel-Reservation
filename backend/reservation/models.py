@@ -157,11 +157,14 @@ class Reservation(models.Model):
         """
         This method is for showing how many rooms of each type has been reserved
         """
-        rooms_counts = self.get_room_counts()
         final_output = ""
-        if rooms_counts['A'] != 0: final_output += f"{rooms_counts['A']} A {'rooms' if rooms_counts['A'] > 1 else 'room'}"
-        if rooms_counts['B'] != 0: final_output += f"{rooms_counts['B']} B {'rooms' if rooms_counts['B'] > 1 else 'room'}"
-        if rooms_counts['C'] != 0: final_output += f"{rooms_counts['C']} C {'rooms' if rooms_counts['C'] > 1 else 'room'}"
+        if self.single_a_room_count != 0: final_output += f"[{self.single_a_room_count} A single], "
+        if self.double_a_room_count != 0: final_output += f"[{self.double_a_room_count} A double], "
+        if self.single_b_room_count != 0: final_output += f"[{self.single_b_room_count} B single], "
+        if self.double_b_room_count != 0: final_output += f"[{self.double_b_room_count} B double], "
+        if self.single_c_room_count != 0: final_output += f"[{self.single_c_room_count} C single], "
+        if self.double_c_room_count != 0: final_output += f"[{self.double_c_room_count} C double], "
+        if self.triple_c_room_count != 0: final_output += f"[{self.triple_c_room_count} C triple], "
         return final_output 
 
     def __str__(self):

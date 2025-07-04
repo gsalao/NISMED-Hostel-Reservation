@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Room, RoomType, RoomRate, Amenity
+from .models import Room, RoomType, RoomRate, Amenity, RoomTypeImage
 
 class RoomTypeAdmin(admin.ModelAdmin):
     list_display = ('name', 'available_rooms') 
@@ -21,8 +21,12 @@ class RoomAdmin(admin.ModelAdmin):
     ordering = ('room_number', '-room_type',)
     list_per_page = 10
 
+class RoomTypeImageAdmin(admin.ModelAdmin):
+    list_display = ('name', 'room_type')
+
 # Register your models here.
 admin.site.register(Room, RoomAdmin)
 admin.site.register(RoomType, RoomTypeAdmin)
 admin.site.register(RoomRate, RoomRateAdmin)
 admin.site.register(Amenity)
+admin.site.register(RoomTypeImage)
