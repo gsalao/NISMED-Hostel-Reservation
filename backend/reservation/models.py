@@ -72,7 +72,7 @@ class Reservation(models.Model):
     """
     guest = models.ForeignKey(Guest, on_delete=models.CASCADE, help_text="Email of the guest who registered the reservation")
     assigned_a_room = models.BooleanField(default=False, help_text="Check this if the reservation has already been assigned room/s")
-    status = models.CharField(max_length=1024, choices=StatusEnum.choices(), default=StatusEnum.CHECKED_IN.value, help_text="The current status of the resevation")
+    status = models.CharField(max_length=1024, choices=StatusEnum.choices(), default=StatusEnum.RESERVED.value, help_text="The current status of the resevation")
     reservation_date = models.DateTimeField(auto_now_add=True, help_text="The date when the reservation was reserved")
     start_date = models.DateField(help_text="The check-in date of the reservation")
     end_date = models.DateField(help_text="The check-out date of the reservation")
