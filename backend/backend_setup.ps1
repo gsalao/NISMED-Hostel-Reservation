@@ -1,4 +1,4 @@
-.\env\Scripts\activate
+source env/bin/activate
 pip install -r requirements.txt
 python manage.py makemigrations
 python manage.py migrate
@@ -10,4 +10,3 @@ python manage.py loaddata fixtures/room_room.json
 python manage.py loaddata fixtures/room_rate.json
 python manage.py loaddata fixtures/reservation_reservation.json
 python manage.py loaddata fixtures/reservation_reservedrooms.json
-python manage.py runserver
