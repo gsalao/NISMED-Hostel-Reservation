@@ -23,7 +23,7 @@ def are_dates_available(start_date, end_date, requested_counts, current_reservat
     overlapping_reservations = Reservation.objects.filter(
         start_date__lt=end_date,
         end_date__gt=start_date,
-        status=StatusEnum.CHECKED_IN.value,
+        status__in=[StatusEnum.RESERVED.value, StatusEnum.CHECKED_IN.value],
     )
 
     # it will count itself, so just remove itself from the overlapping_reservations count

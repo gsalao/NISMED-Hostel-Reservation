@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'guest',
     'room',
     'django_seed',
-    'django_filters'
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -215,6 +215,7 @@ JAZZMIN_UI_TWEAKS = {
     }
 }
 
+# email transactional provider
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -222,6 +223,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')          # the Gmail account sending the emails
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')  # secure password generated below
 
+# caching
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
