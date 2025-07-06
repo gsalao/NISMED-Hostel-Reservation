@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'room',
     'django_seed',
     'django_filters',
-    'anymail'
 ]
 
 MIDDLEWARE = [

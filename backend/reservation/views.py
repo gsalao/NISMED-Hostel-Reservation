@@ -6,14 +6,10 @@ from .utils import are_dates_available
 from guest.utils import insert_guest
 from django.core.exceptions import ValidationError
 from datetime import timedelta, datetime
-from django.core.mail import send_mail, EmailMessage 
-from smtplib import SMTPException
 from django.utils.crypto import get_random_string
-import decouple
 from django.core.cache import cache
 from room.models import RoomRate
 from decouple import config
-from anymail.exceptions import AnymailError
 import requests
 from requests.exceptions import RequestException
 
