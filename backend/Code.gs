@@ -32,6 +32,19 @@ function doGet(e) {
 }
 
 function doPost(e) {
+  /*
+  This function serves as the API endpoint for sending emails (post request)
+  It expects the following request:
+  {
+    'type': '...',
+    'name': '...',
+    'link': '...',
+    'code': '...',
+    'to': 'xyz@example.com'
+    'cc': 'xyz@example.com',
+    'htmlBody': '...'
+  }
+  */
   const data = JSON.parse(e.postData.contents);
   const type = data.type;
 
