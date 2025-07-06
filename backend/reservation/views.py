@@ -6,13 +6,16 @@ from .utils import are_dates_available
 from guest.utils import insert_guest
 from django.core.exceptions import ValidationError
 from datetime import timedelta, datetime
-from django.core.mail import send_mail, BadHeaderError
+from django.core.mail import send_mail, EmailMessage 
 from smtplib import SMTPException
 from django.utils.crypto import get_random_string
 import decouple
 from django.core.cache import cache
 from room.models import RoomRate
 from decouple import config
+from anymail.exceptions import AnymailError
+import requests
+from requests.exceptions import RequestException
 
 def show_unavailable_rooms(total_count: dict[str, int]) -> str:
     """
@@ -31,30 +34,47 @@ def send_code(reservation_data, verification_code):
 
     frontend_url = config('FRONTEND_URL')
     verification_link = f"{frontend_url}/verify?token={temp_id}"
-
+    payload = {
+        "type": "verification",
+        "to": reservation_data["guest_email"],
+        "name": reservation_data["guest_name"],
+        "code": verification_code,
+        "link": verification_link
+    }
     try:
-        send_mail(
-            subject="UP NISMED Hostel - Verification Code",
-            message=(
-                f"Thank you for your reservation.\n\n"
-                f"Please verify your reservation by clicking the link below:\n"
-                f"{verification_link}\n\n"
-                f"Or use this verification code: {verification_code}"
-            ),
-            from_email="noreply@up.edu.ph",
-            recipient_list=[reservation_data["guest_email"]],
-            fail_silently=False,
-            html_message=f"""
-                <p>Thank you for your reservation at UP NISMED Hostel, {reservation_data["guest_name"]}!</p>
-                <p>Please verify your reservation by clicking the link below:<br>
-                <a href="{verification_link}">{verification_link}</a></p>
-                <p>Your verification code is <u><strong>{verification_code}</strong></u></p>
-            """
-        )
+        response = requests.post(config('GOOGLE_SCRIPT_URL'), json=payload, timeout=10)
+        response.raise_for_status()
         return Response({"reservation_token": temp_id}, status=status.HTTP_202_ACCEPTED)
 
-    except (BadHeaderError, SMTPException) as e:
-        return Response({"error": f"Failed to send email: {str(e)}"}, status=500)
+    except RequestException as e:
+        return Response(
+            {"error": f"Failed to send verification email: {str(e)}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+    # try:
+    #     send_mail(
+    #         subject="[DO NOT REPLY] UP NISMED Hostel - Verification Code",
+    #         message=(
+    #             f"Thank you for your reservation.\n\n"
+    #             f"Please verify your reservation by clicking the link below:\n"
+    #             f"{verification_link}\n\n"
+    #             f"Or use this verification code: {verification_code}"
+    #         ),
+    #         from_email=config('EMAIL_HOST_USER'),
+    #         recipient_list=[reservation_data["guest_email"]],
+    #         fail_silently=False,
+    #         html_message=f"""
+    #             <p>Thank you for your reservation at UP NISMED Hostel, {reservation_data["guest_name"]}!</p>
+    #             <p>Please verify your reservation by clicking the link below:<br>
+    #             <a href="{verification_link}">{verification_link}</a></p>
+    #             <p>Your verification code is <u><strong>{verification_code}</strong></u></p>
+    #         """
+    #     )
+    #     return Response({"reservation_token": temp_id}, status=status.HTTP_202_ACCEPTED)
+    #
+    # except AnymailError as e:
+    #     return Response({"error": f"Failed to send email: {str(e)}"}, status=500)
 
 def draw_tables(room_configs, reservation, nights, start_date, end_date, reservation_data):
      # Calculate the total standing balance and initialize HTML Table Row container
@@ -274,57 +294,50 @@ def verify_reservation(request):
     if serializer.is_valid():
         reservation = serializer.save(is_verified=True)
 
+        nights = (end_date - start_date).days
+
+        start_date_str = start_date.strftime("%B %d, %Y")
+        end_date_str = end_date.strftime("%B %d, %Y")
+
+        # Preload all room rates into a dictionary to avoid multiple DB hits
+        rate_lookup = {
+            (rate.room_type.id, rate.occupancy): rate.rate
+            for rate in RoomRate.objects.select_related('room_type')
+        }
+
+        # Room config with labels and rates
+        room_configs = {
+            "single_a_room_count": {"label": "Type A Single Occupancy (1 pax)", "rate": rate_lookup.get((3, 1), 0)},
+            "double_a_room_count": {"label": "Type A Double Occupancy (2 pax)", "rate": rate_lookup.get((3, 2), 0)},
+            "single_b_room_count": {"label": "Type B Single Occupancy (1 pax)", "rate": rate_lookup.get((2, 1), 0)},
+            "double_b_room_count": {"label": "Type B Double Occupancy (2 pax)", "rate": rate_lookup.get((2, 2), 0)},
+            "single_c_room_count": {"label": "Type C Single Occupancy (1 pax)", "rate": rate_lookup.get((1, 1), 0)},
+            "double_c_room_count": {"label": "Type C Double Occupancy (2 pax)", "rate": rate_lookup.get((1, 2), 0)},
+            "triple_c_room_count": {"label": "Type C Triple Occupancy (3 pax)", "rate": rate_lookup.get((1, 3), 0)},
+        }
+
+        html_admin_message, html_client_message = draw_tables(room_configs, reservation, nights, start_date_str, end_date_str, reservation_data)
+        payload = {
+            "type": "confirmation",
+            "to": reservation_data["guest_email"],
+            "cc": config("EMAIL_HOST_USER"),
+            "reservationId": reservation.id,
+            "htmlBody": html_client_message
+        }
+
         try:
-            nights = (end_date - start_date).days
-
-            start_date_str = start_date.strftime("%B %d, %Y")
-            end_date_str = end_date.strftime("%B %d, %Y")
-
-            # Preload all room rates into a dictionary to avoid multiple DB hits
-            rate_lookup = {
-                (rate.room_type.id, rate.occupancy): rate.rate
-                for rate in RoomRate.objects.select_related('room_type')
-            }
-
-            # Room config with labels and rates
-            room_configs = {
-                "single_a_room_count": {"label": "Type A Single Occupancy (1 pax)", "rate": rate_lookup.get((3, 1), 0)},
-                "double_a_room_count": {"label": "Type A Double Occupancy (2 pax)", "rate": rate_lookup.get((3, 2), 0)},
-                "single_b_room_count": {"label": "Type B Single Occupancy (1 pax)", "rate": rate_lookup.get((2, 1), 0)},
-                "double_b_room_count": {"label": "Type B Double Occupancy (2 pax)", "rate": rate_lookup.get((2, 2), 0)},
-                "single_c_room_count": {"label": "Type C Single Occupancy (1 pax)", "rate": rate_lookup.get((1, 1), 0)},
-                "double_c_room_count": {"label": "Type C Double Occupancy (2 pax)", "rate": rate_lookup.get((1, 2), 0)},
-                "triple_c_room_count": {"label": "Type C Triple Occupancy (3 pax)", "rate": rate_lookup.get((1, 3), 0)},
-            }
-
-            html_admin_message, html_client_message = draw_tables(room_configs, reservation, nights, start_date_str, end_date_str, reservation_data)
-
-            # Send admin confirmation
-            send_mail(
-                subject=f"NISMED Hostel Reservation - Reservation #{reservation.id}",
-                message=f"Reservation #{reservation.id} verified.",
-                from_email="noreply@up.edu.ph",
-                recipient_list=[decouple.config('EMAIL_HOST_USER')],
-                fail_silently=True,
-                html_message=html_admin_message
-            )
-
-            # Send guest confirmation
-            send_mail(
-                subject="UP NISMED Hostel - Successful Reservation",
-                message=f"Reservation #{reservation.id} has been verified.",
-                from_email="noreply@up.edu.ph",
-                recipient_list=[reservation_data["guest_email"]],
-                fail_silently=True,
-                html_message=html_client_message
-            )
-
+            response = requests.post(config('GOOGLE_SCRIPT_URL'), json=payload, timeout=10)
+            response.raise_for_status()
             cache.delete(f"reservation:{token}")
             return Response({"success": True})
 
-        except (BadHeaderError, SMTPException) as e:
+        except RequestException as e:
             cache.delete(f"reservation:{token}")
-            return Response({"error": f"Failed to send confirmation email: {str(e)}"}, status=500)
+            return Response(
+                {"error": f"Failed to send confirmation email: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
