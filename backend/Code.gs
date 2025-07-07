@@ -1,36 +1,3 @@
-function doGet(e) {
-  const type = e.parameter.type;
-  const to = e.parameter.to;
-  const name = e.parameter.name;
-  const code = e.parameter.code;
-  const link = e.parameter.link;
-  const cc = e.parameter.cc;
-  const reservationId = e.parameter.reservationId;
-  const htmlBody = e.parameter.htmlBody;
-  
-  // Handle based on type of email
-  if (type === "verification") {
-    MailApp.sendEmail({
-      to: to,
-      subject: "[DO NOT REPLY] UP NISMED Hostel - Verification Code",
-      htmlBody:
-        `<p>Thank you for your reservation, ${name}!</p>` +
-        `<p>Click to verify: <a href="${link}">${link}</a></p>` +
-        `<p>Your code: <b>${code}</b></p>`
-    });
-  } else if (type === "confirmation") {
-    MailApp.sendEmail({
-      to: to,
-      cc: cc,
-      subject: `#${reservationId} Reservation Confirmed`,
-      htmlBody: htmlBody
-    });
-  }
-
-  return ContentService.createTextOutput("Email sent")
-                       .setMimeType(ContentService.MimeType.TEXT);
-}
-
 function doPost(e) {
   /*
   This function serves as the API endpoint for sending emails (post request)
@@ -65,7 +32,7 @@ function doPost(e) {
     MailApp.sendEmail({
       to: data.to,
       cc: data.cc,
-      subject: `Reservation #${data.reservationId} Confirmed`,
+      subject: `Successful Reservation - UP NISMED Hostel`,
       htmlBody: data.htmlBody,
       name: "UP NISMED Hostel"
     });
