@@ -33,56 +33,24 @@
   import RatesLanding from '../components/RatesLanding.vue'
   import AmenitiesLanding from '../components/AmenitiesLanding.vue'
   import OperatingHours from '../components/OperatingHours.vue'
-  import { ref, onMounted } from 'vue'
 
-  interface RoomImage {
-    id: number
-    name: string
-    image: string
-    room_type: number
-    label?: string
-    src?: string
-  }
+  const images = import.meta.glob('@/assets/images/*.{png,jpg,jpeg,avif,webp}', { eager: true, import: 'default' })
 
-  const roomSetA = ref<{ src: string; label: string }[]>([])
-  const roomSetB = ref<{ src: string; label: string }[]>([])
-  const roomSetC = ref<{ src: string; label: string }[]>([])
+  const roomSetA: Array<{ src: string, label: string }> = []
+  const roomSetB: Array<{ src: string, label: string }> = []
+  const roomSetC: Array<{ src: string, label: string }> = []
 
-  const allImages = ref<RoomImage[]>([])
-
-  onMounted(async () => {
-    try {
-      const backendUrl = import.meta.env.VITE_BACKEND_BASE_URL
-      const mediaUrl = import.meta.env.VITE_BACKEND_URL
-      const res = await fetch(`${backendUrl}/room/get_all_room_type_images/`)
-
-      const data: RoomImage[] = await res.json()
-
-      allImages.value = data
-
-      // If your RoomType IDs are: A=1, B=2, C=3 (adjust if needed)
-      roomSetA.value = data
-        .filter(img => img.room_type === 3)
-        .map(img => ({
-          src: `${mediaUrl}${img.image}`,
-          label: 'Room Type A'
-        }))
-
-      roomSetB.value = data
-        .filter(img => img.room_type === 2)
-        .map(img => ({
-          src: `${mediaUrl}${img.image}`,
-          label: 'Room Type B'
-        }))
-
-      roomSetC.value = data
-        .filter(img => img.room_type === 1)
-        .map(img => ({
-          src: `${mediaUrl}${img.image}`,
-          label: 'Room Type C'
-        }))
-    } catch (err) {
-      console.error('Failed to fetch room images:', err)
+  Object.entries(images).forEach(([path, src]) => {
+    if (path.includes('Type-A')) {
+      roomSetA.push({ src: src as string, label: 'Room Type A' })
+    } else if (path.includes('Type-B')) {
+      roomSetB.push({ src: src as string, label: 'Room Type B' })
+    } else if (path.includes('Type-C')) {
+      roomSetC.push({ src: src as string, label: 'Room Type C' })
     }
   })
+
+  roomSetA.sort((a, b) => a.src.localeCompare(b.src))
+  roomSetB.sort((a, b) => a.src.localeCompare(b.src))
+  roomSetC.sort((a, b) => a.src.localeCompare(b.src))
 </script>
