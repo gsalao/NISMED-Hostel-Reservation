@@ -16,8 +16,7 @@ The backend and frontend have `.env.example` files to ensure that secret variabl
 | `DB_USER`               | The user who has access to the database |
 | `DB_PASSWORD`           | The password to the `DB_USER` |
 | `SECRET_KEY`            | The secret key of the Django app |
-| `EMAIL_HOST_USER`       | The email address of the account sending the verification codes |
-| `EMAIL_HOST_PASSWORD`   | The generated app password for the email |
+| `EMAIL_HOST_USER`       | The email address of the account sending emails |
 | `REDIS_URL`             | The URL for redis |
 | `FRONTEND_URL`          | The URL for the frontend |
 | `GOOGLE_SCRIPT_URL`     | The URL of the Google Script webapp |
@@ -36,13 +35,12 @@ This part of the README.md assumes a local setup.
 2. [Python](https://www.python.org)
 3. [PostgreSQL](https://www.postgresql.org) Database
 4. [Docker](https://www.docker.com)
-5. Google Account
 
 ## Backend Setup
 1. Create a PostgeSQL database (local or Supabase)
-2. Create a [Google Apps Script Project](https://developers.google.com/apps-script)
+2. Create a [Google Apps Script Project](https://developers.google.com/apps-script) using your `EMAIL_HOST_USER` .
 3. Paste in the code of `/backend/Code.gs`
-4. Deploy the project and copy the URL of the webapp
+4. Deploy the project with the following configuration: `Execute as:Me` and `Who has access: Anyone` and copy the URL of the webapp
 5. Ensure that you are in the `backend` folder
 6. Create `.env` file and fill up with necessary details (see above for details)
 7. `python3 -m venv env` or `python -m venv env` in order to create the virtual environment for Django
