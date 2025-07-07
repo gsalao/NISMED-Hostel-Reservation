@@ -47,7 +47,7 @@
     <!-- Pulsating Arrow Button at bottom -->
     <button
       @click="scrollToLandingBulk"
-      class="cursor-pointer absolute bottom-40 left-1/2 transform -translate-x-1/2 animate-bounce z-30 focus:outline-none"
+      class="cursor-pointer absolute bottom-4 left-1/2 transform -translate-x-1/2 animate-bounce z-30 focus:outline-none"
       aria-label="Scroll down"
     >
       <svg
