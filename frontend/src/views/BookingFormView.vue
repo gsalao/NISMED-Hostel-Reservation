@@ -52,11 +52,9 @@
   const totalRoomsB = computed(() => form.rooms.airconShared.S + form.rooms.airconShared.D)
   const totalRoomsC = computed(() => form.rooms.ceilingFanShared.S + form.rooms.ceilingFanShared.D + form.rooms.ceilingFanShared.T)
 
-  const disableA = computed(() => totalRoomsA.value >= roomLimits.A)
-  const disableB = computed(() => totalRoomsB.value >= roomLimits.B)
-  const disableC = computed(() => totalRoomsC.value >= roomLimits.C)
-
   const totalGuests = computed(() => form.guests.F + form.guests.M)
+
+  const totalRoomCount = computed(() => totalRoomsA.value + totalRoomsB.value + totalRoomsC.value)
 
   watch(totalGuests, (newCount) => {
     const current = form.guestDetails.length
@@ -90,11 +88,26 @@
       ceilingFanShared: roomLimits.C,
     }[key]
 
-    const currentTotal = total(key)
+    const currentPerType = total(key)
 
-    if (currentTotal > limit) {
-      const excess = currentTotal - limit
+    let roomLabel = '';
+    if (key === 'airconPrivate') roomLabel = 'A';
+    if (key === 'airconShared') roomLabel = 'B';
+    if (key === 'ceilingFanShared') roomLabel = 'C';
+
+    // enforce per-type backend limit
+    if (currentPerType > limit) {
+      const excess = currentPerType - limit
       form.rooms[key][type] = Math.max(0, form.rooms[key][type] - excess)
+      toast.warning(`There are only ${limit} available rooms for Room Type ${roomLabel}`)
+    }
+
+    // enforce global max 10 rooms
+    const currentTotal = totalRoomsA.value + totalRoomsB.value + totalRoomsC.value
+    if (currentTotal > 10) {
+      const excess = currentTotal - 10
+      form.rooms[key][type] = Math.max(0, form.rooms[key][type] - excess)
+      toast.warning("Maximum of 10 rooms only.")
     }
   }
 
