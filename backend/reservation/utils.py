@@ -59,6 +59,6 @@ def are_dates_available(start_date, end_date, requested_counts, current_reservat
 
         if requested != 0 and existing + requested > room_type.available_rooms:
             is_valid = False
-            total_counts[room_type.name] = (existing + requested) - room_type.available_rooms 
+            total_counts[room_type.name] = (existing + requested) - room_type.available_rooms
 
     return (is_valid, total_counts)

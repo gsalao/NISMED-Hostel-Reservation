@@ -15,11 +15,14 @@ class RoomType(models.Model):
         The total number of available rooms
     """
     name = models.CharField(max_length=1, help_text="Name of the room type")
-    available_rooms = models.IntegerField(help_text="The number of available rooms of that room type (Any changes in the number of rooms must be changed here)")
     amenities = models.ManyToManyField('Amenity', related_name='room_types', blank=True, help_text="The amenities of the room type")
 
     def __str__(self):
         return f"{self.name}" 
+
+    @property
+    def available_rooms(self):
+        return self.rooms.filter(is_active=True).count()
 
 class RoomRate(models.Model):
     """

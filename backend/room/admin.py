@@ -4,7 +4,6 @@ from .models import Room, RoomType, RoomRate, Amenity, RoomTypeImage
 class RoomTypeAdmin(admin.ModelAdmin):
     list_display = ('name', 'available_rooms') 
     ordering = ('name',)
-    list_editable = ('available_rooms',) 
     list_per_page = 10
     filter_horizontal = ('amenities',)
 
