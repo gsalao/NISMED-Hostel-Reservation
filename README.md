@@ -36,7 +36,7 @@ This part of the README.md assumes a local setup.
 3. [PostgreSQL](https://www.postgresql.org) Database
 4. [Docker](https://www.docker.com)
 
-## Backend Setup
+## Initial Backend Setup
 1. Create a PostgeSQL database (local or Supabase)
 2. Create a [Google Apps Script Project](https://developers.google.com/apps-script) using your `EMAIL_HOST_USER` .
 3. Paste in the code of `/backend/Code.gs`
@@ -46,6 +46,13 @@ This part of the README.md assumes a local setup.
 7. `python3 -m venv env` or `python -m venv env` in order to create the virtual environment for Django
 8. Run the `backend_setup.ps1` or `backend_setup.sh` file to prepare the backend (use `.ps1` for Windows devices and `.sh` for POSIX-compliant machines)
 9. `docker run -d -p <port>:<port> redis`
+
+  ## Post-Backend Setup
+This is for the runs that arae _after_ the initial backend setup.
+1. Open Docker and run the Redis server
+2. Connect to the virtual environment using `./env/Script/activate` for Windows machines and `source bin/env/activate` for POSIX-compliant machines
+3. Run `python manage.py makemigrations` and `python manage.py migrate` for any migrations to the database
+4. Run `python manage.py runserver` to run the server
 
 ## Frontend Setup
 1. Ensure that you are in the `frontend` folder
