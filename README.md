@@ -49,7 +49,7 @@ This part of the README.md assumes a local setup.
 
 ## Frontend Setup
 1. Ensure that you are in the `frontend` folder
-2. Create `.env` folder and fill up with necessary details (see above for details)
+2. Create `.env` file and fill up with necessary details (see above for details)
 3. `npm install` to install dependecies
 4. `npm run dev` to run server
 5. `npm run build` to type-check, compile, and minify for production (which will be used in Netlify)
