@@ -17,6 +17,7 @@ class RoomSerializer(serializers.ModelSerializer):
 
 class RoomTypeSerializer(serializers.ModelSerializer):
     amenities = AmenitySerializer(many=True, read_only=True)
+    available_rooms = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = RoomType 
