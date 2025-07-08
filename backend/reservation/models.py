@@ -116,7 +116,7 @@ class Reservation(models.Model):
         # Validation: the dates inputted by the guest can be occupied
         valid_dates, total_counts = are_dates_available(self.start_date, self.end_date, self.get_room_counts(), self) 
         if not valid_dates and self.status == StatusEnum.CHECKED_IN.value: 
-            raise ValidationError(f"The reservation cannot be made; {self.show_unavailable_rooms(total_counts)}")
+            raise ValidationError("Dates are unavailable for the type of room of selected; the number of selected room/s is inadequate")
 
         # Validation: the inputted guest count matches the inputted number of rooms
         if self.male_count + self.female_count != self.get_total_guest_count():
@@ -143,15 +143,6 @@ class Reservation(models.Model):
             'B': self.single_b_room_count + self.double_b_room_count,
             'C': self.single_c_room_count + self.double_c_room_count + self.triple_c_room_count
         }
-
-    def show_unavailable_rooms(self, total_count) -> str:
-        """
-        This method is for showing which rooms are unavailable to be used (this is mainly for sending the error message)
-        """
-        final_output = "You cannot reserve your listed amount of: "
-        for (key,_) in total_count.items():
-            final_output += f"{key} room/s"
-        return final_output 
 
     def show_room_counts(self):
         """

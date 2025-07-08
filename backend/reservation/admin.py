@@ -22,6 +22,8 @@ class ReservedRoomInline(admin.TabularInline):
     model = ReservedRoom
     formset = ReservedRoomInlineFormSet
     extra = 1 
+    verbose_name = "Assign room/s"
+    verbose_name_plural = "Assign room/s"
     class Media:
         js = (
             'inline-room-dropdown-select.js', 

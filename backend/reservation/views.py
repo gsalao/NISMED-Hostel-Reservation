@@ -224,6 +224,7 @@ def create_new_reservation(request):
     # Check if there are any available room types at the given dates 
     valid_dates, total_counts = are_dates_available(start_date, end_date, reserved_room_counts)
     if not valid_dates: 
+        return Response({"error": "Dates are unavailable for the type of room of selected; the number of selected room/s is inadequate"}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"error": f"Dates not available; {show_unavailable_rooms(total_counts)}"}, status=status.HTTP_400_BAD_REQUEST)
 
     verification_code = get_random_string(length=6, allowed_chars='0123456789')
