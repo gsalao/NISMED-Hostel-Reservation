@@ -18,12 +18,17 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.http import JsonResponse
+
+def health_check(request):
+    return JsonResponse({"status": "ok"})
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/guest/', include('guest.urls')),
     path('api/reserve/', include('reservation.urls')),
     path('api/room/', include('room.urls')),
+    path('ping/', health_check)
 ]
 
 if settings.DEBUG:
