@@ -22,6 +22,11 @@ class RoomAdmin(admin.ModelAdmin):
 
 class RoomTypeImageAdmin(admin.ModelAdmin):
     list_display = ('name', 'room_type')
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+
+        if obj.image and hasattr(obj.image.file, 'close'):
+            obj.image.file.close()
 
 # Register your models here.
 admin.site.register(Room, RoomAdmin)
