@@ -20,6 +20,15 @@ The backend and frontend have `.env.example` files to ensure that secret variabl
 | `REDIS_URL`             | The URL for redis |
 | `FRONTEND_URL`          | The URL for the frontend |
 | `GOOGLE_SCRIPT_URL`     | The URL of the Google Script webapp |
+| `DEBUG`                 | The value of the DEBUG variable in settings.py |
+| `ALLOWED_HOSTS`         | The allowed hosts in settings.py |
+| `CORS_ALLOWED_ORIGINS`  | The allowed origins in settings.py |
+| `CSRF_TRUSTED_ORIGINS`  | The csrf trusted origins in settings.py |
+| `SUPABASE_ACCESS_KEY`   | The access key to the Supabase Storage |
+| `SUPABASE_SECRET_ACCESS_KEY` | The secret access key to the Supabase Storage |
+| `SUPABASE_PROJECT_ID`   | The project ID of the Supabase project |
+| `SUPABASE_ENDPOINT_URL` | The endpoint URL of the Supabase Storage |
+| `SUPABASE_REGION`       | The region of the Supabase Storage
 
 ### Frontend `.env` configuration
 | **Name**                | **Description**                                                    |
