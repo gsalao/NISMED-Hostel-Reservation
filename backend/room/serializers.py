@@ -28,6 +28,7 @@ class RoomRateSerializer(serializers.ModelSerializer):
     class Meta:
         model = RoomRate 
         fields = '__all__' 
+
     def get_str(self, obj):
         return str(obj)
 
