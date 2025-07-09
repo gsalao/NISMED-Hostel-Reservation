@@ -233,3 +233,4 @@ CSRF_TRUSTED_ORIGINS = config(
     cast=Csv(),
     default=[]
 )
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
