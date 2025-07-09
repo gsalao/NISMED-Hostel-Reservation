@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-from .storage import OverwriteStorage
+from backend.storage_backends import SupabaseMediaStorage
 
 # Create your models here.
 class RoomType(models.Model):
@@ -108,8 +108,12 @@ class RoomTypeImage(models.Model):
     This is the images of a room type
     """
     name = models.CharField(max_length=255, help_text="The name of the image")
-    image = models.ImageField(upload_to='room_type_images/', storage=OverwriteStorage(), help_text="The image of the room type")
+    image = models.ImageField(upload_to='', storage=SupabaseMediaStorage(), help_text="The image of the room type. Save this in .avif format!")
     room_type = models.ForeignKey(RoomType, on_delete=models.CASCADE, help_text="The room type of this image")
 
     def __str__(self):
       return f"{self.name}" 
+
+    def save(self, *args, **kwargs):
+        print(f"[RoomTypeImage] Saving image: {self.image}")
+        super().save(*args, **kwargs)

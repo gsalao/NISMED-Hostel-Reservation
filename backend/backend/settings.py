@@ -229,11 +229,23 @@ CACHES = {
     }
 }
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = BASE_DIR / 'media'
 CSRF_TRUSTED_ORIGINS = config(
     "CSRF_TRUSTED_ORIGINS",
     cast=Csv(),
     default=[]
 )
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+DEFAULT_FILE_STORAGE = 'backend.storage_backends.SupabaseMediaStorage'
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+AWS_ACCESS_KEY_ID = config('SUPABASE_ACCESS_KEY')
+AWS_SECRET_ACCESS_KEY = config('SUPABASE_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = 'nismed-room-type-images'
+AWS_S3_ENDPOINT_URL = config('SUPABASE_ENDPOINT_URL')
+AWS_S3_REGION_NAME = config('SUPABASE_REGION')
+AWS_S3_ADDRESSING_STYLE = "path"  # Needed for Supabase
+AWS_QUERYSTRING_AUTH = False
+
+MEDIA_URL = f"https://{config('SUPABASE_PROJECT_ID')}.supabase.co/storage/v1/object/public/{AWS_STORAGE_BUCKET_NAME}/"
