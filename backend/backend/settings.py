@@ -157,7 +157,7 @@ JAZZMIN_SETTINGS = {
     "site_title": "UP NISMED Hostel Admin",
     "site_header": "UP NISMED Hostel",
     "site_brand": "UP NISMED Hostel",
-    "site_logo": "nismed-site-logo.png",
+    "site_logo": "hostel-logo.png",
     "site_icon": "nismed-site-icon1.png",
     "welcome_sign": "Welcome to the UP NISMED Hostel Admin",
     "copyright": "UP NISMED",
