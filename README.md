@@ -4,7 +4,7 @@ This is the repository of the Hostel Reservation System for the University of th
 # Development
 This project is built on a [Vue.js](https://vuejs.org) frontend with a [Django](https://www.djangoproject.com) backend which uses [PostgreSQL](https://www.postgresql.org) as its database and [Redis](https://redis.io) for its caching.
 
-The website's Vue.js frontend was deployed on [Netlify](https://www.netlify.com). The Django backend and Redis server was hosted on a [DigitalOcean](https://www.digitalocean.com) droplet. The PostgreSQL database that it uses is hosted on [Supabase](https://supabase.com).
+The website's Vue.js frontend was deployed on [Netlify](https://www.netlify.com). The Django backend was hosted on [Render]([https://www.digitalocean.com](https://render.com/)) and it uses [Upstash](https://upstash.com/) to host the Redis server. The PostgreSQL database that it uses is hosted on [Supabase](https://supabase.com).
 
 ## Managing Environment Variables
 The backend and frontend have `.env.example` files to ensure that secret variables are maintained.
