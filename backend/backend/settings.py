@@ -59,6 +59,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', cast=Csv())
+print(CORS_ALLOWED_ORIGINS)
 
 ROOT_URLCONF = 'backend.urls'
 
