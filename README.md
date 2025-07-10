@@ -2,9 +2,9 @@
 This is the repository of the Hostel Reservation System for the University of the Philippines National Institute for Science and Mathematics Education Development (UP NISMED) Hostel.
 
 # Development
-This project is built on a [Vue.js](https://vuejs.org) frontend with a [Django](https://www.djangoproject.com) backend which uses [PostgreSQL](https://www.postgresql.org) as its database and [Redis](https://redis.io) for its caching.
+This project is built on a [Vue.js](https://vuejs.org) frontend with a [Django](https://www.djangoproject.com) backend, which uses [PostgreSQL](https://www.postgresql.org) as its database and [Redis](https://redis.io) for its caching.
 
-The website's Vue.js frontend was deployed on [Netlify](https://www.netlify.com). The Django backend was hosted on [Render](https://render.com/) and it uses [Upstash](https://upstash.com/) to host the Redis server. The PostgreSQL database that it uses is hosted on [Supabase](https://supabase.com).
+The website's Vue.js frontend was deployed on [Netlify](https://www.netlify.com). The Django backend was hosted on [Render](https://render.com/,) and it uses [Upstash](https://upstash.com/) to host the Redis server. The PostgreSQL database that it uses is hosted on [Supabase](https://supabase.com).
 
 ## Managing Environment Variables
 The backend and frontend have `.env.example` files to ensure that secret variables are maintained.
@@ -46,18 +46,18 @@ This part of the README.md assumes a local setup.
 4. [Docker](https://www.docker.com)
 
 ## Initial Backend Setup
-1. Create a PostgeSQL database (local or Supabase)
+1. Create a PostgreSQL database (local or Supabase)
 2. Create a [Google Apps Script Project](https://developers.google.com/apps-script) using your `EMAIL_HOST_USER` .
 3. Paste in the code of `/backend/Code.gs`
-4. Deploy the project with the following configuration: `Execute as:Me` and `Who has access: Anyone` and copy the URL of the webapp
+4. Deploy the project with the following configuration: `Execute as:Me` and `Who has access: Anyone`, and copy the URL of the webapp
 5. Ensure that you are in the `backend` folder
-6. Create `.env` file and fill up with necessary details (see above for details)
+6. Create `.env` file and fill it up with necessary details (see above for details)
 7. `python3 -m venv env` or `python -m venv env` in order to create the virtual environment for Django
 8. Run the `backend_setup.ps1` or `backend_setup.sh` file to prepare the backend (use `.ps1` for Windows devices and `.sh` for POSIX-compliant machines)
 9. `docker run -d -p <port>:<port> redis`
 
   ## Post-Backend Setup
-This is for the runs that arae _after_ the initial backend setup.
+This is for the runs that occur _after_ the initial backend setup.
 1. Open Docker and run the Redis server
 2. Connect to the virtual environment using `./env/Script/activate` for Windows machines and `source bin/env/activate` for POSIX-compliant machines
 3. Run `python manage.py makemigrations` and `python manage.py migrate` for any migrations to the database
@@ -65,9 +65,9 @@ This is for the runs that arae _after_ the initial backend setup.
 
 ## Frontend Setup
 1. Ensure that you are in the `frontend` folder
-2. Create `.env` file and fill up with necessary details (see above for details)
-3. `npm install` to install dependecies
-4. `npm run dev` to run server
+2. Create `.env` file and fill it up with necessary details (see above for details)
+3. `npm install` to install dependencies
+4. `npm run dev` to run the server
 5. `npm run build` to type-check, compile, and minify for production (which will be used in Netlify)
 
 # Team
