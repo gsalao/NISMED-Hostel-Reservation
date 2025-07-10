@@ -108,7 +108,7 @@ class RoomTypeImage(models.Model):
     This is the images of a room type
     """
     name = models.CharField(max_length=255, help_text="The name of the image")
-    image = models.ImageField(upload_to='', storage=SupabaseMediaStorage(), help_text="The image of the room type. Save this in .avif format!")
+    image = models.ImageField(upload_to='', storage=SupabaseMediaStorage(), help_text="The image of the room type. Please make sure that the images are less than 250 KB.") 
     room_type = models.ForeignKey(RoomType, on_delete=models.CASCADE, help_text="The room type of this image")
 
     def __str__(self):
