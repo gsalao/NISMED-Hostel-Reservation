@@ -1,33 +1,26 @@
 <!-- Amenities Grid View -->
 
 <script setup>
-  import { ref, onMounted } from 'vue'
-  import axios from 'axios'
+  import { computed } from 'vue'
+  import { useHomePageStore } from '../stores/homePageStore'
 
-  const rooms = ref([])
-  const amenities = ref([])
+  const store = useHomePageStore()
 
-  onMounted(async () => {
-    try {
-      const backendUrl = import.meta.env.VITE_BACKEND_BASE_URL
-      const { data: roomTypes } = await axios.get(`${backendUrl}/room/get_all_room_types/`)
-      
-      roomTypes.sort((a, b) => a.name.localeCompare(b.name))
+  const rooms = computed(() => {
+    const sorted = [...store.roomTypes].sort((a, b) => a.name.localeCompare(b.name))
 
-      rooms.value = roomTypes.map(room => ({
-        type: `Type ${room.name}`,
-        amenities: room.amenities.map(a => a.name)
-      }))
+    return sorted.map(room => ({
+      type: `Type ${room.name}`,
+      amenities: room.amenities.map(a => a.name)
+    }))
+  })
 
-      const allAmenities = new Set()
-      roomTypes.forEach(rt => {
-        rt.amenities.forEach(a => allAmenities.add(a.name))
-      })
-      amenities.value = Array.from(allAmenities).sort()
-
-    } catch (error) {
-      console.error('Failed to load amenities or room types:', error)
-    }
+  const amenities = computed(() => {
+    const allAmenities = new Set()
+    store.roomTypes.forEach(rt => {
+      rt.amenities.forEach(a => allAmenities.add(a.name))
+    })
+    return Array.from(allAmenities).sort()
   })
 </script>
 

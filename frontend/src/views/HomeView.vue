@@ -33,56 +33,34 @@
   import RatesLanding from '../components/RatesLanding.vue'
   import AmenitiesLanding from '../components/AmenitiesLanding.vue'
   import OperatingHours from '../components/OperatingHours.vue'
-  import { ref, onMounted } from 'vue'
 
-  interface RoomImage {
-    id: number
-    name: string
-    image: string
-    room_type: number
-    label?: string
-    src?: string
-  }
+  import { computed, onMounted } from 'vue'
+  import { useHomePageStore } from '../stores/homePageStore'
 
-  const roomSetA = ref<{ src: string; label: string }[]>([])
-  const roomSetB = ref<{ src: string; label: string }[]>([])
-  const roomSetC = ref<{ src: string; label: string }[]>([])
+  const store = useHomePageStore()
 
-  const allImages = ref<RoomImage[]>([])
+  const roomSetA = computed(() =>
+    store.images.filter(img => img.room_type === 3).map(img => ({
+      src: img.image,
+      label: 'Room Type A'
+    }))
+  )
 
-  onMounted(async () => {
-    try {
-      const backendUrl = import.meta.env.VITE_BACKEND_BASE_URL
-      // const mediaUrl = import.meta.env.VITE_BACKEND_URL
-      const res = await fetch(`${backendUrl}/room/get_all_room_type_images/`)
+  const roomSetB = computed(() =>
+    store.images.filter(img => img.room_type === 2).map(img => ({
+      src: img.image,
+      label: 'Room Type B'
+    }))
+  )
 
-      const data: RoomImage[] = await res.json()
+  const roomSetC = computed(() =>
+    store.images.filter(img => img.room_type === 1).map(img => ({
+      src: img.image,
+      label: 'Room Type C'
+    }))
+  )
 
-      allImages.value = data
-
-      // If your RoomType IDs are: A=1, B=2, C=3 (adjust if needed)
-      roomSetA.value = data
-        .filter(img => img.room_type === 3)
-        .map(img => ({
-          src: `${img.image}`,
-          label: 'Room Type A'
-        }))
-
-      roomSetB.value = data
-        .filter(img => img.room_type === 2)
-        .map(img => ({
-          src: `${img.image}`,
-          label: 'Room Type B'
-        }))
-
-      roomSetC.value = data
-        .filter(img => img.room_type === 1)
-        .map(img => ({
-          src: `${img.image}`,
-          label: 'Room Type C'
-        }))
-    } catch (err) {
-      console.error('Failed to fetch room images:', err)
-    }
+  onMounted(() => {
+    store.loadAll()
   })
 </script>

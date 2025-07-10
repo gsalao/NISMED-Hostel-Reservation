@@ -1,48 +1,36 @@
 <!-- Room Rates Grid View -->
 
 <script setup>
-  import { ref, onMounted } from 'vue'
+  import { computed } from 'vue'
+  import { useHomePageStore } from '../stores/homePageStore'
 
-  const categories = ref(['Single', 'Double', 'Triple'])
-  const rates = ref([])
+  const store = useHomePageStore()
 
-  const fetchRoomRates = async () => {
-    try {
-      const backendUrl = import.meta.env.VITE_BACKEND_BASE_URL
-      const res = await fetch(`${backendUrl}/room/get_all_room_rates/`)
+  const categories = ['Single', 'Double', 'Triple']
 
-      const data = await res.json()
+  const rates = computed(() => {
+    const grouped = {}
 
-      const grouped = {}  // { 'Type A': { Single: 1234, Double: 2345 }, ... }
+    store.rates.forEach(rate => {
+      const type = rate.room_type
+      const typeAlpha =
+        type === 1 ? 'Type C' : type === 2 ? 'Type B' : 'Type A'
+      const occ = rate.occupancy
+      const label =
+        occ === 1 ? 'Single' : occ === 2 ? 'Double' : 'Triple'
 
-      data.forEach(rate => {
-        const type = rate.room_type
-        // Note Room Type C ID = 1, Room Type A ID = 3 (backend-based)
-        const typeAlpha = type === 1 ? 'Type C' : type === 2 ? 'Type B' : 'Type A'
-        const occ = rate.occupancy
-        const label = occ === 1 ? 'Single' : occ === 2 ? 'Double' : 'Triple'
+      if (!grouped[typeAlpha]) grouped[typeAlpha] = {}
+      grouped[typeAlpha][label] = parseFloat(rate.rate)
+    })
 
-        if (!grouped[typeAlpha]) grouped[typeAlpha] = {}
-        grouped[typeAlpha][label] = parseFloat(rate.rate)
-      })
+    const sortedEntries = Object.entries(grouped).sort((a, b) =>
+      a[0].localeCompare(b[0])
+    )
 
-      // sort displayed room type alphabetically (i.e. Room Type A -> B -> C in UI)
-      const sortedEntries = Object.entries(grouped).sort((a, b) => {
-        return a[0].localeCompare(b[0])
-      })
-
-      rates.value = sortedEntries.map(([type, prices]) => ({
-        type,
-        prices
-      }))
-
-    } catch (err) {
-      console.error('Failed to fetch room rates:', err)
-    }
-  }
-
-  onMounted(() => {
-    fetchRoomRates()
+    return sortedEntries.map(([type, prices]) => ({
+      type,
+      prices
+    }))
   })
 </script>
 

@@ -2,8 +2,15 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import axios from 'axios'
 
+export interface RoomImage {
+  id: number
+  name: string
+  image: string
+  room_type: number
+}
+
 export const useHomePageStore = defineStore('room', () => {
-  const images = ref([])
+  const images = ref<RoomImage[]>([])
   const roomTypes = ref([])
   const rates = ref([])
   const loaded = ref(false)
