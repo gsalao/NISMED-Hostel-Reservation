@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import axios from 'axios'
 
-export const useRoomStore = defineStore('room', () => {
+export const useHomePageStore = defineStore('room', () => {
   const images = ref([])
   const roomTypes = ref([])
   const rates = ref([])
