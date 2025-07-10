@@ -19,9 +19,22 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.http import JsonResponse
+from django.db import connection
+from django.db.utils import OperationalError
 
 def health_check(request):
-    return JsonResponse({"status": "ok"})
+    db_status = "unknown"
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1;")
+            db_status = "ok"
+    except OperationalError:
+        db_status = "unavailable"
+    
+    return JsonResponse({
+        "status": "ok",
+        "database": db_status
+    })
 
 urlpatterns = [
     path('admin/', admin.site.urls),
