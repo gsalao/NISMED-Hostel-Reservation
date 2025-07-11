@@ -23,38 +23,16 @@ from django.db import connection
 from django.db.utils import OperationalError
 from decouple import config
 
-HEALTH_CHECK_TOKEN = config('HEALTH_CHECK_TOKEN')
 def ping(request):
    return JsonResponse({
         "status": "ok",
     })
-
-def ping_db(request):
-    token = request.GET.get("token")
-    if token != HEALTH_CHECK_TOKEN:
-        return HttpResponseForbidden("Forbidden")
-
-    db_status = "unknown"
-    try:
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT 1;")
-            db_status = "ok"
-    except OperationalError:
-        db_status = "unavailable"
-
-    return JsonResponse({
-        "status": "ok",
-        "database": db_status
-    })
-
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/guest/', include('guest.urls')),
     path('api/reserve/', include('reservation.urls')),
     path('api/room/', include('room.urls')),
     path('ping/', ping),
-    path('ping/db', ping_db)
 ]
 
 if settings.DEBUG:
